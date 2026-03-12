@@ -1,0 +1,4 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.77;27-29;.Person.setName(String);26-28;.Person.setFullName(String)
+Change Method Signature;method;0.78;23-25;.Person.getName();22-24;.Person.getFullName()
+Change Constructor Signature;constructor;0.67;10-13;.Person.Person(int, String);7-12;.Person.Person(int, String, String, String)

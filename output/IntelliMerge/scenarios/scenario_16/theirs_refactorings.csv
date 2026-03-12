@@ -1,0 +1,5 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.7;24-26;.Person.setName(String);22-24;.PersonalData.setName(String)
+Change Method Signature;method;0.69;20-22;.Person.getName();18-20;.PersonalData.getName()
+Change Field Signature;field;1.0;4-4;.Person.email;2-2;.ContactData.email
+Change Field Signature;field;1.0;3-3;.Person.name;3-3;.PersonalData.name

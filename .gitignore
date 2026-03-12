@@ -1,0 +1,27 @@
+# Pastas com arquivos grandes
+java-versions/
+libs/javafx-sdk/
+
+# Arquivos JDK/JRE grandes
+*.tar.gz
+*.zip
+jdk*/
+openjdk*/
+
+# Arquivos binários Java grandes
+*.jar
+src.zip
+modules
+lib/modules
+jre/lib/rt.jar
+
+# Bibliotecas JavaFX
+javafx-sdk*/
+*.so
+
+# Outros arquivos temporários
+*.tmp
+*.bak
+*.orig
+.DS_Store
+Thumbs.db
