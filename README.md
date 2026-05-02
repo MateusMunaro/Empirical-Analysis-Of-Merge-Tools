@@ -1,570 +1,487 @@
-# Scientific Research on Merge Tools
+# Empirical Analysis of Merge Tools
 
-## 📋 Overview
+> An empirical study comparing the effectiveness of structured and semi-structured merge tools on a curated benchmark of three-way merge scenarios written in Java.
 
-This repository contains a comprehensive scientific study evaluating the performance and effectiveness of multiple merge tools used in software development. The research employs rigorous empirical methods to compare merge tool capabilities across diverse scenarios.
+This repository contains the **dataset**, **execution scripts**, **evaluation framework**, and **results** of an empirical analysis that quantitatively compares the merge correctness of multiple academic merge tools across a controlled set of conflict scenarios.
 
-**Evaluated Tools:**
-- **FSTMerge** - Feature Structure Tree-based merge
-- **IntelliMerge** - Intelligent semantic merge tool
-- **JDime** - Java Differencing and Merging Tool
-- **AutoMerge** - Automated structured merge
-- **KDiff3** - Three-way merge with GUI support
+---
 
-## 🗂️ Project Structure
+## Table of Contents
+
+1. [Research Overview](#research-overview)
+2. [Repository Layout](#repository-layout)
+3. [Dataset](#dataset)
+4. [Evaluated Tools](#evaluated-tools)
+5. [Reproducing the Study](#reproducing-the-study)
+   - [1. Prerequisites](#1-prerequisites)
+   - [2. Clone & Setup](#2-clone--setup)
+   - [3. Provision the Merge Tools](#3-provision-the-merge-tools)
+   - [4. Run the Merges](#4-run-the-merges)
+   - [5. Evaluate the Results](#5-evaluate-the-results)
+   - [6. Generate Reports & Graphs](#6-generate-reports--graphs)
+6. [Manual Tool Invocation (reference)](#manual-tool-invocation-reference)
+7. [Evaluation Methodology](#evaluation-methodology)
+8. [Results Summary](#results-summary)
+9. [Extending the Study](#extending-the-study)
+10. [Troubleshooting](#troubleshooting)
+11. [Citation](#citation)
+12. [Author & Contact](#author--contact)
+
+---
+
+## Research Overview
+
+The goal of the study is to answer the research question:
+
+> *How do structured, semi-structured, and unstructured merge tools compare in correctness across a controlled set of three-way merge scenarios?*
+
+To answer this we:
+
+1. Built a benchmark of **39 three-way merge scenarios** per tool (base / left / right) with a known *expected* resolution (ground truth).
+2. Executed each tool over the benchmark using a uniform Python harness.
+3. Compared each tool's output against the ground truth using line-level metrics (precision, recall, F1, accuracy) and quality classifications.
+4. Aggregated the per-scenario results into a comparative report with statistical commentary.
+
+The benchmark and all intermediate artefacts are kept in the repository so the study is fully reproducible.
+
+---
+
+## Repository Layout
 
 ```
-Pesquisa-cientifica/
-├── scripts/                      # Python evaluation and execution scripts
-│   ├── executor.py              # Interactive menu for running merge tools
-│   ├── run_evaluation.py        # Main evaluation orchestrator
-│   ├── demo_complete_evaluation.py  # Complete demonstration script
-│   ├── merge_evaluation_tool.py # Core evaluation framework
-│   ├── scientific_report_generator.py  # Academic report generator
-│   ├── evaluation_config.py     # Configuration and data structures
-│   └── graphs/                  # Visualization scripts
+Empirical-Analysis-Of-Merge-Tools/
+├── scripts/                              # Python harness (execution + evaluation)
+│   ├── executor.py                       # Interactive runner for the merge tools
+│   ├── run_evaluation.py                 # Orchestrates the evaluation pipeline
+│   ├── merge_evaluation_tool.py          # Core evaluation engine (metrics, reports)
+│   ├── scientific_report_generator.py    # Builds the academic-style report
+│   ├── evaluation_config.py              # Data classes & evaluation configuration
+│   ├── demo_complete_evaluation.py       # Guided end-to-end demonstration
+│   └── graphs/                           # Plotting scripts + pre-rendered figures
 │       ├── accuracy_graph.py
 │       ├── f1_score_graph.py
 │       ├── recall_graph.py
-│       └── combined_metrics_graph.py
-├── merge_tools/                  # Merge tool binaries and executables
-│   ├── FSTMerge/
-│   ├── IntelliMerge/
-│   ├── JDime/
-│   ├── AutoMerge/
-│   └── KDiff/
-├── scenarios_base/               # Test scenarios for each tool
-│   ├── FSTMerge/scenario_1..39/
-│   ├── IntelliMerge/scenario_1..39/
-│   ├── JDime/scenario_1..39/
-│   └── AutoMerge/scenario_1..34/
-├── output/                       # Merge operation results
-│   ├── [Tool]/scenarios/        # Actual merge outputs
-│   └── [Tool]/expected/         # Expected correct outputs
-├── evaluation_results/           # Scientific evaluation results
-│   └── scientific_evaluation/   # Detailed metrics and reports
-├── java_dependencies/            # Java versions and native libraries
-│   └── java-versions/
-│       ├── jdk-11.0.2/
-│       ├── jdk8u392-b08/
-│       └── libgit2/
-└── libs/                         # External libraries (JavaFX, activation.jar)
+│       ├── combined_metrics_graph.py
+│       └── *.png                         # Generated charts
+│
+├── scenarios_base/                       # Input dataset (39 scenarios per tool)
+│   ├── FSTMerge/scenario_1 .. scenario_39/   (base/, left/, right/, merge.expression)
+│   ├── IntelliMerge/scenario_1 .. scenario_39/   (base/, left/, right/)
+│   ├── JDime/scenario_1 .. scenario_39/          (base/, left/, right/)
+│   └── KDiff3/                                  (single illustrative sample)
+│
+├── merge_tools/                          # Tool binaries (some are gitignored — see below)
+│   ├── JDime/                            # JDime distribution (committed)
+│   └── KDiff/                            # KDiff3 reference notes
+│   # FSTMerge / IntelliMerge / AutoMerge JARs are gitignored — see "Provision the Merge Tools"
+│
+├── output/                               # Tool outputs + ground-truth expected outputs
+│   ├── FSTMerge/{scenarios,expected}/
+│   ├── IntelliMerge/{scenarios,expected}/
+│   └── JDime/{scenarios,expected}/
+│
+├── evaluation_results/                   # Generated metrics, comparisons and report
+│   └── scientific_evaluation/
+│       ├── tools_comparison.json
+│       ├── scientific_merge_tools_evaluation.md
+│       ├── FSTMerge/{evaluation_report.json, scenario_metrics.csv}
+│       ├── IntelliMerge/{evaluation_report.json, scenario_metrics.csv}
+│       └── JDime/{evaluation_report.json, scenario_metrics.csv}
+│
+├── .gitignore
+└── README.md
 ```
 
-## 🔬 Research Methodology
+> **Note on the project name.** The harness and some legacy paths still refer to a previous project name (`Pesquisa-cientifica`). The current canonical name of the repository is **`Empirical-Analysis-Of-Merge-Tools`**. Replace any absolute path you might find in older scripts/notes with the path of your local clone.
 
-### Phase 1: Initial Tool Execution
+---
 
-The first phase involved understanding and configuring each merge tool individually. Each tool has unique requirements and execution patterns:
+## Dataset
 
-#### 1.1 Tool-Specific Configurations
-
-**FSTMerge:**
-- Required creating `merge.expression` files for each scenario
-- Uses a base directory structure with left/base/right branches
-- Generates output in a `merge/` subdirectory
-
-**IntelliMerge:**
-- Java-based tool requiring explicit directory paths
-- Creates nested directory structures mimicking workspace paths
-- Required post-processing to flatten output structure
-
-**JDime:**
-- Requires specific JAVA_HOME configuration (JDK 8)
-- Supports both structured and unstructured merge modes
-- Some scenarios fail in structured mode, requiring fallback strategies
-
-**AutoMerge:**
-- Complex setup requiring JavaFX libraries
-- Native library dependencies (libgit2)
-- Uses JDK 11 with module path configuration
-- Required downloading and configuring JavaFX SDK dynamically
-
-**KDiff3:**
-- GUI-based tool with batch mode support
-- Simpler execution but limited automation capabilities
-
-#### 1.2 Challenges Encountered
-
-1. **Path Management:** Each tool expected different directory structures
-2. **Java Version Compatibility:** Tools required different JDK versions (8 vs 11)
-3. **Library Dependencies:** Missing libraries like JavaFX and libgit2
-4. **Output Inconsistencies:** Tools generated outputs in varying locations
-5. **Error Handling:** Some scenarios failed silently or with cryptic errors
-
-### Phase 2: Development of Automated Executor
-
-To streamline the execution of 39 scenarios across multiple tools, the `executor.py` script was developed with the following features:
-
-#### 2.1 Design Goals
-
-- **Batch Processing:** Execute all scenarios for a selected tool automatically
-- **Error Recovery:** Handle failures gracefully and continue processing
-- **Output Standardization:** Move outputs to consistent locations
-- **Progress Tracking:** Report execution status for each scenario
-- **Interactive Interface:** User-friendly menu for tool selection
-
-#### 2.2 Implementation Strategy
-
-```python
-# Key components of executor.py:
-
-1. Tool-specific functions (run_intellimerge, run_fstmerge, etc.)
-   - Iterate through scenarios 1-39
-   - Build appropriate command for each scenario
-   - Handle tool-specific quirks (nested paths, output locations)
-
-2. Environment management
-   - Configure JAVA_HOME per tool requirements
-   - Set LD_LIBRARY_PATH for native libraries
-   - Manage classpath for Java tools
-
-3. Post-processing
-   - Relocate outputs to standardized directories
-   - Clean up temporary/nested structures
-   - Report success/failure statistics
-
-4. Error handling
-   - Try/catch for subprocess failures
-   - Fallback modes (structured → unstructured for JDime)
-   - Detailed error logging
-```
-
-#### 2.3 Execution Flow
+The dataset lives in [`scenarios_base/`](./scenarios_base). Each scenario is a self-contained three-way merge:
 
 ```
-User Selection → Tool Configuration → Scenario Loop
-    ↓                    ↓                   ↓
-[Menu]           [Paths & Env]      [For i in 1..39]
-    ↓                    ↓                   ↓
-Tool Function → Execute Command → Post-Process
-    ↓                    ↓                   ↓
-Run All          Capture Output      Move Files
-Scenarios        Handle Errors       Clean Dirs
-    ↓                    ↓                   ↓
-    └─────────→ Summary Report ←────────────┘
+scenarios_base/<Tool>/scenario_N/
+├── base/    # common ancestor
+├── left/    # branch A (e.g. ours)
+└── right/   # branch B (e.g. theirs)
 ```
 
-### Phase 3: Scientific Evaluation Framework
+For **FSTMerge**, each scenario additionally contains a `merge.expression` file consumed by FeatureHouse.
 
-After generating merge outputs, a comprehensive evaluation framework was developed to scientifically assess tool performance.
+The reference (expected) merge result for each scenario lives under [`output/<Tool>/expected/scenario_N/`](./output) and is the ground truth used to score each tool.
 
-#### 3.1 Evaluation Metrics
+| Tool         | # Scenarios | Input layout                          | Expected output             |
+|--------------|-------------|---------------------------------------|-----------------------------|
+| FSTMerge     | 39          | `base/`, `left/`, `right/`, `merge.expression` | `output/FSTMerge/expected/` |
+| IntelliMerge | 39          | `base/`, `left/`, `right/`            | `output/IntelliMerge/expected/` |
+| JDime        | 39          | `base/`, `left/`, `right/`            | `output/JDime/expected/`    |
+| KDiff3       | 1 (sample)  | `base/`, `left/`, `right/`            | not part of the formal evaluation |
 
-The framework implements multiple rigorous metrics following software engineering research standards:
+> AutoMerge support is implemented in `executor.py` (option 4), but its scenario corpus is **not bundled** in this release.
 
-**Core Metrics:**
-- **Precision:** Ratio of correct lines in output to total output lines
-- **Recall:** Ratio of correct lines in output to expected lines
-- **F1-Score:** Harmonic mean of precision and recall
-- **Accuracy:** Overall correctness percentage
+---
 
-**Quality Metrics:**
-- **Syntactic Correctness:** Java compilation success
-- **Structural Integrity:** AST-level correctness
-- **Lexical Similarity:** Token-level comparison
-- **Semantic Similarity:** Meaning preservation analysis
+## Evaluated Tools
 
-**Classification System:**
-- Perfect (100%)
-- Excellent (≥95%)
-- Good (≥85%)
-- Acceptable (≥70%)
-- Poor (≥50%)
-- Failed (<50%)
+| Tool         | Strategy                       | Language target | Notes |
+|--------------|--------------------------------|-----------------|-------|
+| **FSTMerge**     | Structured (FST / FeatureHouse) | Java            | Requires a `merge.expression` per scenario. |
+| **IntelliMerge** | Semantic / refactoring-aware   | Java            | Operates on directories (`-d left base right`). |
+| **JDime**        | Structured AST merge (with linebased fallback) | Java | Needs JDK 8 (`JAVA_HOME`). |
+| **AutoMerge**    | Conflict-resolution suggestion (fork of JDime) | Java | Needs JDK 11 + JavaFX + libgit2 (auto-downloaded by the harness). Optional in this release. |
+| **KDiff3**       | Line-based three-way merge     | Any text        | Used only as an illustrative reference. |
 
-#### 3.2 Evaluation Process
+The full quantitative comparison only includes **FSTMerge**, **IntelliMerge** and **JDime**, which are the three tools with a complete dataset and ground truth in this repository.
 
-```python
-# Evaluation pipeline:
+---
 
-1. Load expected outputs (ground truth)
-2. Load actual tool outputs (test results)
-3. For each scenario:
-   a. Normalize whitespace and formatting
-   b. Compute line-level differences
-   c. Calculate precision, recall, F1
-   d. Analyze syntax and structure
-   e. Classify quality level
-   f. Identify error patterns
-4. Aggregate metrics per tool
-5. Perform statistical comparisons
-6. Generate comprehensive reports
+## Reproducing the Study
+
+### 1. Prerequisites
+
+| Component                  | Version                | Used by                              |
+|----------------------------|------------------------|--------------------------------------|
+| Python                     | 3.8+                   | All scripts                          |
+| JDK 8                      | e.g. `jdk8u392-b08`    | JDime                                |
+| JDK 11                     | e.g. `jdk-11.0.2`      | AutoMerge (optional)                 |
+| Java 17+ (recommended)     | -                      | FSTMerge, IntelliMerge               |
+| `wget`, `unzip`            | recent                 | Auto-downloading JavaFX (AutoMerge)  |
+| Linux x86_64 (or WSL)      | -                      | Native libs (`libgit2`) used by AutoMerge |
+
+Python packages used by the evaluation framework (install with `pip`):
+
+```bash
+pip install numpy pandas matplotlib scipy
 ```
 
-#### 3.3 Implementation Components
+> A `requirements.txt` is not yet pinned in this release — install the packages above directly.
 
-**merge_evaluation_tool.py:**
-- Core evaluation engine
-- Metric calculation algorithms
-- File comparison logic
-- Statistical analysis functions
-- Report generation
+### 2. Clone & Setup
 
-**run_evaluation.py:**
-- Orchestration script
-- Directory structure validation
-- Tool auto-detection
-- Batch evaluation execution
-- Summary report generation
+```bash
+git clone https://github.com/MateusMunaro/Empirical-Analysis-Of-Merge-Tools.git
+cd Empirical-Analysis-Of-Merge-Tools
+```
 
-**scientific_report_generator.py:**
-- Academic-standard report formatting
-- Statistical significance testing
-- Comparative analysis tables
-- Methodology documentation
-- Results visualization data
+All commands in the rest of this guide assume your **current working directory is the repository root**. The harness uses relative paths (`./scripts/...`, `./scenarios_base/...`, `./output/...`).
 
-#### 3.4 Evaluation Outputs
+### 3. Provision the Merge Tools
 
-The evaluation generates multiple output formats:
+Some tool binaries are **gitignored** because of their size. Download them and drop them into `merge_tools/` so the directory tree looks like:
+
+```
+merge_tools/
+├── FSTMerge/featurehouse_20220107.jar
+├── IntelliMerge/IntelliMerge-1.0.9-all.jar
+├── JDime/jdime/build/install/JDime/bin/JDime          # already in the repo
+└── AutoMerge/AutoMerge.jar                             # optional
+```
+
+For **AutoMerge** (optional), additionally provide:
+
+```
+java_dependencies/java-versions/jdk-11.0.2/             # JDK 11
+java_dependencies/java-versions/jdk8u392-b08/           # JDK 8 (also used by JDime)
+java_dependencies/java-versions/libgit2/build/          # native libgit2
+libs/activation-1.1.1.jar                               # Java Activation Framework
+libs/javafx-sdk/                                        # auto-downloaded by executor.py
+```
+
+> If you only want to reproduce the headline numbers (FSTMerge / IntelliMerge / JDime), you can skip everything related to AutoMerge.
+
+### 4. Run the Merges
+
+The harness (`scripts/executor.py`) provides an interactive menu that runs **all 39 scenarios** for the selected tool, normalises the output layout, and reports per-scenario success/failure.
+
+```bash
+python scripts/executor.py
+```
+
+Menu:
+
+```
+1 - IntelliMerge
+2 - FSTMerge
+3 - JDime
+4 - AutoMerge
+```
+
+Outputs are written to:
+
+```
+output/<Tool>/scenarios/scenario_N/...
+```
+
+Run the harness once per tool (or invoke the underlying functions directly from a Python REPL).
+
+### 5. Evaluate the Results
+
+Once `output/<Tool>/scenarios/` is populated for each tool, score them against the ground truth in `output/<Tool>/expected/`:
+
+```bash
+# Sanity-check that the expected/ and scenarios/ folders are well-formed
+python scripts/run_evaluation.py --check-only
+
+# Run the full evaluation (all tools that have data)
+python scripts/run_evaluation.py
+
+# Restrict to a subset
+python scripts/run_evaluation.py --tools IntelliMerge JDime
+
+# Re-aggregate from cached results without recomputing
+python scripts/run_evaluation.py --summary-only
+
+# Verbose logging
+python scripts/run_evaluation.py --verbose
+```
+
+Outputs land in `evaluation_results/scientific_evaluation/`:
 
 ```
 evaluation_results/scientific_evaluation/
-├── tools_comparison.json          # Comparative analysis
-├── scientific_merge_tools_evaluation.md  # Academic report
-├── FSTMerge/
-│   ├── evaluation_report.json    # Detailed metrics
-│   └── scenario_metrics.csv      # Per-scenario data
-├── IntelliMerge/
-│   ├── evaluation_report.json
-│   └── scenario_metrics.csv
-└── JDime/
-    ├── evaluation_report.json
-    └── scenario_metrics.csv
+├── tools_comparison.json                 # Cross-tool comparative summary
+├── scientific_merge_tools_evaluation.md  # Human-readable academic report
+└── <Tool>/
+    ├── evaluation_report.json            # Aggregated metrics + per-scenario detail
+    └── scenario_metrics.csv              # One row per scenario, ready for stats tools
 ```
 
-### Phase 4: Results and Analysis
+### 6. Generate Reports & Graphs
 
-#### 4.1 Key Findings
+```bash
+# Build the markdown academic report
+python scripts/scientific_report_generator.py
 
-The evaluation revealed:
+# Render individual metric figures
+python scripts/graphs/accuracy_graph.py
+python scripts/graphs/f1_score_graph.py
+python scripts/graphs/recall_graph.py
 
-1. **Performance Variability:** Significant differences between tools
-2. **Scenario Complexity Impact:** Some tools excel with simple scenarios
-3. **Structural vs Line-based:** Trade-offs between merge strategies
-4. **Reliability Patterns:** Consistency across scenario types
-5. **Error Categories:** Common failure modes identified
+# Combined comparison figure
+python scripts/graphs/combined_metrics_graph.py
+```
 
-#### 4.2 Statistical Validation
+Pre-rendered figures are committed under `scripts/graphs/*.png` for convenience.
 
-- Mann-Whitney U tests for pairwise comparisons
-- Effect size calculations (Cohen's d)
-- Confidence intervals for metrics
-- Distribution analysis of quality classifications
+### Guided demo (optional)
 
-#### 4.3 Practical Implications
+For a narrated end-to-end walk-through (data check → evaluation → report → summary):
 
-Results inform tool selection based on:
-- Project characteristics (size, complexity)
-- Language features used
-- Team expertise level
-- Merge frequency and patterns
+```bash
+python scripts/demo_complete_evaluation.py
+```
 
-## 🚀 Usage Guide
+---
 
-## 🚀 Usage Guide
+## Manual Tool Invocation (reference)
 
-### Prerequisites
+These are the underlying commands the harness wraps. Useful for debugging a single scenario. All paths are relative to the repository root.
 
-- Python 3.8+
-- Java 8 and Java 11
-- Required Python packages (install via `pip install -r requirements.txt`)
-
-### Running Individual Merge Tools
-
-#### FSTMerge
+### FSTMerge
 
 ```bash
 java -jar ./merge_tools/FSTMerge/featurehouse_20220107.jar \
-  --expression /workspaces/Pesquisa-cientifica/scenarios_base/FSTMerge/scenario_1/merge.expression \
-  --base-directory /workspaces/Pesquisa-cientifica/scenarios_base/FSTMerge/scenario_1
+  --expression    ./scenarios_base/FSTMerge/scenario_1/merge.expression \
+  --base-directory ./scenarios_base/FSTMerge/scenario_1
 ```
 
 ### IntelliMerge
 
 ```bash
 java -jar ./merge_tools/IntelliMerge/IntelliMerge-1.0.9-all.jar \
-  -d "/workspaces/Pesquisa-cientifica/scenarios_base/IntelliMerge/scenario_12/left" \
-     "/workspaces/Pesquisa-cientifica/scenarios_base/IntelliMerge/scenario_12/base" \
-     "/workspaces/Pesquisa-cientifica/scenarios_base/IntelliMerge/scenario_12/right" \
-  -o "/workspaces/Pesquisa-cientifica/output/IntelliMerge/scenario_12"
+  -d ./scenarios_base/IntelliMerge/scenario_12/left \
+     ./scenarios_base/IntelliMerge/scenario_12/base \
+     ./scenarios_base/IntelliMerge/scenario_12/right \
+  -o ./output/IntelliMerge/scenarios/scenario_12
 ```
 
-### AutoMerge
-
-AutoMerge requires Java 8-11. Example with structured mode:
+### JDime (structured, with unstructured fallback)
 
 ```bash
-./java_dependencies/java-versions/jdk-11.0.2/bin/java \
-  -cp ./merge_tools/AutoMerge/AutoMerge.jar:libs/activation-1.1.1.jar \
-  de.fosd.jdime.Main \
-  -m structured \
-  -f \
-  -o /workspaces/Pesquisa-cientifica/output/AutoMerge/scenario_1.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/AutoMerge/scenario_1/base/Person.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/AutoMerge/scenario_1/left/Person.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/AutoMerge/scenario_1/right/Person.java
-```
-
-Example with line-based mode:
-
-```bash
-java -Djava.library.path=/usr/lib/x86_64-linux-gnu/ \
-  -cp ./merge_tools/AutoMerge/AutoMerge.jar:libs/activation-1.1.1.jar \
-  de.fosd.jdime.Main \
-  -m linebased \
-  -f \
-  -o /workspaces/Pesquisa-cientifica/output/AutoMerge/output.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/AutoMerge/base/SimpleClass.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/AutoMerge/left/SimpleClass.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/AutoMerge/right/SimpleClass.java
-```
-
-### KDiff3
-
-For GUI environments:
-
-```bash
-kdiff3 \
-  /workspaces/Pesquisa-cientifica/scenarios_base/KDiff3/base/SimpleClass.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/KDiff3/left/SimpleClass.java \
-  /workspaces/Pesquisa-cientifica/scenarios_base/KDiff3/right/SimpleClass.java \
-  -m --batch -o /workspaces/Pesquisa-cientifica/output/KDiff3/output.java
-```
-
-### JDime
-
-```bash
-JAVA_HOME=/workspaces/Pesquisa-cientifica/java_dependencies/java-versions/jdk8u392-b08 \
-  ./merge_tools/JDime/jdime/build/install/JDime/bin/JDime \
-  --mode structured \
-  --output ./output/JDime/scenario_12 \
+JAVA_HOME=./java_dependencies/java-versions/jdk8u392-b08 \
+./merge_tools/JDime/jdime/build/install/JDime/bin/JDime \
+  -f --mode structured \
+  --output ./output/JDime/scenarios/scenario_12 \
   ./scenarios_base/JDime/scenario_12/left \
   ./scenarios_base/JDime/scenario_12/base \
   ./scenarios_base/JDime/scenario_12/right
 ```
 
-## Running Scripts
-
-All Python scripts are located in the `scripts/` directory:
+### AutoMerge (structured)
 
 ```bash
-# Run executor menu
-python scripts/executor.py
+./java_dependencies/java-versions/jdk-11.0.2/bin/java \
+  --module-path=./libs/javafx-sdk/lib \
+  --add-modules=javafx.base,javafx.controls,javafx.graphics \
+  -cp ./merge_tools/AutoMerge/AutoMerge.jar:./libs/activation-1.1.1.jar \
+  de.fosd.jdime.Main \
+  -m structured -f -S \
+  -o ./output/AutoMerge \
+  ./scenarios_base/AutoMerge/scenario_1/left \
+  ./scenarios_base/AutoMerge/scenario_1/base \
+  ./scenarios_base/AutoMerge/scenario_1/right
 ```
 
-### Running Complete Evaluation
-
-#### Quick Start
+### KDiff3 (illustrative, line-based)
 
 ```bash
-# 1. Check data availability
-python scripts/run_evaluation.py --check-only
-
-# 2. Run evaluation for all available tools
-python scripts/run_evaluation.py
-
-# 3. Generate scientific report
-python scripts/scientific_report_generator.py
+kdiff3 \
+  ./scenarios_base/KDiff3/base/SimpleClass.java \
+  ./scenarios_base/KDiff3/left/SimpleClass.java \
+  ./scenarios_base/KDiff3/right/SimpleClass.java \
+  -m --batch -o ./output/KDiff3/output.java
 ```
-
-#### Advanced Options
-
-```bash
-# Evaluate specific tools only
-python scripts/run_evaluation.py --tools IntelliMerge JDime
-
-# Custom output directory
-python scripts/run_evaluation.py --output-dir my_results
-
-# Verbose logging
-python scripts/run_evaluation.py --verbose
-
-# Generate summary from existing results
-python scripts/run_evaluation.py --summary-only
-```
-
-#### Complete Demonstration
-
-```bash
-# Run full demonstration with explanations
-python scripts/demo_complete_evaluation.py
-```
-
-This script provides an interactive walkthrough of:
-1. Data structure verification
-2. Complete evaluation execution
-3. Scientific report generation
-4. Results summary and analysis
-
-## 📊 Understanding the Results
-
-### Evaluation Report Structure
-
-Each tool receives:
-
-**JSON Report (`evaluation_report.json`):**
-- Overall metrics (precision, recall, F1-score)
-- Success rate and reliability score
-- Quality distribution statistics
-- Common error patterns
-- Per-scenario detailed metrics
-
-**CSV Data (`scenario_metrics.csv`):**
-- Tabular format for statistical analysis
-- One row per scenario with all metrics
-- Suitable for importing into R, SPSS, or Excel
-
-**Comparative Analysis (`tools_comparison.json`):**
-- Performance ranking across all tools
-- Statistical significance tests
-- Quality distribution comparisons
-- Strengths and weaknesses analysis
-
-### Scientific Report
-
-The generated Markdown report includes:
-
-1. **Abstract & Introduction:** Research context and objectives
-2. **Methodology:** Detailed evaluation approach
-3. **Results:** Comprehensive tables and statistics
-4. **Statistical Analysis:** Significance tests and effect sizes
-5. **Discussion:** Interpretation of findings
-6. **Threats to Validity:** Limitations and biases
-7. **Reproducibility:** Steps to replicate the study
-
-## 📈 Visualization
-
-Generate graphs for presentation:
-
-```bash
-# Individual metric graphs
-python scripts/graphs/accuracy_graph.py
-python scripts/graphs/f1_score_graph.py
-python scripts/graphs/recall_graph.py
-
-# Combined comparison
-python scripts/graphs/combined_metrics_graph.py
-```
-
-## 🔧 Development Notes
-
-### Adding New Scenarios
-
-1. Create scenario directories in `scenarios_base/[Tool]/scenario_N/`
-2. Include `base/`, `left/`, and `right/` subdirectories
-3. Add expected output to `output/[Tool]/expected/scenario_N/`
-4. Update scenario count in executor functions if needed
-
-### Adding New Tools
-
-1. Add tool binaries to `merge_tools/[NewTool]/`
-2. Create function in `executor.py` following existing patterns
-3. Add tool option to menu in `main()` function
-4. Create corresponding scenario directories
-5. Test with a few scenarios before full batch
-
-### Extending Metrics
-
-To add custom evaluation metrics:
-
-1. Update `ScenarioMetrics` dataclass in `evaluation_config.py`
-2. Implement calculation logic in `merge_evaluation_tool.py`
-3. Update report generation in `scientific_report_generator.py`
-4. Add visualization if needed in `graphs/` directory
-
-## 📚 Research Applications
-
-This framework is suitable for:
-
-- **Academic Papers:** Empirical software engineering research
-- **Master's/PhD Theses:** Comparative tool evaluation studies
-- **Technical Reports:** Tool selection justification
-- **Tool Development:** Benchmark for new merge algorithms
-- **Educational Material:** Teaching merge concepts
-
-### Citation
-
-If you use this framework in your research, please cite:
-
-```bibtex
-@misc{merge_tools_evaluation,
-  title={Scientific Evaluation Framework for Software Merge Tools},
-  author={[Your Name]},
-  year={2025},
-  howpublished={\url{https://github.com/MateusMunaro/Pesquisa-cientifica}}
-}
-```
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Issue:** Java version conflicts
-```bash
-# Solution: Verify JAVA_HOME is set correctly
-echo $JAVA_HOME
-# Update in executor.py if needed
-```
-
-**Issue:** Missing JavaFX libraries for AutoMerge
-```bash
-# Solution: Libraries are auto-downloaded, ensure wget/unzip available
-sudo apt-get install wget unzip
-```
-
-**Issue:** JDime scenarios failing
-```bash
-# Solution: Tool falls back to unstructured mode automatically
-# Check logs in merge_evaluation.log for details
-```
-
-**Issue:** Permission denied on executables
-```bash
-# Solution: Make scripts executable
-chmod +x merge_tools/JDime/jdime/build/install/JDime/bin/JDime
-```
-
-**Issue:** Output directories not found
-```bash
-# Solution: Create expected output structure
-mkdir -p output/{FSTMerge,IntelliMerge,JDime}/{scenarios,expected}
-```
-
-## 🤝 Contributing
-
-Contributions are welcome! Areas for improvement:
-
-- Additional merge tools (git-merge, Spork, etc.)
-- More evaluation metrics (complexity, readability)
-- Language support beyond Java
-- Performance benchmarking
-- GUI for result exploration
-
-## 📄 License
-
-This research project is available for academic and educational use. Please contact the author for commercial applications.
-
-## 👥 Authors
-
-- **Mateus Munaro** - Initial research and implementation
-- Research conducted as part of [Institution/Program Name]
-
-## 🙏 Acknowledgments
-
-- Tool developers for making their software available
-- Academic community for evaluation methodology standards
-- Open-source contributors to dependencies
-
-## 📞 Contact
-
-For questions, suggestions, or collaboration opportunities:
-- GitHub: [@MateusMunaro](https://github.com/MateusMunaro)
-- Email: [MateusSouza2@edu.unisinis.br]
 
 ---
 
-**Last Updated:** November 2025
-**Version:** 1.0.0
-**Status:** Active Research Project
+## Evaluation Methodology
+
+### Metrics
+
+For each scenario the framework compares the tool's output against the expected resolution and computes:
+
+| Metric              | Definition                                                    |
+|---------------------|---------------------------------------------------------------|
+| **Precision**       | Correct lines in output / Total lines in output               |
+| **Recall**          | Correct lines in output / Total lines expected                |
+| **F1-Score**        | Harmonic mean of precision and recall                         |
+| **Accuracy**        | Overall correctness percentage                                |
+| **Success rate**    | Fraction of scenarios where the tool produced an output       |
+| **Reliability**     | Fraction of scenarios producing usable (non-failed) results   |
+
+Scenarios are normalised before comparison (whitespace collapsing) and then classified by quality:
+
+| Class       | Threshold (F1) |
+|-------------|----------------|
+| Perfect     | 100%           |
+| Excellent   | ≥ 95%          |
+| Good        | ≥ 85%          |
+| Acceptable  | ≥ 70%          |
+| Poor        | ≥ 50%          |
+| Failed      | < 50%          |
+
+### Pipeline
+
+```
+load expected outputs ──┐
+                        ├──► per-scenario diff ──► metrics ──► classification
+load tool outputs ──────┘                                              │
+                                                                       ▼
+                                aggregate per tool ──► compare tools ──► report + graphs
+```
+
+### Statistical commentary
+
+The comparative report (`tools_comparison.json`) reports pairwise F1 differences and flags potentially significant gaps. The shipped numbers are descriptive; for publication-grade significance testing, run a Mann-Whitney U / Wilcoxon rank-sum test over the per-scenario F1 column in `scenario_metrics.csv`.
+
+---
+
+## Results Summary
+
+The currently committed evaluation (3 tools, 68 evaluated scenarios in total — see `evaluation_results/scientific_evaluation/tools_comparison.json`) ranks the tools as follows:
+
+| Rank | Tool         | Overall F1 | Success rate | Reliability |
+|------|--------------|------------|--------------|-------------|
+| 1    | IntelliMerge | 0.704      | 0.667        | 0.833       |
+| 2    | JDime        | 0.695      | 0.710        | 0.774       |
+| 3    | FSTMerge     | 0.574      | 0.574        | 0.632       |
+
+Quality distribution (fraction of scenarios in each class):
+
+| Tool         | Perfect | Acceptable | Poor  | Failed |
+|--------------|---------|------------|-------|--------|
+| IntelliMerge | 0.667   | 0.000      | 0.056 | 0.278  |
+| JDime        | 0.581   | 0.129      | 0.016 | 0.274  |
+| FSTMerge     | 0.574   | 0.000      | 0.000 | 0.426  |
+
+Pairwise F1 gaps (descriptive, not yet formally tested):
+
+- FSTMerge vs IntelliMerge: **Δ = 0.130** (potentially significant)
+- FSTMerge vs JDime:        **Δ = 0.121** (potentially significant)
+- IntelliMerge vs JDime:    **Δ = 0.009** (likely not significant)
+
+The full report is at [`evaluation_results/scientific_evaluation/scientific_merge_tools_evaluation.md`](./evaluation_results/scientific_evaluation/scientific_merge_tools_evaluation.md).
+
+---
+
+## Extending the Study
+
+### Add a new scenario
+
+1. Create `scenarios_base/<Tool>/scenario_N/{base,left,right}/`.
+2. (FSTMerge only) Add the matching `merge.expression`.
+3. Drop the ground-truth resolution under `output/<Tool>/expected/scenario_N/`.
+4. If `N > 39`, update the loop bounds in `scripts/executor.py` accordingly.
+
+### Add a new merge tool
+
+1. Place the binary/JAR under `merge_tools/<NewTool>/`.
+2. Add a `run_<newtool>()` function in `scripts/executor.py` following the existing patterns (path setup → `subprocess.run` → output relocation).
+3. Add the new option to the menu in `main()`.
+4. Mirror the dataset under `scenarios_base/<NewTool>/` and the ground truth under `output/<NewTool>/expected/`.
+5. Re-run `scripts/run_evaluation.py` — the framework auto-detects tools that have both `scenarios/` and `expected/`.
+
+### Add a new metric
+
+1. Extend the `ScenarioMetrics` dataclass in `scripts/evaluation_config.py`.
+2. Implement the calculation in `scripts/merge_evaluation_tool.py`.
+3. Surface the new metric in `scripts/scientific_report_generator.py` and (optionally) add a plot under `scripts/graphs/`.
+
+---
+
+## Troubleshooting
+
+**Wrong Java version**
+```bash
+echo $JAVA_HOME       # JDK 8 expected for JDime, 11 for AutoMerge
+java -version
+```
+Override `JAVA_HOME` per-tool when invoking the harness manually, or edit the path constants in `scripts/executor.py`.
+
+**Missing JavaFX (AutoMerge)**
+The harness auto-downloads JavaFX 11.0.2 via `wget`/`unzip`. Ensure both are on your `PATH`:
+```bash
+sudo apt-get install wget unzip
+```
+
+**JDime structured mode fails on a scenario**
+The harness automatically falls back to `--mode unstructured`. The summary at the end of `run_jdime()` lists the affected scenarios.
+
+**Permission denied on JDime launcher**
+```bash
+chmod +x ./merge_tools/JDime/jdime/build/install/JDime/bin/JDime
+```
+
+**`output/` folder structure missing**
+```bash
+mkdir -p output/{FSTMerge,IntelliMerge,JDime}/{scenarios,expected}
+```
+
+**Legacy `/workspaces/Pesquisa-cientifica` paths**
+Older snippets reference the previous project location. Replace with `.` (the repo root) — every script in this release uses relative paths.
+
+---
+
+## Citation
+
+If you use this dataset or framework in academic work, please cite:
+
+```bibtex
+@misc{munaro_merge_tools_2025,
+  title  = {Empirical Analysis of Merge Tools: A Reproducible Benchmark for Structured and Semi-structured Java Merging},
+  author = {Mateus Munaro},
+  year   = {2025},
+  howpublished = {\url{https://github.com/MateusMunaro/Empirical-Analysis-Of-Merge-Tools}}
+}
+```
+
+---
+
+## Author & Contact
+
+- **Mateus Munaro** — research design, dataset curation, harness and evaluation framework.
+- GitHub: [@MateusMunaro](https://github.com/MateusMunaro)
+- Email: `MateusSouza2@edu.unisinos.br`
+
+Issues and pull requests are welcome — particularly for: additional merge tools (e.g. `git-merge`, Spork, JDime variants), additional scenarios, or non-Java language support.
