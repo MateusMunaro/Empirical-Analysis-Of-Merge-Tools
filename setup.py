@@ -50,12 +50,20 @@ FEATUREHOUSE_REPO = "https://github.com/joliebig/featurehouse.git"
 FEATUREHOUSE_SRC_JAR = "fstcomp/lib/FeatureHouse.jar"
 FSTMERGE_JAR = REPO_ROOT / "merge_tools" / "FSTMerge" / "featurehouse_20220107.jar"
 
-# Adoptium Temurin JDK 8u392-b08 (Linux x64).
+# Adoptium Temurin JDK 8u392-b08 (Linux x64). Used by JDime at runtime.
 JDK8_URL = (
     "https://github.com/adoptium/temurin8-binaries/releases/download/"
     "jdk8u392-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u392b08.tar.gz"
 )
 JDK8_DIR = REPO_ROOT / "java_dependencies" / "java-versions" / "jdk8u392-b08"
+
+# Adoptium Temurin JDK 21 (Linux x64). Used to run the Gradle wrapper while
+# building JDime. JDime's own toolchain (JDK 8) is still resolved via Foojay.
+JDK21_URL = (
+    "https://github.com/adoptium/temurin21-binaries/releases/download/"
+    "jdk-21.0.11%2B10/OpenJDK21U-jdk_x64_linux_hotspot_21.0.11_10.tar.gz"
+)
+JDK21_DIR = REPO_ROOT / "java_dependencies" / "java-versions" / "jdk-21.0.11+10"
 
 JDIME_REPO = "https://github.com/se-sic/jdime.git"
 JDIME_SRC_DIR = REPO_ROOT / "merge_tools" / "JDime" / "jdime"
@@ -183,18 +191,18 @@ def step_fstmerge(force: bool) -> None:
     info("FeatureHouse jar installed.")
 
 
-def step_jdk8(force: bool) -> None:
-    info("== Adoptium Temurin JDK 8 ==")
-    marker = JDK8_DIR / "bin" / "java"
+def _install_jdk(label: str, url: str, target_dir: Path, archive_name: str, force: bool) -> None:
+    info(f"== Adoptium Temurin {label} ==")
+    marker = target_dir / "bin" / "java"
     if marker.exists() and not force:
-        info(f"already present: {JDK8_DIR.relative_to(REPO_ROOT)} (skipping)")
+        info(f"already present: {target_dir.relative_to(REPO_ROOT)} (skipping)")
         return
-    if force and JDK8_DIR.exists():
-        shutil.rmtree(JDK8_DIR)
+    if force and target_dir.exists():
+        shutil.rmtree(target_dir)
 
-    JDK8_DIR.parent.mkdir(parents=True, exist_ok=True)
-    archive = JDK8_DIR.parent / "jdk8.tar.gz"
-    download(JDK8_URL, archive)
+    target_dir.parent.mkdir(parents=True, exist_ok=True)
+    archive = target_dir.parent / archive_name
+    download(url, archive)
 
     info(f"extracting {archive.name}")
     with tarfile.open(archive, "r:gz") as tf:
@@ -202,18 +210,26 @@ def step_jdk8(force: bool) -> None:
         if not members:
             raise SetupError("JDK archive is empty")
         top = members[0].name.split("/", 1)[0]
-        tf.extractall(JDK8_DIR.parent)
+        tf.extractall(target_dir.parent)
     archive.unlink()
 
-    extracted = JDK8_DIR.parent / top
-    if extracted != JDK8_DIR:
-        if JDK8_DIR.exists():
-            shutil.rmtree(JDK8_DIR)
-        extracted.rename(JDK8_DIR)
+    extracted = target_dir.parent / top
+    if extracted != target_dir:
+        if target_dir.exists():
+            shutil.rmtree(target_dir)
+        extracted.rename(target_dir)
 
     if not marker.exists():
         raise SetupError(f"JDK extraction did not produce {marker}")
-    info("JDK 8 installed.")
+    info(f"{label} installed.")
+
+
+def step_jdk8(force: bool) -> None:
+    _install_jdk("JDK 8", JDK8_URL, JDK8_DIR, "jdk8.tar.gz", force)
+
+
+def step_jdk21(force: bool) -> None:
+    _install_jdk("JDK 21", JDK21_URL, JDK21_DIR, "jdk21.tar.gz", force)
 
 
 def step_jdime(force: bool) -> None:
@@ -233,10 +249,18 @@ def step_jdime(force: bool) -> None:
         raise SetupError(f"gradlew not found at {gradlew}")
     gradlew.chmod(0o755)
 
-    # Build with JDime's Gradle wrapper. The foojay-resolver convention plugin
-    # auto-provisions the JDK 8 toolchain required by JDime, so we don't need
-    # to point JAVA_HOME at our local copy here.
+    # Gradle 9.x requires JVM 17+ to run, so point JAVA_HOME at our local
+    # JDK 21. JDime's own build still targets JDK 8, which Foojay provisions
+    # via the toolchain mechanism.
+    jdk21_java = JDK21_DIR / "bin" / "java"
+    if not jdk21_java.exists():
+        raise SetupError(
+            f"JDK 21 not found at {JDK21_DIR}. Run setup.py without "
+            "--skip jdk21 to install it before building JDime."
+        )
     env = os.environ.copy()
+    env["JAVA_HOME"] = str(JDK21_DIR)
+    env["PATH"] = f"{JDK21_DIR / 'bin'}{os.pathsep}{env.get('PATH', '')}"
     run([str(gradlew), "installDist", "--no-daemon"], cwd=JDIME_SRC_DIR, env=env)
 
     if not JDIME_LAUNCHER.exists():
@@ -255,6 +279,7 @@ def verify(strict: bool) -> bool:
         ("IntelliMerge jar", INTELLIMERGE_JAR),
         ("FeatureHouse jar", FSTMERGE_JAR),
         ("JDK 8 (java binary)", JDK8_DIR / "bin" / "java"),
+        ("JDK 21 (java binary)", JDK21_DIR / "bin" / "java"),
         ("JDime launcher", JDIME_LAUNCHER),
     ]
     ok = True
@@ -280,7 +305,7 @@ def main() -> int:
     parser.add_argument("--force", action="store_true",
                         help="Reinstall components even when they look present.")
     parser.add_argument("--skip", nargs="*", default=[],
-                        choices=["venv", "intellimerge", "fstmerge", "jdk8", "jdime"],
+                        choices=["venv", "intellimerge", "fstmerge", "jdk8", "jdk21", "jdime"],
                         help="Skip specific steps.")
     args = parser.parse_args()
 
@@ -299,6 +324,7 @@ def main() -> int:
             ("intellimerge", step_intellimerge),
             ("fstmerge", step_fstmerge),
             ("jdk8", step_jdk8),
+            ("jdk21", step_jdk21),
             ("jdime", step_jdime),
         ]
         for name, fn in steps:
