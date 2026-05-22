@@ -18,7 +18,7 @@ This repository contains the **dataset**, **execution scripts**, **evaluation fr
    - [3. Provision the Merge Tools](#3-provision-the-merge-tools)
    - [4. Run the Merges](#4-run-the-merges)
    - [5. Evaluate the Results](#5-evaluate-the-results)
-   - [6. Generate Reports & Graphs](#6-generate-reports--graphs)
+   - [6. Generate the Report](#6-generate-the-report)
 6. [Manual Tool Invocation (reference)](#manual-tool-invocation-reference)
 7. [Evaluation Methodology](#evaluation-methodology)
 8. [Results Summary](#results-summary)
@@ -56,13 +56,7 @@ Empirical-Analysis-Of-Merge-Tools/
 │   ├── merge_evaluation_tool.py          # Core evaluation engine (metrics, reports)
 │   ├── scientific_report_generator.py    # Builds the academic-style report
 │   ├── evaluation_config.py              # Data classes & evaluation configuration
-│   ├── demo_complete_evaluation.py       # Guided end-to-end demonstration
-│   └── graphs/                           # Plotting scripts + pre-rendered figures
-│       ├── accuracy_graph.py
-│       ├── f1_score_graph.py
-│       ├── recall_graph.py
-│       ├── combined_metrics_graph.py
-│       └── *.png                         # Generated charts
+│   └── demo_complete_evaluation.py       # Guided end-to-end demonstration
 │
 ├── scenarios_base/                       # Input dataset (39 scenarios per tool)
 │   ├── FSTMerge/scenario_1 .. scenario_39/   (base/, left/, right/, merge.expression)
@@ -118,8 +112,6 @@ The reference (expected) merge result for each scenario lives under [`output/<To
 | JDime        | 39          | `base/`, `left/`, `right/`            | `output/JDime/expected/`    |
 | KDiff3       | 1 (sample)  | `base/`, `left/`, `right/`            | not part of the formal evaluation |
 
-> AutoMerge support is implemented in `executor.py` (option 4), but its scenario corpus is **not bundled** in this release.
-
 ---
 
 ## Evaluated Tools
@@ -128,11 +120,10 @@ The reference (expected) merge result for each scenario lives under [`output/<To
 |--------------|--------------------------------|-----------------|-------|
 | **FSTMerge**     | Structured (FST / FeatureHouse) | Java            | Requires a `merge.expression` per scenario. |
 | **IntelliMerge** | Semantic / refactoring-aware   | Java            | Operates on directories (`-d left base right`). |
-| **JDime**        | Structured AST merge (with linebased fallback) | Java | Needs JDK 8 (`JAVA_HOME`). |
-| **AutoMerge**    | Conflict-resolution suggestion (fork of JDime) | Java | Needs JDK 11 + JavaFX + libgit2 (auto-downloaded by the harness). Optional in this release. |
+| **JDime**        | Structured AST merge (with linebased fallback) | Java | Needs JDK 8 (`JAVA_HOME`). Provisioned by `setup.py`. |
 | **KDiff3**       | Line-based three-way merge     | Any text        | Used only as an illustrative reference. |
 
-The full quantitative comparison only includes **FSTMerge**, **IntelliMerge** and **JDime**, which are the three tools with a complete dataset and ground truth in this repository.
+The full quantitative comparison covers **FSTMerge**, **IntelliMerge** and **JDime**, which are the three tools with a complete dataset and ground truth in this repository.
 
 ---
 
@@ -140,55 +131,72 @@ The full quantitative comparison only includes **FSTMerge**, **IntelliMerge** an
 
 ### 1. Prerequisites
 
-| Component                  | Version                | Used by                              |
-|----------------------------|------------------------|--------------------------------------|
-| Python                     | 3.8+                   | All scripts                          |
-| JDK 8                      | e.g. `jdk8u392-b08`    | JDime                                |
-| JDK 11                     | e.g. `jdk-11.0.2`      | AutoMerge (optional)                 |
-| Java 17+ (recommended)     | -                      | FSTMerge, IntelliMerge               |
-| `wget`, `unzip`            | recent                 | Auto-downloading JavaFX (AutoMerge)  |
-| Linux x86_64 (or WSL)      | -                      | Native libs (`libgit2`) used by AutoMerge |
+The setup script needs the following on a fresh Linux machine (WSL2 also works for Windows users):
 
-Python packages used by the evaluation framework (install with `pip`):
+| Component       | Used for                                                       |
+|-----------------|----------------------------------------------------------------|
+| Python 3.8+     | Running the harness and the setup script                       |
+| `git`           | Cloning JDime and FeatureHouse during provisioning             |
+| A system JRE    | Running JDime's Gradle wrapper while building it from source   |
+| `tar`           | Extracting the Temurin JDK 8 archive                           |
+
+On Debian/Ubuntu the prerequisites can be installed with:
 
 ```bash
-pip install numpy pandas matplotlib scipy
+sudo apt update
+sudo apt install -y python3 python3-venv python3-pip git default-jre tar ca-certificates
 ```
 
-> A `requirements.txt` is not yet pinned in this release — install the packages above directly.
+- `python3-venv` is required by `python3 -m venv` on Debian/Ubuntu.
+- `ca-certificates` is required for `urllib` to download artifacts from GitHub over HTTPS.
+- If you are behind a corporate proxy, export `HTTPS_PROXY` / `HTTP_PROXY` **before** running `setup.py` — `urllib`, `git`, and `pip` all honour these variables.
 
-### 2. Clone & Setup
+Everything else — IntelliMerge, FeatureHouse, JDK 8, and a freshly built JDime — is provisioned automatically by [`setup.py`](./setup.py) (see step 3).
+
+> **Moving the repo from Windows to Linux?** Do **not** copy the `merge_tools/JDime/jdime/` folder across — `setup.py` will clone it fresh on the Linux side, avoiding CRLF line endings in `gradlew` (which would otherwise fail with `bad interpreter: /bin/sh^M`).
+
+### 2. Clone the Repository
 
 ```bash
 git clone https://github.com/MateusMunaro/Empirical-Analysis-Of-Merge-Tools.git
 cd Empirical-Analysis-Of-Merge-Tools
 ```
 
-All commands in the rest of this guide assume your **current working directory is the repository root**. The harness uses relative paths (`./scripts/...`, `./scenarios_base/...`, `./output/...`).
+All commands in the rest of this guide assume your **current working directory is the repository root**. The harness now resolves every path relative to the repository, so it can be invoked from any directory once setup is complete.
 
-### 3. Provision the Merge Tools
+### 3. Provision the Merge Tools (automated)
 
-Some tool binaries are **gitignored** because of their size. Download them and drop them into `merge_tools/` so the directory tree looks like:
+Run the setup script once. It is idempotent — re-running it skips steps that are already done:
 
-```
-merge_tools/
-├── FSTMerge/featurehouse_20220107.jar
-├── IntelliMerge/IntelliMerge-1.0.9-all.jar
-├── JDime/jdime/build/install/JDime/bin/JDime          # already in the repo
-└── AutoMerge/AutoMerge.jar                             # optional
+```bash
+python3 setup.py
 ```
 
-For **AutoMerge** (optional), additionally provide:
+What it installs, under the repository:
 
 ```
-java_dependencies/java-versions/jdk-11.0.2/             # JDK 11
-java_dependencies/java-versions/jdk8u392-b08/           # JDK 8 (also used by JDime)
-java_dependencies/java-versions/libgit2/build/          # native libgit2
-libs/activation-1.1.1.jar                               # Java Activation Framework
-libs/javafx-sdk/                                        # auto-downloaded by executor.py
+.venv/                                                          # Python deps (numpy, pandas, ...)
+merge_tools/IntelliMerge/IntelliMerge-1.0.9-all.jar             # downloaded from GitHub Releases
+merge_tools/FSTMerge/featurehouse_20220107.jar                  # extracted from joliebig/featurehouse
+java_dependencies/java-versions/jdk8u392-b08/                   # Adoptium Temurin JDK 8 (used by JDime)
+merge_tools/JDime/jdime/build/install/JDime/bin/JDime           # built from se-sic/jdime via Gradle
 ```
 
-> If you only want to reproduce the headline numbers (FSTMerge / IntelliMerge / JDime), you can skip everything related to AutoMerge.
+Useful flags:
+
+```bash
+python3 setup.py --check          # only verify, install nothing
+python3 setup.py --force          # reinstall everything from scratch
+python3 setup.py --skip jdime     # skip a specific step
+```
+
+Activate the virtualenv before running any other script:
+
+```bash
+source .venv/bin/activate
+```
+
+> **AutoMerge note.** The harness no longer ships an `AutoMerge` option. The headline benchmark (FSTMerge / IntelliMerge / JDime) is fully covered by `setup.py`.
 
 ### 4. Run the Merges
 
@@ -204,7 +212,6 @@ Menu:
 1 - IntelliMerge
 2 - FSTMerge
 3 - JDime
-4 - AutoMerge
 ```
 
 Outputs are written to:
@@ -247,22 +254,12 @@ evaluation_results/scientific_evaluation/
     └── scenario_metrics.csv              # One row per scenario, ready for stats tools
 ```
 
-### 6. Generate Reports & Graphs
+### 6. Generate the Report
 
 ```bash
 # Build the markdown academic report
 python scripts/scientific_report_generator.py
-
-# Render individual metric figures
-python scripts/graphs/accuracy_graph.py
-python scripts/graphs/f1_score_graph.py
-python scripts/graphs/recall_graph.py
-
-# Combined comparison figure
-python scripts/graphs/combined_metrics_graph.py
 ```
-
-Pre-rendered figures are committed under `scripts/graphs/*.png` for convenience.
 
 ### Guided demo (optional)
 
@@ -306,21 +303,6 @@ JAVA_HOME=./java_dependencies/java-versions/jdk8u392-b08 \
   ./scenarios_base/JDime/scenario_12/left \
   ./scenarios_base/JDime/scenario_12/base \
   ./scenarios_base/JDime/scenario_12/right
-```
-
-### AutoMerge (structured)
-
-```bash
-./java_dependencies/java-versions/jdk-11.0.2/bin/java \
-  --module-path=./libs/javafx-sdk/lib \
-  --add-modules=javafx.base,javafx.controls,javafx.graphics \
-  -cp ./merge_tools/AutoMerge/AutoMerge.jar:./libs/activation-1.1.1.jar \
-  de.fosd.jdime.Main \
-  -m structured -f -S \
-  -o ./output/AutoMerge \
-  ./scenarios_base/AutoMerge/scenario_1/left \
-  ./scenarios_base/AutoMerge/scenario_1/base \
-  ./scenarios_base/AutoMerge/scenario_1/right
 ```
 
 ### KDiff3 (illustrative, line-based)
@@ -368,7 +350,7 @@ load expected outputs ──┐
                         ├──► per-scenario diff ──► metrics ──► classification
 load tool outputs ──────┘                                              │
                                                                        ▼
-                                aggregate per tool ──► compare tools ──► report + graphs
+                                aggregate per tool ──► compare tools ──► report
 ```
 
 ### Statistical commentary
@@ -426,7 +408,7 @@ The full report is at [`evaluation_results/scientific_evaluation/scientific_merg
 
 1. Extend the `ScenarioMetrics` dataclass in `scripts/evaluation_config.py`.
 2. Implement the calculation in `scripts/merge_evaluation_tool.py`.
-3. Surface the new metric in `scripts/scientific_report_generator.py` and (optionally) add a plot under `scripts/graphs/`.
+3. Surface the new metric in `scripts/scientific_report_generator.py`.
 
 ---
 
@@ -434,16 +416,13 @@ The full report is at [`evaluation_results/scientific_evaluation/scientific_merg
 
 **Wrong Java version**
 ```bash
-echo $JAVA_HOME       # JDK 8 expected for JDime, 11 for AutoMerge
+echo $JAVA_HOME       # JDK 8 expected for JDime
 java -version
 ```
-Override `JAVA_HOME` per-tool when invoking the harness manually, or edit the path constants in `scripts/executor.py`.
+`setup.py` provisions Temurin JDK 8 under `java_dependencies/java-versions/jdk8u392-b08/` and `executor.py` points `JAVA_HOME` at it automatically when invoking JDime.
 
-**Missing JavaFX (AutoMerge)**
-The harness auto-downloads JavaFX 11.0.2 via `wget`/`unzip`. Ensure both are on your `PATH`:
-```bash
-sudo apt-get install wget unzip
-```
+**Setup script reports a step failed**
+Re-run `python3 setup.py` — the script is idempotent and resumes from the failed step. Use `--force` to redo a step from scratch, or `--check` to inspect what is missing without installing anything.
 
 **JDime structured mode fails on a scenario**
 The harness automatically falls back to `--mode unstructured`. The summary at the end of `run_jdime()` lists the affected scenarios.
@@ -452,6 +431,16 @@ The harness automatically falls back to `--mode unstructured`. The summary at th
 ```bash
 chmod +x ./merge_tools/JDime/jdime/build/install/JDime/bin/JDime
 ```
+
+**`gradlew: bad interpreter: /bin/sh^M` while building JDime**
+The `gradlew` script has CRLF line endings (typically from a Windows checkout). Fix with:
+```bash
+sed -i 's/\r$//' merge_tools/JDime/jdime/gradlew
+```
+Or delete `merge_tools/JDime/jdime/` and rerun `python3 setup.py` so it re-clones with native line endings.
+
+**`setup.py` cannot reach GitHub / Foojay (Gradle toolchain)**
+Building JDime requires network access for both `git clone` and the Foojay resolver, which downloads the JDK 8 toolchain the first time it runs. Behind a proxy, export `HTTPS_PROXY` and `HTTP_PROXY` before running `setup.py`.
 
 **`output/` folder structure missing**
 ```bash
