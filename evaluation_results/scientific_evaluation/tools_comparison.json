@@ -1,73 +1,65 @@
 {
-  "evaluation_timestamp": "2025-09-21T20:11:53.819616",
+  "evaluation_timestamp": "2026-05-17T21:53:46.881880",
   "tools_compared": [
     "FSTMerge",
     "IntelliMerge",
     "JDime"
   ],
-  "total_scenarios": 68,
+  "total_scenarios": 69,
   "performance_ranking": [
     {
       "rank": 1,
-      "tool_name": "IntelliMerge",
-      "overall_f1_score": 0.7037037037037037,
-      "success_rate": 0.6666666666666666,
-      "reliability_score": 0.8333333333333334
+      "tool_name": "FSTMerge",
+      "overall_f1_score": 0.5652173913043478,
+      "success_rate": 0.5652173913043478,
+      "reliability_score": 0.6376811594202898
     },
     {
       "rank": 2,
-      "tool_name": "JDime",
-      "overall_f1_score": 0.6946236559139785,
-      "success_rate": 0.7096774193548387,
-      "reliability_score": 0.7741935483870968
+      "tool_name": "IntelliMerge",
+      "overall_f1_score": 0.0,
+      "success_rate": 0.0,
+      "reliability_score": 0.0
     },
     {
       "rank": 3,
-      "tool_name": "FSTMerge",
-      "overall_f1_score": 0.5735294117647058,
-      "success_rate": 0.5735294117647058,
-      "reliability_score": 0.6323529411764706
+      "tool_name": "JDime",
+      "overall_f1_score": 0.0,
+      "success_rate": 0.0,
+      "reliability_score": 1.0
     }
   ],
   "quality_distribution": {
     "FSTMerge": {
-      "perfect": 0.5735294117647058,
+      "perfect": 0.5652173913043478,
       "excellent": 0.0,
       "good": 0.0,
       "acceptable": 0.0,
       "poor": 0.0,
-      "failed": 0.4264705882352941
+      "failed": 0.43478260869565216
     },
-    "IntelliMerge": {
-      "perfect": 0.6666666666666666,
+    "JDime": {
+      "perfect": 0.0,
       "excellent": 0.0,
       "good": 0.0,
       "acceptable": 0.0,
-      "poor": 0.05555555555555555,
-      "failed": 0.2777777777777778
-    },
-    "JDime": {
-      "perfect": 0.5806451612903226,
-      "excellent": 0.0,
-      "good": 0.0,
-      "acceptable": 0.12903225806451613,
-      "poor": 0.016129032258064516,
-      "failed": 0.27419354838709675
+      "poor": 0.0,
+      "failed": 1.0
     }
   },
   "statistical_significance": {
     "FSTMerge_vs_IntelliMerge": {
-      "f1_difference": 0.13017429193899788,
-      "potentially_significant": true,
+      "f1_difference": 0.5652173913043478,
+      "potentially_significant": false,
       "note": "Requires proper statistical testing for formal significance"
     },
     "FSTMerge_vs_JDime": {
-      "f1_difference": 0.12109424414927261,
+      "f1_difference": 0.5652173913043478,
       "potentially_significant": true,
       "note": "Requires proper statistical testing for formal significance"
     },
     "IntelliMerge_vs_JDime": {
-      "f1_difference": 0.009080047789725265,
+      "f1_difference": 0.0,
       "potentially_significant": false,
       "note": "Requires proper statistical testing for formal significance"
     }
@@ -76,36 +68,38 @@
     "summary_table": [
       {
         "tool": "FSTMerge",
-        "f1_score": 0.5735,
-        "precision": 0.5735,
-        "recall": 0.5735,
-        "success_rate": 0.5735,
-        "reliability": 0.6324,
-        "consistency": 0.5018
+        "f1_score": 0.5652,
+        "precision": 0.5652,
+        "recall": 0.5652,
+        "success_rate": 0.5652,
+        "reliability": 0.6377,
+        "consistency": 0.5006
       },
       {
         "tool": "IntelliMerge",
-        "f1_score": 0.7037,
-        "precision": 0.7222,
-        "recall": 0.6944,
-        "success_rate": 0.6667,
-        "reliability": 0.8333,
-        "consistency": 0.5443
+        "f1_score": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "success_rate": 0.0,
+        "reliability": 0.0,
+        "consistency": 0.0
       },
       {
         "tool": "JDime",
-        "f1_score": 0.6946,
-        "precision": 0.6747,
-        "recall": 0.7258,
-        "success_rate": 0.7097,
-        "reliability": 0.7742,
-        "consistency": 0.563
+        "f1_score": 0.0,
+        "precision": 0.0,
+        "recall": 0.0,
+        "success_rate": 0.0,
+        "reliability": 1.0,
+        "consistency": 1.0
       }
     ],
     "strength_analysis": {
       "FSTMerge": [],
       "IntelliMerge": [],
-      "JDime": []
+      "JDime": [
+        "Consistent performance"
+      ]
     },
     "weakness_analysis": {
       "FSTMerge": [
@@ -114,13 +108,12 @@
         "Inconsistent performance"
       ],
       "IntelliMerge": [
-        "High failure rate",
+        "Low overall accuracy",
         "Inconsistent performance"
       ],
       "JDime": [
         "Low overall accuracy",
-        "High failure rate",
-        "Inconsistent performance"
+        "High failure rate"
       ]
     },
     "scenario_performance": {}

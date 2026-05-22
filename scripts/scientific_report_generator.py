@@ -15,6 +15,8 @@ The reports follow empirical software engineering standards and include:
 - Reproducibility information
 """
 
+import os
+import sys
 import json
 import pandas as pd
 import numpy as np
@@ -26,6 +28,12 @@ import statistics
 import scipy.stats as stats
 from tabulate import tabulate
 import logging
+
+# Repository root (one level above /scripts). Run all relative paths from here.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+os.chdir(REPO_ROOT)
+# Ensure sibling scripts (evaluation_config) are importable.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from evaluation_config import (
     DEFAULT_CONFIG, FRAMEWORK_VERSION, FRAMEWORK_NAME,

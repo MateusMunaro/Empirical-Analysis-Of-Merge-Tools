@@ -1,0 +1,18 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"createUser": {
+			"left": "createUser",
+			"right": "createUser"
+		},
+		"updateUser": {
+			"left": "updateUser",
+			"right": "updateUser"
+		}
+	}
+
+}

@@ -1,10 +1,10 @@
 refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
-Change Method Signature;method;0.68;15-17;.Person.getId();10-12;.PersonalInfo.getId()
+Change Method Signature;method;0.69;23-25;.Person.getName();18-20;.PersonalInfo.getName()
 Change Method Signature;method;0.7;27-29;.Person.setName(String);22-24;.PersonalInfo.setName(String)
 Change Method Signature;method;0.69;19-21;.Person.setId(int);14-16;.PersonalInfo.setId(int)
-Change Method Signature;method;0.69;23-25;.Person.getName();18-20;.PersonalInfo.getName()
-Change Field Signature;field;1.0;3-3;.Person.name;3-3;.PersonalInfo.name
-Change Field Signature;field;1.0;4-4;.Person.email;2-2;.ContactDetails.email
+Change Method Signature;method;0.68;15-17;.Person.getId();10-12;.PersonalInfo.getId()
 Change Field Signature;field;1.0;5-5;.Person.phone;3-3;.ContactDetails.phone
+Change Field Signature;field;1.0;4-4;.Person.email;2-2;.ContactDetails.email
+Change Field Signature;field;1.0;3-3;.Person.name;3-3;.PersonalInfo.name
 Change Field Signature;field;1.0;2-2;.Person.id;2-2;.PersonalInfo.id
 Change Constructor Signature;constructor;0.64;10-13;.Person.Person(int, String);5-8;.PersonalInfo.PersonalInfo(int, String)

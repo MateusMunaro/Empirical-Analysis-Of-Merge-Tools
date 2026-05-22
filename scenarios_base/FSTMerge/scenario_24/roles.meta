@@ -1,0 +1,22 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"getStreet": {
+			"left": "getStreet"
+		},
+		"setStreet": {
+			"left": "setStreet"
+		},
+		"getCity": {
+			"left": "getCity"
+		},
+		"setCity": {
+			"left": "setCity"
+		}
+	}
+
+}

@@ -10,11 +10,16 @@ Usage:
     python run_evaluation.py [options]
 """
 
+import os
 import sys
 import argparse
 from pathlib import Path
 import subprocess
 import logging
+
+# Repository root (one level above /scripts). Run all relative paths from here.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+os.chdir(REPO_ROOT)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -73,7 +78,7 @@ def run_evaluation(tools, output_dir="evaluation_results/scientific_evaluation",
     """Run the evaluation framework"""
     
     # Build command
-    python_cmd = "/workspaces/Pesquisa-cientifica/.venv/bin/python"
+    python_cmd = sys.executable
     eval_script = "scripts/merge_evaluation_tool.py"
     
     cmd = [

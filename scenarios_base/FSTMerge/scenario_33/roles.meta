@@ -1,0 +1,28 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"getBio": {
+			"left": "getBio"
+		},
+		"setBio": {
+			"left": "setBio"
+		},
+		"getId": {
+			"left": "getId"
+		},
+		"setId": {
+			"left": "setId"
+		},
+		"getUsername": {
+			"left": "getUsername"
+		},
+		"setUsername": {
+			"left": "setUsername"
+		}
+	}
+
+}
