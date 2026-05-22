@@ -29,6 +29,10 @@ import statistics
 import numpy as np
 from enum import Enum
 
+# Repository root (one level above /scripts). Run all relative paths from here.
+REPO_ROOT = Path(__file__).resolve().parent.parent
+os.chdir(REPO_ROOT)
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

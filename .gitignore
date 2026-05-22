@@ -25,3 +25,14 @@ javafx-sdk*/
 *.orig
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# JDime build artifacts (cloned/built fresh by setup.py)
+/merge_tools/JDime/jdime/

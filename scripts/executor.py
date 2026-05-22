@@ -1,100 +1,112 @@
-import subprocess
 import os
+import sys
 import shutil
+import subprocess
+
+# Repository root (one level above /scripts), so the script works regardless of cwd.
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+
+
+def _abs(*parts):
+    return os.path.join(REPO_ROOT, *parts)
+
+
+def _flatten_java_outputs(output_dir):
+    """Move any .java files from nested subdirectories into output_dir, then
+    remove the now-empty nesting. Some tools (e.g. IntelliMerge) mirror the
+    absolute path of the input under the output directory; this normalises
+    the layout for the evaluator."""
+    moved_any = False
+    for root, _dirs, files in os.walk(output_dir):
+        if os.path.abspath(root) == os.path.abspath(output_dir):
+            continue
+        for file in files:
+            if file.endswith(".java"):
+                src = os.path.join(root, file)
+                dst = os.path.join(output_dir, file)
+                if os.path.exists(dst):
+                    # Avoid silent overwrite; append the parent dir name.
+                    parent = os.path.basename(root)
+                    dst = os.path.join(output_dir, f"{parent}__{file}")
+                shutil.move(src, dst)
+                moved_any = True
+    # Remove leftover empty subdirectories.
+    for entry in os.listdir(output_dir):
+        sub = os.path.join(output_dir, entry)
+        if os.path.isdir(sub):
+            shutil.rmtree(sub, ignore_errors=True)
+    return moved_any
+
 
 def run_intellimerge():
-    jar_path = "./merge_tools/IntelliMerge/IntelliMerge-1.0.9-all.jar"
+    jar_path = _abs("merge_tools", "IntelliMerge", "IntelliMerge-1.0.9-all.jar")
     for i in range(1, 40):
         scenario = f"scenario_{i}"
-        left = f"./scenarios_base/IntelliMerge/{scenario}/left"
-        base = f"./scenarios_base/IntelliMerge/{scenario}/base"
-        right = f"./scenarios_base/IntelliMerge/{scenario}/right"
-        output = f"./output/IntelliMerge/scenarios/{scenario}"
+        left = _abs("scenarios_base", "IntelliMerge", scenario, "left")
+        base = _abs("scenarios_base", "IntelliMerge", scenario, "base")
+        right = _abs("scenarios_base", "IntelliMerge", scenario, "right")
+        output = _abs("output", "IntelliMerge", "scenarios", scenario)
 
-        # Garantir que o diretório de saída existe
         os.makedirs(output, exist_ok=True)
 
         command = [
             "java", "-jar", jar_path,
             "-d", left, base, right,
-            "-o", output
+            "-o", output,
         ]
         print(f"[IntelliMerge] Executando cenário {i}")
         subprocess.run(command, check=True)
-        
-        # Corrigir a estrutura de pastas criada pelo IntelliMerge
-        nested_path = f"{output}/workspaces/Pesquisa-cientifica"
-        if os.path.exists(nested_path):
-            # Encontrar todos os arquivos .java na pasta aninhada
-            for root, dirs, files in os.walk(nested_path):
-                for file in files:
-                    if file.endswith('.java'):
-                        src_file = os.path.join(root, file)
-                        dst_file = os.path.join(output, file)
-                        shutil.move(src_file, dst_file)
-                        print(f"[IntelliMerge] Arquivo {file} movido para {output}")
-            
-            # Remover a estrutura de pastas desnecessária
-            shutil.rmtree(f"{output}/workspaces")
-            print(f"[IntelliMerge] Estrutura de pastas desnecessária removida do cenário {i}")
-        
+
+        if _flatten_java_outputs(output):
+            print(f"[IntelliMerge] Estrutura aninhada normalizada no cenário {i}")
         print(f"[IntelliMerge] Cenário {i} processado com sucesso")
-        
+
+
 def run_fstmerge():
-    jar_path = "./merge_tools/FSTMerge/featurehouse_20220107.jar"
+    jar_path = _abs("merge_tools", "FSTMerge", "featurehouse_20220107.jar")
     for i in range(1, 40):
         scenario = f"scenario_{i}"
-        base_dir = f"./scenarios_base/FSTMerge/{scenario}"
-        expression = f"{base_dir}/merge.expression"
-
-        output_dir = f"./output/FSTMerge/scenarios/{scenario}"
+        base_dir = _abs("scenarios_base", "FSTMerge", scenario)
+        expression = os.path.join(base_dir, "merge.expression")
+        output_dir = _abs("output", "FSTMerge", "scenarios", scenario)
         os.makedirs(output_dir, exist_ok=True)
 
         command = [
             "java", "-jar", jar_path,
             "--expression", expression,
-            "--base-directory", base_dir, 
+            "--base-directory", base_dir,
         ]
         print(f"[FSTMerge] Executando cenário {i}")
         subprocess.run(command, check=True)
-        
-        # Mover o arquivo do diretório de merge para o diretório de saída correto
-        merge_output_dir = f"{base_dir}/merge"
+
+        merge_output_dir = os.path.join(base_dir, "merge")
         if os.path.exists(merge_output_dir):
-            # Encontrar todos os arquivos .java na pasta merge
-            for root, dirs, files in os.walk(merge_output_dir):
+            for root, _dirs, files in os.walk(merge_output_dir):
                 for file in files:
-                    if file.endswith('.java'):
+                    if file.endswith(".java"):
                         src_file = os.path.join(root, file)
                         dst_file = os.path.join(output_dir, file)
                         shutil.move(src_file, dst_file)
                         print(f"[FSTMerge] Arquivo {file} movido para {output_dir}")
-            
-            # Remover a pasta merge se estiver vazia
-            try:
-                if not os.listdir(merge_output_dir):
-                    os.rmdir(merge_output_dir)
-                    print(f"[FSTMerge] Pasta merge removida do cenário {i}")
-            except OSError:
-                print(f"[FSTMerge] Pasta merge não pôde ser removida (pode conter outros arquivos)")
-        
+            shutil.rmtree(merge_output_dir, ignore_errors=True)
+
         print(f"[FSTMerge] Cenário {i} processado com sucesso")
 
+
 def run_jdime():
-    jdime_exec = "./merge_tools/JDime/jdime/build/install/JDime/bin/JDime"
-    java_home = "/workspaces/Pesquisa-cientifica/java_dependencies/java-versions/jdk8u392-b08"
-    
+    jdime_basename = "JDime.bat" if sys.platform == "win32" else "JDime"
+    jdime_exec = _abs("merge_tools", "JDime", "jdime", "build", "install", "JDime", "bin", jdime_basename)
+    java_home = _abs("java_dependencies", "java-versions", "jdk8u392-b08")
+
     failed_scenarios = []
     successful_scenarios = []
 
     for i in range(1, 40):
         scenario = f"scenario_{i}"
-        left = f"./scenarios_base/JDime/{scenario}/left"
-        base = f"./scenarios_base/JDime/{scenario}/base"
-        right = f"./scenarios_base/JDime/{scenario}/right"
-        output = f"./output/JDime/scenarios/{scenario}"
-
-        # Ensure output directory exists
+        left = _abs("scenarios_base", "JDime", scenario, "left")
+        base = _abs("scenarios_base", "JDime", scenario, "base")
+        right = _abs("scenarios_base", "JDime", scenario, "right")
+        output = _abs("output", "JDime", "scenarios", scenario)
         os.makedirs(output, exist_ok=True)
 
         command = [
@@ -102,186 +114,51 @@ def run_jdime():
             "-f",
             "--mode", "structured",
             "--output", output,
-            left, base, right
+            left, base, right,
         ]
         env = os.environ.copy()
         env["JAVA_HOME"] = java_home
 
         print(f"[JDime] Executando cenário {i}")
-        
         try:
-            result = subprocess.run(command, env=env, check=True, 
-                                  capture_output=True, text=True)
+            subprocess.run(command, env=env, check=True, capture_output=True, text=True)
             successful_scenarios.append(i)
             print(f"[JDime] Cenário {i} executado com sucesso")
-            
         except subprocess.CalledProcessError as e:
             failed_scenarios.append(i)
             print(f"[JDime] Falha no cenário {i}: {e}")
             print(f"[JDime] Erro de saída: {e.stderr}")
-            
-            # Try alternative merge mode for failed scenarios
             print(f"[JDime] Tentando modo alternativo para cenário {i}")
             try:
                 alt_command = [
-                    jdime_exec,
-                    "-f",
-                    "--mode", "unstructured",  # Try unstructured mode
-                    "--output", output,
-                    left, base, right
+                    jdime_exec, "-f", "--mode", "unstructured",
+                    "--output", output, left, base, right,
                 ]
-                subprocess.run(alt_command, env=env, check=True, 
-                             capture_output=True, text=True)
-                print(f"[JDime] Cenário {i} executado com sucesso em modo não estruturado")
+                subprocess.run(alt_command, env=env, check=True, capture_output=True, text=True)
+                print(f"[JDime] Cenário {i} executado em modo não estruturado")
                 failed_scenarios.remove(i)
                 successful_scenarios.append(i)
-                
             except subprocess.CalledProcessError as alt_e:
                 print(f"[JDime] Cenário {i} falhou também em modo não estruturado: {alt_e}")
-                
         except Exception as e:
             failed_scenarios.append(i)
             print(f"[JDime] Erro inesperado no cenário {i}: {e}")
-    
-    # Summary report
+
     print(f"\n[JDime] Resumo da execução:")
     print(f"Cenários executados com sucesso: {len(successful_scenarios)}")
     print(f"Cenários com falha: {len(failed_scenarios)}")
-    
     if failed_scenarios:
         print(f"Cenários que falharam: {failed_scenarios}")
-    
     if successful_scenarios:
         print(f"Cenários executados: {successful_scenarios}")
 
 
-def run_automerge():
-    # Configurar caminhos base
-    workspace = "/workspaces/Pesquisa-cientifica"
-    java_exec = f"{workspace}/java_dependencies/java-versions/jdk-11.0.2/bin/java"
-    
-    # Caminhos para JARs e bibliotecas
-    automerge_jar = f"{workspace}/merge_tools/AutoMerge/AutoMerge.jar"
-    activation_jar = f"{workspace}/libs/activation-1.1.1.jar"
-    
-    # Diretório para bibliotecas do JavaFX
-    javafx_dir = f"{workspace}/libs/javafx-sdk"
-    os.makedirs(javafx_dir, exist_ok=True)
-    
-    # Baixar e extrair JavaFX SDK se necessário
-    javafx_jars = []
-    if not os.path.exists(f"{javafx_dir}/lib"):
-        print("Baixando e extraindo JavaFX SDK...")
-        javafx_url = "https://download2.gluonhq.com/openjfx/11.0.2/openjfx-11.0.2_linux-x64_bin-sdk.zip"
-        try:
-            # Baixar o arquivo zip
-            zip_path = f"{workspace}/libs/javafx.zip"
-            subprocess.run(["wget", "-O", zip_path, javafx_url], check=True)
-            
-            # Extrair o arquivo
-            subprocess.run(["unzip", "-q", zip_path, "-d", f"{workspace}/libs"], check=True)
-            
-            # Mover os arquivos para o diretório correto
-            subprocess.run(["mv", f"{workspace}/libs/javafx-sdk-11.0.2", javafx_dir], check=True)
-            
-            # Limpar o arquivo zip
-            if os.path.exists(zip_path):
-                os.remove(zip_path)
-                
-        except subprocess.CalledProcessError as e:
-            print(f"Erro ao baixar/extrair JavaFX: {e}")
-            return
-    
-    javafx_jars = []
-    javafx_lib_dir = f"{javafx_dir}/lib"
-    if os.path.exists(javafx_lib_dir):
-        for jar_file in os.listdir(javafx_lib_dir):
-            if jar_file.endswith(".jar"):
-                javafx_jars.append(os.path.join(javafx_lib_dir, jar_file))
-    
-    classpath_components = [automerge_jar, activation_jar] + javafx_jars
-    classpath = ":".join(classpath_components)
-    
-    javafx_modules = "--module-path=" + javafx_lib_dir + " --add-modules=javafx.base,javafx.controls,javafx.graphics"
-    
-    env = os.environ.copy()
-    env["LD_LIBRARY_PATH"] = f"{workspace}/java_dependencies/java-versions/libgit2/build:{env.get('LD_LIBRARY_PATH', '')}"
-    
-    # Verificar se os diretórios necessários existem
-    os.makedirs(f"{workspace}/output/AutoMerge", exist_ok=True)
-    
-    # Executar para cada cenário
-    for i in range(1, 35):
-        scenario = f"scenario_{i}"
-        
-        # Definir caminhos para arquivos
-        output_file = f"{workspace}/output/AutoMerge/{scenario}.java"
-        
-        # Obter diretórios para entrada
-        base_dir = f"{workspace}/scenarios_base/AutoMerge/{scenario}/base"
-        left_dir = f"{workspace}/scenarios_base/AutoMerge/{scenario}/left"
-        right_dir = f"{workspace}/scenarios_base/AutoMerge/{scenario}/right"
-        
-        # Verificar se os diretórios existem
-        if not all(os.path.exists(d) for d in [base_dir, left_dir, right_dir]):
-            print(f"[AutoMerge] Pulando cenário {i} - diretórios de entrada não encontrados")
-            continue
-        
-        print(f"[AutoMerge] Executando cenário {i}")
-        
-        try:
-            # Construir o comando com JavaFX
-            command = [
-                java_exec,
-                javafx_modules,
-                "-cp", 
-                classpath,
-                "de.fosd.jdime.Main",
-                "-o", 
-                f"{workspace}/output/AutoMerge",  # Diretório de saída 
-                "-m", 
-                "structured",
-                "-log", 
-                "info",
-                "-f",
-                "-S",  # Indica que estamos fornecendo diretórios, não arquivos individuais
-                left_dir, 
-                base_dir, 
-                right_dir
-            ]
-            
-            print(f"Executando: {' '.join(command)}")
-            
-            # Executar o comando
-            subprocess.run(command, env=env, check=True)
-            
-            # Verificar se o arquivo Person.java foi gerado e renomeá-lo se necessário
-            person_output = f"{workspace}/output/AutoMerge/Person.java"
-            if os.path.exists(person_output):
-                shutil.move(person_output, output_file)
-                print(f"[AutoMerge] Arquivo renomeado para {scenario}.java")
-            
-            print(f"[AutoMerge] Cenário {i} concluído com sucesso")
-            
-        except subprocess.CalledProcessError as e:
-            print(f"[AutoMerge] Falha ao executar cenário {i}: {e}")
-            
-            # Registrar que houve falha para este cenário
-            print(f"[AutoMerge] Não foi possível processar o cenário {i}")
-        
-        print("-------------------------------------------")
-    
-    print("[AutoMerge] Processamento de todos os cenários concluído")
-
-
-# MENU INTERATIVO
 def main():
-    print("Escolha a ferramenta de merge para rodar os 34 cenários:\n")
+    print("Escolha a ferramenta de merge para rodar os 39 cenários:\n")
     print("1 - IntelliMerge")
     print("2 - FSTMerge")
     print("3 - JDime")
-    print("4 - AutoMerge")
-    choice = input("\nDigite o número da ferramenta desejada: ")
+    choice = input("\nDigite o número da ferramenta desejada: ").strip()
 
     try:
         if choice == '1':
@@ -290,8 +167,6 @@ def main():
             run_fstmerge()
         elif choice == '3':
             run_jdime()
-        elif choice == '4':
-            run_automerge()
         else:
             print("Opção inválida.")
     except subprocess.CalledProcessError as e:

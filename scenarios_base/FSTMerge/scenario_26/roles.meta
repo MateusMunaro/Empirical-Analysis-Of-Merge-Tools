@@ -1,0 +1,34 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"getCustomerId": {
+			"left": "getCustomerId"
+		},
+		"setCustomerId": {
+			"left": "setCustomerId"
+		},
+		"getCustomerName": {
+			"left": "getCustomerName"
+		},
+		"setCustomerName": {
+			"left": "setCustomerName"
+		},
+		"getOrderId": {
+			"left": "getOrderId"
+		},
+		"setOrderId": {
+			"left": "setOrderId"
+		},
+		"getOrderAmount": {
+			"left": "getOrderAmount"
+		},
+		"setOrderAmount": {
+			"left": "setOrderAmount"
+		}
+	}
+
+}

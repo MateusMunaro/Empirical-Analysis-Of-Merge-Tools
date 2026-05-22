@@ -1,7 +1,7 @@
 refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
-Change Method Signature;method;0.72;12-14;.Profile.setBio(String);14-16;.UserProfile.setBio(String)
 Change Method Signature;method;0.68;18-20;.User.getUsername();20-22;.Account.getUsername()
-Change Method Signature;method;0.69;22-24;.User.setUsername(String);24-26;.Account.setUsername(String)
 Change Method Signature;method;0.71;8-10;.Profile.getBio();10-12;.UserProfile.getBio()
-Change Field Signature;field;1.0;2-2;.Profile.bio;2-2;.UserProfile.bio
+Change Method Signature;method;0.72;12-14;.Profile.setBio(String);14-16;.UserProfile.setBio(String)
+Change Method Signature;method;0.69;22-24;.User.setUsername(String);24-26;.Account.setUsername(String)
 Change Field Signature;field;1.0;3-3;.User.username;3-3;.Account.username
+Change Field Signature;field;1.0;2-2;.Profile.bio;2-2;.UserProfile.bio
