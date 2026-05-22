@@ -42,7 +42,7 @@ REPO_ROOT = Path(__file__).resolve().parent
 
 INTELLIMERGE_URL = (
     "https://github.com/Symbolk/IntelliMerge/releases/download/"
-    "v1.0.9/IntelliMerge-1.0.9-all.jar"
+    "1.0.9/IntelliMerge-1.0.9-all.jar"
 )
 INTELLIMERGE_JAR = REPO_ROOT / "merge_tools" / "IntelliMerge" / "IntelliMerge-1.0.9-all.jar"
 
