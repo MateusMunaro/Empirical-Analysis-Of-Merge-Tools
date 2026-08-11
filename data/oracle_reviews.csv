@@ -1,0 +1,1 @@
+scenario_id,reviewer_id,review_round,oracle_decision,intent_preserved,complete_artifact_tree,no_unjustified_content,syntactically_valid,compilation_result,tests_result,assigned_mapping,assigned_change_type,comments,reviewed_at_utc
