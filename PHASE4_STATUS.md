@@ -15,7 +15,7 @@ Last automated audit: `2026-08-12`
 - Diagnostic smoke executions exist for each adapter. They are isolated from
   publication results and carry `run_kind = diagnostic`.
 
-## Blocked
+## Preserved invalid runs
 
 `canonical_run_1` produced all 117 records and exposed missing explicit JDime
 recursive mode. `canonical_run_2` added that option and passed the structural
@@ -26,28 +26,42 @@ automatic line-based fallback after structured exceptions unless
 was also corrected to accept mathematically undefined precision/F1 for a
 readable zero-line output.
 
-The corrected harness requires a fresh complete run named `canonical_run_3` in
-the Linux x86_64 environment. The Windows workstation remains unsuitable for
-release execution because its registered WSL distributions are broken.
+`canonical_run_3` has now been received and passes the 117-cell integrity gate.
+The 85-cell Codex-assisted evidence inspection is complete and recorded in
+`PHASE4_AUDIT.md` and `canonical_run_3/manual_audit.csv`. Only the frozen
+27-cell high-risk determinism repeat remains before `phase4_gate --final` can
+release Phase 4.
 
-After a working Linux x86_64 environment is available, run:
+## Remaining command sequence
+
+Run only the frozen high-risk repeat in the same Linux x86_64 environment:
 
 ```bash
-python3 setup.py
-source .venv/bin/activate
-python -m unittest discover -s tests -v
-python -m scripts.phase3_gate --release
-python -m scripts.revised_experiment --release \
-  --run-dir evaluation_results/revised_experiment/canonical_run_3
-python -m scripts.phase4_gate \
-  evaluation_results/revised_experiment/canonical_run_3
-python -m scripts.phase4_audit prepare \
+python -m scripts.revised_experiment \
+  --tool FSTMerge --tool IntelliMerge --tool JDime \
+  --scenario scenario_1 --scenario scenario_5 --scenario scenario_6 \
+  --scenario scenario_10 --scenario scenario_11 --scenario scenario_17 \
+  --scenario scenario_23 --scenario scenario_30 --scenario scenario_38 \
+  --run-dir evaluation_results/revised_experiment/determinism_high_risk_1
+
+python -m scripts.phase4_audit compare-sample \
   evaluation_results/revised_experiment/canonical_run_3 \
-  --output evaluation_results/revised_experiment/manual_audit.csv
+  evaluation_results/revised_experiment/determinism_high_risk_1 \
+  --output evaluation_results/revised_experiment/canonical_run_3/determinism_high_risk.csv
+
+python -m scripts.phase4_gate --final \
+  evaluation_results/revised_experiment/canonical_run_3
 ```
 
-Manual stratified inspection and a full or high-risk repeat for determinism
-remain mandatory after this first canonical run. After the repeat, compare it
-with `python -m scripts.phase4_audit compare <primary> <repeat> --output
-<determinism.csv>`. Any differing cell requires explicit adjudication. Phases 5
-and 8 results must not be regenerated from diagnostic data.
+Do not add `--release` to the repeat: it is intentionally a diagnostic subset
+and cannot replace the canonical 117-cell source. Any substantive difference
+blocks the final gate and requires explicit adjudication. A raw byte checksum
+change alone is retained as provenance but is not a difference when the
+normalized tree, terminal state, oracle, tool artifact, and metrics agree.
+
+The preregistered high-risk repeat uses all three tools on scenarios 1, 5, 6,
+10, 11, 17, 23, 30, and 38. These 27 cells cover every mapping/change-type
+stratum, exact matches, empty artifacts, invalid outputs, syntax boundaries,
+and conflicts. Run it without `--release`, then compare it with
+`phase4_audit compare-sample`; diagnostic metadata prevents it from replacing
+the 117-cell canonical source of truth.

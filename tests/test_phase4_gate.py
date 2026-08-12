@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from scripts.analysis_units import DEFAULT_SCENARIO_IDS, DEFAULT_TOOLS
-from scripts.phase4_gate import phase4_issues
+from scripts.phase4_gate import HIGH_RISK_KEYS, phase4_issues
 from scripts.revised_experiment import EXECUTION_FIELDS, RESULT_FIELDS
 
 
@@ -142,6 +142,52 @@ class Phase4GateTests(unittest.TestCase):
             self.assertIn(
                 "run has been explicitly invalidated; see run_invalidation.json",
                 phase4_issues(root),
+            )
+
+    def test_final_gate_requires_audit_and_determinism_evidence(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            make_valid_run(root)
+            issues = phase4_issues(root, require_final_audit=True)
+            self.assertTrue(any("manual_audit.csv" in issue for issue in issues))
+
+    def test_completed_final_audit_passes(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            make_valid_run(root)
+            audit_rows = [
+                {
+                    "tool_name": tool,
+                    "scenario_id": scenario,
+                    "audit_decision": "evidence_consistent",
+                    "auditor_id": "test_auditor",
+                    "audit_notes": "retained evidence checked",
+                    "audited_at_utc": "2026-08-12T00:00:00Z",
+                }
+                for tool in DEFAULT_TOOLS
+                for scenario in DEFAULT_SCENARIO_IDS
+            ]
+            audit_path = root / "manual_audit.csv"
+            write_csv(audit_path, list(audit_rows[0]), audit_rows)
+            audit_path.write_text(
+                audit_path.read_text(encoding="utf-8"), encoding="utf-8-sig"
+            )
+            determinism_rows = [
+                {
+                    "tool_name": tool,
+                    "scenario_id": scenario,
+                    "deterministic": "True",
+                    "different_fields": "",
+                }
+                for tool, scenario in sorted(HIGH_RISK_KEYS)
+            ]
+            write_csv(
+                root / "determinism_high_risk.csv",
+                list(determinism_rows[0]),
+                determinism_rows,
+            )
+            self.assertEqual(
+                (), phase4_issues(root, require_final_audit=True)
             )
 
 
