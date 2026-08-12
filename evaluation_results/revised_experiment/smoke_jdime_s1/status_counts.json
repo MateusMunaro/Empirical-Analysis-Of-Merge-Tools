@@ -1,0 +1,8 @@
+{
+  "completed_clean": 0,
+  "completed_conflicted": 0,
+  "invalid_output": 0,
+  "crash": 1,
+  "timeout": 0,
+  "setup_error": 0
+}
