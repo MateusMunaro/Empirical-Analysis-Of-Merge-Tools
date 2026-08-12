@@ -1,0 +1,15 @@
+Custumer.java:1:9: compiler.err.class.public.should.be.in.file: kindname.class, Customer
+Person.java:1:9: compiler.err.class.public.should.be.in.file: kindname.class, Customer
+Client.java:9:13: compiler.err.cant.resolve.location: kindname.class, Address, , , (compiler.misc.location: kindname.class, Client, null)
+Client.java:13:46: compiler.err.cant.resolve.location: kindname.class, Address, , , (compiler.misc.location: kindname.class, Client, null)
+Client.java:45:12: compiler.err.cant.resolve.location: kindname.class, Address, , , (compiler.misc.location: kindname.class, Client, null)
+Client.java:51:28: compiler.err.cant.resolve.location: kindname.class, Address, , , (compiler.misc.location: kindname.class, Client, null)
+Order.java:40:13: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Order, null)
+Order.java:44:46: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Order, null)
+Order.java:52:12: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Order, null)
+Order.java:58:30: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Order, null)
+Purchase.java:9:13: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, Purchase, null)
+Purchase.java:13:43: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, Purchase, null)
+Purchase.java:45:12: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, Purchase, null)
+Purchase.java:51:26: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, Purchase, null)
+14 errors

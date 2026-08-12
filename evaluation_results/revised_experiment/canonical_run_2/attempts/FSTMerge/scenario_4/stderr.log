@@ -1,0 +1,4 @@
+Warning: return types of the two fields `phone' are not compatible: Float != String
+Warning: return types of the two methods `getPhone' are not compatible: Float != String
+Warning: return types of the two fields `phone' are not compatible: int != Float
+Warning: return types of the two methods `getPhone' are not compatible: int != Float

@@ -1,0 +1,28 @@
+TeamManager.java:2:1: compiler.err.illegal.start.of.type
+TeamManager.java:2:13: compiler.err.expected: >
+TeamManager.java:3:5: compiler.err.illegal.start.of.type
+TeamManager.java:3:33: compiler.err.expected: ';'
+TeamManager.java:5:32: compiler.err.expected: ';'
+TeamManager.java:6:15: compiler.err.expected: token.identifier
+TeamManager.java:7:13: compiler.err.expected: >
+TeamManager.java:8:6: compiler.err.illegal.start.of.type
+TeamManager.java:8:22: compiler.err.illegal.start.of.type
+TeamManager.java:8:23: compiler.err.expected: token.identifier
+TeamManager.java:9:1: compiler.err.illegal.start.of.type
+TeamManager.java:10:20: compiler.err.illegal.start.of.type
+TeamManager.java:10:21: compiler.err.expected: token.identifier
+TeamManager.java:11:1: compiler.err.illegal.start.of.type
+TeamManager.java:11:15: compiler.err.expected: token.identifier
+TeamManager.java:15:1: compiler.err.illegal.start.of.expr
+TeamManager.java:15:3: compiler.err.illegal.start.of.expr
+TeamManager.java:15:5: compiler.err.illegal.start.of.expr
+TeamManager.java:16:1: compiler.err.expected: >
+TeamManager.java:16:3: compiler.err.illegal.start.of.expr
+TeamManager.java:16:5: compiler.err.illegal.start.of.expr
+TeamManager.java:16:7: compiler.err.illegal.start.of.expr
+TeamManager.java:17:9: compiler.err.illegal.start.of.expr
+TeamManager.java:20:1: compiler.err.illegal.start.of.expr
+TeamManager.java:20:4: compiler.err.illegal.start.of.expr
+TeamManager.java:20:7: compiler.err.illegal.start.of.expr
+TeamManager.java:20:15: compiler.err.expected: ';'
+27 errors
