@@ -4,11 +4,12 @@ public class Person {
     private String email;
     private String phone;
     
-    public Person(int id, String name, String email, String phone) {
+    public Person() {
+    }
+    
+    public Person(int id, String name) {
         this.id = id;
         this.name = name;
-        this.email = email;
-        this.phone = phone;
     }
     
     public int getId() {

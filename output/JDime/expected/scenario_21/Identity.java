@@ -1,12 +1,10 @@
 public class Identity {
     private int id;
     private String name;
-    private Date birthDate;
 
-    public Identity(int id, String name, Date birthDate) {
+    public Identity(int id, String name) {
         this.id = id;
         this.name = name;
-        this.birthDate = birthDate;
     }
 
     public int getId() {
@@ -25,13 +23,6 @@ public class Identity {
         this.name = name;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
 }
 
 

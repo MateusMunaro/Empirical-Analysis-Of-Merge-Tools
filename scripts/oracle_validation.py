@@ -418,7 +418,7 @@ def main() -> int:
             "coverage issue(s)"
         )
     else:
-        print("Independent review coverage valid for all 39 scenarios")
+        print("Two-review coverage valid for all 39 scenarios")
 
     readiness_issues = release_readiness_issues(reviews, manifest)
     if readiness_issues:
@@ -430,7 +430,7 @@ def main() -> int:
                 print(f"- {issue}")
             return 1
     else:
-        print("All oracles and scenario labels are independently confirmed")
+        print("All oracles and scenario labels are confirmed by the two-pass workflow")
 
     for result in pairwise_agreement(reviews):
         print(

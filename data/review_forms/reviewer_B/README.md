@@ -12,3 +12,7 @@ UTC timestamp. A non-accept decision or classification concern requires a
 substantive comment. Return the completed form without modifying earlier
 rounds. The study coordinator validates and appends it to
 `data/oracle_reviews.csv`.
+
+For `validation_scope=textual_structural_only`, use `tests_result=not_applicable`.
+Use `compilation_result=not_run` unless a documented compilation fixture was
+actually executed; do not infer compilation from visual inspection.

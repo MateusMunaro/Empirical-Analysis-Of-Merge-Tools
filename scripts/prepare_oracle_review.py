@@ -24,6 +24,7 @@ CONTEXT_COLUMNS = (
     "merge_intent",
     "acceptance_criteria",
     "expected_files",
+    "validation_scope",
     "associated_tests",
 )
 
@@ -34,20 +35,30 @@ def prepare_review_packet(
     manifest: Sequence[ScenarioMetadata] | None = None,
     repo_root: Path = REPO_ROOT,
     include_artifacts: bool = True,
+    review_round: int = 1,
+    scenario_ids: Sequence[str] | None = None,
 ) -> Path:
-    """Create a first-round packet without tool outputs or proposed labels."""
+    """Create a blinded review packet without tool outputs or proposed labels."""
 
     reviewer_id = _validate_reviewer_id(reviewer_id)
-    scenarios = tuple(manifest or load_manifest())
+    if review_round < 1:
+        raise ValueError("review_round must be at least 1")
+    scenarios = _select_scenarios(
+        tuple(manifest or load_manifest()), scenario_ids
+    )
     _require_empty_target(output_directory)
     output_directory.mkdir(parents=True)
 
     _write_review_form(
-        reviewer_id, scenarios, output_directory / "review_form.csv"
+        reviewer_id,
+        scenarios,
+        output_directory / "review_form.csv",
+        review_round,
     )
     _write_context(scenarios, output_directory / "scenario_context.csv")
     (output_directory / "README.md").write_text(
-        _packet_readme(reviewer_id, include_artifacts), encoding="utf-8"
+        _packet_readme(reviewer_id, include_artifacts, review_round),
+        encoding="utf-8",
     )
 
     if include_artifacts:
@@ -77,6 +88,7 @@ def _write_review_form(
     reviewer_id: str,
     manifest: Sequence[ScenarioMetadata],
     path: Path,
+    review_round: int,
 ) -> None:
     with path.open("w", encoding="utf-8", newline="") as form_file:
         writer = csv.DictWriter(form_file, fieldnames=REVIEW_COLUMNS)
@@ -87,7 +99,7 @@ def _write_review_form(
                 {
                     "scenario_id": scenario.scenario_id,
                     "reviewer_id": reviewer_id,
-                    "review_round": "1",
+                    "review_round": str(review_round),
                 }
             )
             writer.writerow(row)
@@ -110,12 +122,15 @@ def _write_context(
                     "merge_intent": scenario.merge_intent,
                     "acceptance_criteria": scenario.acceptance_criteria,
                     "expected_files": ";".join(scenario.expected_files),
+                    "validation_scope": scenario.validation_scope.value,
                     "associated_tests": scenario.associated_tests,
                 }
             )
 
 
-def _packet_readme(reviewer_id: str, includes_artifacts: bool) -> str:
+def _packet_readme(
+    reviewer_id: str, includes_artifacts: bool, review_round: int
+) -> str:
     artifact_instruction = (
         "Inspect only `artifacts/<scenario>/base`, `left`, `right`, and "
         "`proposed_oracle`."
@@ -125,7 +140,7 @@ def _packet_readme(reviewer_id: str, includes_artifacts: bool) -> str:
     return f"""# Independent oracle review packet
 
 Reviewer: `{reviewer_id}`  
-Round: `1`
+Round: `{review_round}`
 
 {artifact_instruction}
 
@@ -136,7 +151,33 @@ UTC timestamp. A non-accept decision or classification concern requires a
 substantive comment. Return the completed form without modifying earlier
 rounds. The study coordinator validates and appends it to
 `data/oracle_reviews.csv`.
+
+For `validation_scope=textual_structural_only`, use `tests_result=not_applicable`.
+Use `compilation_result=not_run` unless a documented compilation fixture was
+actually executed; do not infer compilation from visual inspection.
 """
+
+
+def _select_scenarios(
+    manifest: Sequence[ScenarioMetadata], scenario_ids: Sequence[str] | None
+) -> tuple[ScenarioMetadata, ...]:
+    if scenario_ids is None:
+        return tuple(manifest)
+    requested = tuple(scenario_ids)
+    if not requested:
+        raise ValueError("scenario_ids must not be empty when provided")
+    if len(set(requested)) != len(requested):
+        raise ValueError("scenario_ids contains duplicates")
+    by_id = {scenario.scenario_id: scenario for scenario in manifest}
+    unexpected = [scenario_id for scenario_id in requested if scenario_id not in by_id]
+    if unexpected:
+        raise ValueError(
+            "Unknown scenario_id(s): " + ", ".join(unexpected)
+        )
+    requested_set = set(requested)
+    return tuple(
+        scenario for scenario in manifest if scenario.scenario_id in requested_set
+    )
 
 
 def _validate_reviewer_id(reviewer_id: str) -> str:
@@ -159,6 +200,13 @@ def main() -> int:
     )
     parser.add_argument("--reviewer", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--round", type=int, default=1, dest="review_round")
+    parser.add_argument(
+        "--scenario",
+        action="append",
+        dest="scenario_ids",
+        help="Limit the packet to a scenario ID; repeat for multiple IDs",
+    )
     parser.add_argument(
         "--form-only",
         action="store_true",
@@ -170,6 +218,8 @@ def main() -> int:
         reviewer_id=args.reviewer,
         output_directory=args.output,
         include_artifacts=not args.form_only,
+        review_round=args.review_round,
+        scenario_ids=args.scenario_ids,
     )
     print(f"Prepared independent review packet: {args.output}")
     return 0

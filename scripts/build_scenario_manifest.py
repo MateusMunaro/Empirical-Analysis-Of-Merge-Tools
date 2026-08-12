@@ -34,6 +34,7 @@ FIELDNAMES = (
     "logical_element_count",
     "logical_elements",
     "dependency_scope",
+    "validation_scope",
     "associated_tests",
     "mapping_basis",
     "change_type_basis",
@@ -52,36 +53,36 @@ MERGE_INTENTS = {
     7: "Remove the email state and its accessors while retaining the name state selected by the oracle.",
     8: "Combine the email and phone additions with their constructor parameters and accessors.",
     9: "Remove the textual representation method while retaining the Person data fields and accessors.",
-    10: "Produce the complete Person API with full constructor, accessors, and textual representation.",
+    10: "Retain the branch-supported no-argument and two-argument constructors, complete accessors, and the left branch's textual representation without inventing a new constructor.",
     11: "Combine Builder-based user creation from the left branch with Validator-based create and update checks from the right branch.",
-    12: "Combine distributed order validation with audit logging in the resolved OrderService workflow.",
+    12: "Combine distributed order validation with audit logging and retain every validator, exception, and logger artifact required by the resolved OrderService workflow.",
     13: "Resolve the Person decomposition into Individual and ContactInfo according to the oracle tree.",
-    14: "Resolve the Person decomposition into PersonalInfo and ContactDetails according to the oracle tree.",
-    15: "Resolve the attribute reorganization across Individual and ContactInfo according to the oracle tree.",
+    14: "Resolve the Person decomposition into PersonalInfo and ContactDetails while propagating the left branch's name-to-fullName change into PersonalInfo.",
+    15: "Resolve the attribute reorganization across Individual and ContactInfo while propagating the left branch's getPhoneNumber and setPhoneNumber accessors into ContactInfo.",
     16: "Retain Person while extracting contact data into ContactData and applying the selected phone representation.",
-    17: "Retain Person and the ContactMethods extraction while applying the oracle's removal decision.",
+    17: "Retain the right branch's PersonIdentity and ContactMethods decomposition despite the competing whole-class removal.",
     18: "Resolve the addition into PersonBasicInfo and PersonContactInfo.",
     19: "Resolve the removal across the CoreInfo and ExtendedInfo decomposition.",
     20: "Resolve the addition across PersonId and PersonContact.",
-    21: "Resolve the attribute removal across Identity and Contact.",
+    21: "Resolve the decomposition into Identity and Contact while propagating the left branch's removal of birthDate.",
     22: "Resolve the attribute addition across BasicPerson and ExtendedPerson.",
     23: "Combine strategy-based notification dispatch with logging and error handling.",
-    24: "Resolve the coupled Person-to-Client and Address-to-Location reorganization.",
+    24: "Resolve the coupled Person-to-Client and Address-to-Location reorganization while preserving city in Location.",
     25: "Resolve the coupled Person-to-User and contact-model reorganization while retaining the oracle's Contact representation.",
-    26: "Integrate the selected Customer and Order field changes while retaining the oracle's Custumer and Order artifacts.",
+    26: "Integrate the selected Customer and Order field changes using Java filenames consistent with their public types.",
     27: "Resolve the coupled Department-to-Division and Employee-to-Worker reorganization.",
     28: "Retain the Address artifact selected by the oracle while resolving the competing Person and detailed-profile decomposition.",
     29: "Retain Employee and integrate the selected Organization and Position artifacts from the multi-class decomposition.",
     30: "Retain the Contact and Person artifacts selected by the oracle while resolving the competing UserContact reorganization.",
-    31: "Resolve Customer and Order into the Client, Item, and Purchase artifact tree.",
-    32: "Retain Course and resolve the student information into StudentDetails according to the oracle.",
+    31: "Resolve Customer and Order into Client, Item, and Purchase while propagating email into Client and orderDate into Purchase.",
+    32: "Retain Course, preserve student identity in Learner, and retain the separate StudentDetails artifact.",
     33: "Retain Profile and User while resolving the competing Account and UserProfile decomposition.",
-    34: "Combine the competing calculateDiscount rules into the customer-type behavior selected by the oracle.",
+    34: "Combine the left branch's tiered premium discounts with the right branch's MAX_DISCOUNT cap.",
     35: "Combine the competing setAge validation constraints into the accepted age-validation behavior.",
     36: "Combine singleton connection management with factory-based database connection creation.",
     37: "Resolve list-versus-set membership semantics with deterministic uniqueness and both list and set views.",
     38: "Combine exception-based and boolean validation with configurable error logging.",
-    39: "Integrate loyalty, subscription, recurring billing, payment, credit, and order-processing behavior across the full artifact tree.",
+    39: "Integrate the branch-defined loyalty and subscription behaviors without invented cross-system bonuses: use the larger branch-defined customer discount, configure recurring billing before total calculation, retain the right branch's 12 percent service tax, and keep loyalty and subscription upgrades independent.",
 }
 
 
@@ -132,8 +133,8 @@ def build_manifest_rows(manifest_path: Path) -> list[dict[str, str | int]]:
                 "merge_intent": intent,
                 "acceptance_criteria": (
                     f"The normalized output tree must contain exactly "
-                    f"{_display_files(expected_files)}, match the independently "
-                    f"approved oracle, contain no conflict markers, pass the "
+                    f"{_display_files(expected_files)}, match the workflow-"
+                    f"confirmed oracle, contain no conflict markers, pass the "
                     f"preregistered syntax check, and satisfy this intent: {intent}"
                 ),
                 "base_files": _serialize_files(variant_files["base"]),
@@ -144,7 +145,8 @@ def build_manifest_rows(manifest_path: Path) -> list[dict[str, str | int]]:
                 "logical_element_count": _provisional_element_count(mapping),
                 "logical_elements": title,
                 "dependency_scope": _dependency_scope(mapping),
-                "associated_tests": "none_defined",
+                "validation_scope": "textual_structural_only",
+                "associated_tests": "not_applicable",
                 "mapping_basis": _required(source, "mapping_basis"),
                 "change_type_basis": _required(source, "change_type_basis"),
                 "oracle_review_status": source.get(

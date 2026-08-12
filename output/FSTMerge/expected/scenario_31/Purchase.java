@@ -2,11 +2,13 @@ public class Purchase {
     private int id;
     private double value;
     private List<Item> items;
+    private Date orderDate;
 
-    public Purchase(int id, double value, List<Item> items) {
+    public Purchase(int id, double value, List<Item> items, Date orderDate) {
         this.id = id;
         this.value = value;
         this.items = items;
+        this.orderDate = orderDate;
     }
 
     public int getId() {
@@ -31,5 +33,13 @@ public class Purchase {
 
     public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    public Date getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(Date orderDate) {
+        this.orderDate = orderDate;
     }
 }

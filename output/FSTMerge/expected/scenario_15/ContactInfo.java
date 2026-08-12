@@ -15,11 +15,11 @@ public class ContactInfo {
         this.email = email;
     }
 
-    public String getPhone() {
+    public String getPhoneNumber() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhoneNumber(String phone) {
         this.phone = phone;
     }
 }

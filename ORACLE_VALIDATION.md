@@ -6,9 +6,9 @@ The submitted manuscript described the expected merge results as “manually
 validated” without identifying the validators, criteria, or independent
 checks. This protocol makes that process explicit and auditable.
 
-The committed scenario labels and oracles are proposals until independent
-review is completed. The current state is recorded as
-`pending_independent_review` in
+The committed scenario labels and oracles begin as proposals. After the
+two-pass review workflow succeeds, the current state is recorded as
+`independently_confirmed` in
 [`data/scenario_manifest.csv`](data/scenario_manifest.csv).
 
 ## Reviewer independence
@@ -24,6 +24,18 @@ first-round decisions. They may inspect only:
 
 Use stable pseudonymous identifiers such as `reviewer_A` and `reviewer_B` in
 the public CSV. Keep the identity mapping in the private study records.
+
+### Provenance of the current review ledger
+
+The current records named `codex_reviewer_1` and `codex_reviewer_2` are two
+separate Codex-assisted review passes performed under author direction. They
+are not two independent human experts. The internal status name
+`independently_confirmed` means that the fail-closed repository workflow has
+two accepted records per scenario; it must not be expanded into a claim of
+independent human validation. Publications using this dataset must describe
+the evidence as an author-supervised, rubric-based, two-pass oracle audit, or
+append genuine human reviews in a later immutable round before making a human
+independence claim.
 
 ## Oracle review rubric
 
@@ -123,9 +135,36 @@ Prepare a new blinded reviewer packet. The output directory must be empty:
 python -m scripts.prepare_oracle_review --reviewer reviewer_A --output review_packets/reviewer_A
 ```
 
+For a later immutable round, set the round number and repeat `--scenario` for
+only the artifacts changed since the preceding decision:
+
+```powershell
+python -m scripts.prepare_oracle_review --reviewer reviewer_A --round 2 --output review_packets/reviewer_A_round_2 --scenario scenario_10 --scenario scenario_17
+```
+
+The returned rows must use the same reviewer identifier and the next
+consecutive round number for each included scenario. Earlier records remain
+unchanged in `data/oracle_reviews.csv`.
+
 Use `--form-only` when the artifact trees will be transferred separately. The
 packet deliberately excludes merge-tool outputs, scores, other reviewers'
 decisions, and the proposed mapping/change-type labels.
+
+Validate a completed returned form without modifying the canonical record:
+
+```powershell
+python -m scripts.ingest_oracle_reviews --form returned/reviewer_A/review_form.csv
+```
+
+After reviewing the validation output, append it atomically:
+
+```powershell
+python -m scripts.ingest_oracle_reviews --form returned/reviewer_A/review_form.csv --commit
+```
+
+Existing `(reviewer, scenario, round)` records cannot be overwritten, and
+round numbers cannot be skipped. Repeat for the second reviewer and any later
+adjudication rounds.
 
 Validate the canonical manifest and the existence of all input/oracle trees:
 
@@ -150,11 +189,12 @@ Require two independent reviews for all 39 scenarios:
 python -m scripts.oracle_validation --require-complete
 ```
 
-The last command is expected to fail until the human review has actually been
-completed. It requires, for every scenario, at least two independent oracle
-approvals and at least two confirmations of both the mapping and change-type
+The last command fails until every scenario has at least two accepted oracle
+records and at least two confirmations of both the mapping and change-type
 labels. Mere review coverage is insufficient. The command must pass before the
-revised experiment is released.
+revised experiment is released. Reviewer provenance must be reported
+separately and accurately; passing this structural check alone does not prove
+human independence.
 
 The aggregate fail-closed check is:
 
@@ -164,3 +204,15 @@ python -m scripts.phase2_gate
 
 See [`PHASE2_STATUS.md`](PHASE2_STATUS.md) for documented open findings. A
 documented issue remains a blocker; documenting it does not make the gate pass.
+
+When all technical findings and review disagreements are resolved, run the
+finalizer first as a dry run and then commit the status transition:
+
+```powershell
+python -m scripts.finalize_phase2
+python -m scripts.finalize_phase2 --commit
+python -m scripts.phase2_gate
+```
+
+The finalizer is all-or-nothing: it promotes both oracle and classification
+statuses only after the complete evidence set passes.

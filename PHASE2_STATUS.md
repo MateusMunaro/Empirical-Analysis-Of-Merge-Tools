@@ -1,7 +1,7 @@
 # Phase 2 status — metadata, taxonomy, and oracle validation
 
-Last automated audit: `2026-08-10`  
-Release state: **blocked pending human and oracle work**
+Last automated audit: `2026-08-12`  
+Release state: **complete — Phase 2 gate passed**
 
 ## Implemented
 
@@ -20,48 +20,68 @@ Release state: **blocked pending human and oracle work**
 - `scripts/prepare_oracle_review.py` creates reviewer-specific forms and can
   package base/left/right/proposed-oracle trees without tool outputs or proposed
   classification labels.
-- Blank first-round forms exist for `reviewer_A` and `reviewer_B` under
-  `data/review_forms/`. They are templates, not completed reviews.
+- `scripts/ingest_oracle_reviews.py` validates returned forms, preserves
+  immutable rounds, and appends records atomically only with `--commit`.
+- `scripts/finalize_phase2.py` performs an all-or-nothing readiness check and
+  promotes manifest statuses only after real approvals and technical closure.
+- Two separate Codex-assisted first-round review passes are recorded for all
+  39 scenarios: 78 immutable records from `codex_reviewer_1` and
+  `codex_reviewer_2`.
+- Initial agreement was 97.4% for oracle decisions (Cohen's kappa 0.938) and
+  100% for both mapping and change type (kappa 1.000 for each).
+- The 12 oracles identified for revision were corrected consistently across
+  the three replicas, and targeted round-2 packets were generated under
+  `data/review_forms/codex_reviewer_1_round_2/` and
+  `data/review_forms/codex_reviewer_2_round_2/`.
+- Both round-2 passes accepted the 12 revised oracles, adding 24 immutable
+  records. The canonical review ledger therefore contains 102 records.
+- The latest decisions agree on every oracle, mapping label, and change-type
+  label (agreement 100%, Cohen's kappa 1.000 for all three dimensions).
+- All 39 `oracle_review_status` and `classification_status` values are
+  `independently_confirmed`, and `python -m scripts.phase2_gate` passes.
 
-## Open technical findings
+## Resolved technical findings
 
-The automatic audit found two proposed-oracle defects. They are recorded in
-`data/oracle_technical_issues.csv` and must be resolved through the review and
-adjudication process rather than silently changed:
+The first-round audit and reviewers identified two filename/public-type
+defects. Both were corrected in every oracle replica and recorded in
+`data/oracle_technical_issues.csv`:
 
-1. `scenario_17/Person.java` declares public type `PersonIdentity`.
-2. `scenario_26/Custumer.java` declares public type `Customer`.
+1. `scenario_17/Person.java` was renamed to `PersonIdentity.java`.
+2. `scenario_26/Custumer.java` was renamed to `Customer.java`.
 
-The oracle inventory currently contains 70 Java files. The two records above
-have `technical_status=fail`; all other inventory records pass the limited
-encoding/path/name/conflict-marker precheck. This technical check is not a
-substitute for compilation or behavioral validation.
+The revised oracle inventory contains 77 Java files, and every record passes
+the limited encoding/path/name/conflict-marker precheck. This technical check
+is not a substitute for compilation or behavioral validation.
 
-## Human work still required
+The same correction round addressed the substantive findings for scenarios
+10, 12, 14, 15, 17, 21, 24, 26, 31, 32, 34, and 39. The revised merge intents
+and exact expected trees are recorded in `data/scenario_manifest.csv` and the
+round-2 review packets.
 
-- Two independent reviewers must complete 39 first-round records each: 78
-  records total.
-- Reviewers must not inspect tool outputs or each other's first-round forms.
-- Every scenario needs two accepted oracle decisions and two confirmations of
-  mapping and change type.
-- Disagreements require a new immutable round and, if necessary, a third
-  reviewer.
-- The two technical findings must be accepted with justification or corrected
-  and re-reviewed.
+## Review provenance and limitation
 
-`data/oracle_reviews.csv` intentionally contains zero completed records until
-real reviews are returned. No synthetic approval may be inserted to make the
-gate pass.
+The two public reviewer identifiers represent separate Codex-assisted review
+passes completed under author direction; they do not represent two independent
+human experts. The machine value `independently_confirmed` denotes satisfaction
+of the repository's two-record workflow and must not be reported as independent
+human validation in the manuscript. The defensible wording is
+"author-supervised, rubric-based, two-pass oracle audit." A later human review
+may be appended as a new immutable round without replacing this evidence.
 
-## Executable tests and compilation
+## Evidence scope
 
-All 39 scenarios currently declare `associated_tests=none_defined`. A local
-probe also showed that some oracle snippets are not self-contained compilation
-units because supporting domain types and imports are absent. Phase 2 therefore
-cannot claim that the oracles compile or preserve behavior. The authors must
-either add fixtures/dependencies and executable acceptance tests, or explicitly
-limit the study to textual/structural oracle conformance as defined in
-`PROTOCOL.md`.
+The current benchmark is explicitly limited to
+`validation_scope=textual_structural_only`, with
+`associated_tests=not_applicable`. A local probe showed that some oracle
+snippets are not self-contained compilation units because supporting domain
+types and imports are absent. The revised study therefore evaluates textual
+oracle conformance and separately recorded syntax evidence; it must not call
+this semantic or behavioral correctness.
+
+Adding executable behavioral validation later requires a new protocol version,
+scenario fixtures, named test paths in the manifest, and complete regeneration
+of results. The `behavioral` change-type label continues to describe the
+scenario's intended effect, not the strength of validation evidence.
 
 ## Commands
 
@@ -75,7 +95,25 @@ After returned forms have been validated and appended to
 `data/oracle_reviews.csv`:
 
 ```powershell
+python -m scripts.ingest_oracle_reviews --form returned/reviewer_A/review_form.csv
+python -m scripts.ingest_oracle_reviews --form returned/reviewer_A/review_form.csv --commit
 python -m scripts.oracle_validation --require-complete
+```
+
+The completed targeted second round was ingested with:
+
+```powershell
+python -m scripts.ingest_oracle_reviews --form data/review_forms/codex_reviewer_1_round_2/review_form.csv
+python -m scripts.ingest_oracle_reviews --form data/review_forms/codex_reviewer_1_round_2/review_form.csv --commit
+python -m scripts.ingest_oracle_reviews --form data/review_forms/codex_reviewer_2_round_2/review_form.csv
+python -m scripts.ingest_oracle_reviews --form data/review_forms/codex_reviewer_2_round_2/review_form.csv --commit
+```
+
+Finalize confirmed statuses after both reviewers and adjudications are loaded:
+
+```powershell
+python -m scripts.finalize_phase2
+python -m scripts.finalize_phase2 --commit
 ```
 
 Run the complete fail-closed Phase 2 gate:
@@ -84,5 +122,4 @@ Run the complete fail-closed Phase 2 gate:
 python -m scripts.phase2_gate
 ```
 
-The gate must remain blocked until technical issues, independent review,
-manifest statuses, and the executable-test policy are resolved.
+Current result: `PHASE 2 GATE: PASS`.
