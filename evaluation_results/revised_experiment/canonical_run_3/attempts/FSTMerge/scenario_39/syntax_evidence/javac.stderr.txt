@@ -1,0 +1,2 @@
+Customer.java:1:1: compiler.err.doesnt.exist: javax.persistence
+1 error

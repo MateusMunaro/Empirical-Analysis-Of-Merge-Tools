@@ -1,0 +1,3 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.74;42-44;.Person.setPhone(String);45-47;.Person.setPhone(int)
+Change Constructor Signature;constructor;0.97;7-12;.Person.Person(int, String, String, String);10-15;.Person.Person(int, String, String, int)

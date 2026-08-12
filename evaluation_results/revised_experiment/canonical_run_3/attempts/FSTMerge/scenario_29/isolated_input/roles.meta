@@ -1,0 +1,22 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"getId": {
+			"left": "getId"
+		},
+		"getName": {
+			"left": "getName"
+		},
+		"setId": {
+			"left": "setId"
+		},
+		"setName": {
+			"left": "setName"
+		}
+	}
+
+}

@@ -1,0 +1,14 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"connect": {
+			"left": "connect",
+			"right": "connect"
+		}
+	}
+
+}

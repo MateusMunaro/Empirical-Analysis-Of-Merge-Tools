@@ -1,0 +1,2 @@
+Departament.java:1:10: compiler.err.class.public.should.be.in.file: kindname.class, Department
+1 error

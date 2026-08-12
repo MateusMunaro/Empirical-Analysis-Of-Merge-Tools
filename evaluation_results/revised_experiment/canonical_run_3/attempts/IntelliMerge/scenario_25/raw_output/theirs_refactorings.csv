@@ -1,0 +1,3 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.62;18-20;.Contact.getPhoneNumber();8-10;.PhoneContact.getPhone()
+Change Field Signature;field;0.72;3-3;.Contact.phoneNumber;2-2;.PhoneContact.phone
