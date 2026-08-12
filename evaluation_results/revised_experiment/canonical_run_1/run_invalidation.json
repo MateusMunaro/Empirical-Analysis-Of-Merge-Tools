@@ -1,0 +1,12 @@
+{
+  "invalidated_at_utc": "2026-08-12T23:30:00Z",
+  "scope": "entire_run",
+  "reason": "JDime directory inputs were invoked without the required --recursive option.",
+  "evidence": {
+    "invalid_output_count": 37,
+    "empty_java_artifact_count": 2,
+    "source_option": "CommandLineConfigSource.java: --recursive merges directories recursively"
+  },
+  "disposition": "Preserved as harness-discovery evidence; excluded from all analysis and publication results.",
+  "replacement_run": "canonical_run_2"
+}

@@ -28,8 +28,7 @@ VALID_STATUSES = {status.value for status in ObservationStatus}
 METRIC_FIELDS = (
     "expected_file_count", "actual_file_count", "expected_line_count",
     "actual_line_count", "true_positives", "false_positives",
-    "false_negatives", "precision", "recall", "f1_score",
-    "sequence_agreement", "exact_oracle_match",
+    "false_negatives", "sequence_agreement", "exact_oracle_match",
 )
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
@@ -127,6 +126,9 @@ def _metric_issues(row: dict[str, str]) -> list[str]:
 def phase4_issues(run_dir: Path, require_release: bool = True) -> tuple[str, ...]:
     run_dir = run_dir.resolve()
     issues: list[str] = []
+    invalidation_path = run_dir / "run_invalidation.json"
+    if invalidation_path.is_file():
+        issues.append("run has been explicitly invalidated; see run_invalidation.json")
     executions, execution_read_issues = _read_csv(run_dir / "executions.csv")
     results, result_read_issues = _read_csv(run_dir / "scenario_tool_results.csv")
     issues.extend(execution_read_issues)

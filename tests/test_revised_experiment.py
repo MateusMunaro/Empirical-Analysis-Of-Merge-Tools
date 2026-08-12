@@ -6,9 +6,11 @@ from pathlib import Path
 
 from scripts.analysis_units import ObservationStatus
 from scripts.revised_experiment import (
+    DEFAULT_LOCK,
     ProcessOutcome,
     ToolRuntime,
     classify_terminal_status,
+    load_runtimes,
     normalize_java_output,
     run_attempt,
     run_process,
@@ -150,6 +152,19 @@ class AttemptIntegrationTests(unittest.TestCase):
             self.assertEqual(
                 json.loads(execution["command_json"])[0], sys.executable
             )
+
+
+class FrozenCommandTests(unittest.TestCase):
+    def test_jdime_directory_command_is_recursive_and_structured(self):
+        _, runtimes = load_runtimes(DEFAULT_LOCK)
+        runtime = runtimes["JDime"]
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            attempt = Path(temporary_directory)
+            command, _, _ = runtime.command_builder(
+                "scenario_1", attempt, attempt / "raw", {}
+            )
+        self.assertIn("--recursive", command)
+        self.assertEqual("structured", command[command.index("--mode") + 1])
 
 
 if __name__ == "__main__":

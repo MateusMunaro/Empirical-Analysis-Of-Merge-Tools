@@ -406,7 +406,10 @@ def main() -> int:
 
         verify(strict=True)
         info("All components installed.")
-        info("Next step: source .venv/bin/activate && python scripts/executor.py")
+        info(
+            "Next step: source .venv/bin/activate && "
+            "python -m scripts.phase3_gate --release"
+        )
         return 0
 
     except SetupError as e:
