@@ -1,0 +1,108 @@
+{
+  "created_at_utc": "2026-08-12T17:53:21Z",
+  "tools": [
+    "JDime"
+  ],
+  "scenarios": [
+    "scenario_1"
+  ],
+  "timeout_seconds": 120,
+  "run_kind": "diagnostic",
+  "lockfile": "C:\\Users\\HP\\OneDrive\\Desktop\\Trabalho\\Estudos\\Faculdade\\Pesquisa Cientifica\\case_sudy\\repo\\tool_versions.lock",
+  "lock": {
+    "schema_version": 1,
+    "frozen_at_utc": "2026-08-12T17:00:00Z",
+    "target_environment": {
+      "operating_system": "Linux x86_64 (WSL2 or native)",
+      "python": ">=3.8",
+      "build_jdk": "Eclipse Temurin 21.0.11+10",
+      "jdime_runtime_jdk": "Eclipse Temurin 8u392-b08"
+    },
+    "execution_policy": {
+      "timeout_seconds": 120,
+      "jdime_mode": "structured",
+      "jdime_fallback": "disabled",
+      "clean_output_per_attempt": true,
+      "continue_after_failure": true,
+      "unit_of_analysis": "tool_name x scenario_id",
+      "expected_observations": 117,
+      "syntax_validator": "javac -proc:none -XDrawDiagnostics; parser diagnostics only",
+      "output_normalization": "tool adapter preserves relative paths; raw output retained separately"
+    },
+    "tools": {
+      "IntelliMerge": {
+        "repository": "https://github.com/Symbolk/IntelliMerge.git",
+        "tag": "1.0.9",
+        "tag_commit": "1aa08901c1502871c2f77f7561a91586a47dec7c",
+        "artifact_url": "https://github.com/Symbolk/IntelliMerge/releases/download/1.0.9/IntelliMerge-1.0.9-all.jar",
+        "artifact_path": "merge_tools/IntelliMerge/IntelliMerge-1.0.9-all.jar",
+        "artifact_size": 41340240,
+        "artifact_sha256": "a1bc929f8c5cb2f293b4d7fdd9a9bdf67460cad79c58b5ca052ada44e4df5f0e",
+        "arguments": [
+          "java",
+          "-jar",
+          "<artifact>",
+          "-d",
+          "<left>",
+          "<base>",
+          "<right>",
+          "-o",
+          "<raw_output>"
+        ]
+      },
+      "FSTMerge": {
+        "repository": "https://github.com/joliebig/featurehouse.git",
+        "commit": "81724157bc638524e72af5bb689cf939e6df8599",
+        "source_artifact": "fstcomp/lib/FeatureHouse.jar",
+        "artifact_path": "merge_tools/FSTMerge/featurehouse-8172415.jar",
+        "artifact_size": 4126379,
+        "artifact_sha256": "b70425b557ab3ac20d223febc9b6247cddbd12befa5165067972e95173aed10f",
+        "arguments": [
+          "java",
+          "-jar",
+          "<artifact>",
+          "--expression",
+          "<expression>",
+          "--base-directory",
+          "<isolated_scenario>"
+        ]
+      },
+      "JDime": {
+        "repository": "https://github.com/se-sic/jdime.git",
+        "commit": "dc3d2eeacf0bb0980994b980bcb11c630300c4f3",
+        "artifact_path_linux": "merge_tools/JDime/jdime/build/install/JDime/bin/JDime",
+        "artifact_path_windows": "merge_tools/JDime/jdime/build/install/JDime/bin/JDime.bat",
+        "build_artifact_path": "merge_tools/JDime/jdime/build/install/JDime/lib/JDime.jar",
+        "build_artifact_size": 290059,
+        "build_artifact_sha256": "9ad4ebfbbe43a1e3d85b2ec77cd217f87451f0e56e73f09b886a5d708ff5e248",
+        "arguments": [
+          "<artifact>",
+          "-f",
+          "--mode",
+          "structured",
+          "--output",
+          "<raw_output>",
+          "<left>",
+          "<base>",
+          "<right>"
+        ]
+      }
+    },
+    "runtime_archives": {
+      "temurin_8u392_b08_linux_x64": {
+        "url": "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u392b08.tar.gz",
+        "sha256": "15d091e22aa0cad12a241acff8c1634e7228b9740f8d19634250aa6fe0c19a33"
+      },
+      "temurin_21_0_11_10_linux_x64": {
+        "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.11%2B10/OpenJDK21U-jdk_x64_linux_hotspot_21.0.11_10.tar.gz",
+        "sha256": "4b2220e232a97997b436ca6ab15cbf70171ecff52958a46159dfa5a8c44ca4de"
+      }
+    }
+  },
+  "environment": {
+    "java_version": "java version \"24\" 2025-03-18 Java(TM) SE Runtime Environment (build 24+36-3646)",
+    "python_version": "3.12.3",
+    "operating_system": "Windows-11-10.0.26200-SP0",
+    "architecture": "AMD64"
+  }
+}

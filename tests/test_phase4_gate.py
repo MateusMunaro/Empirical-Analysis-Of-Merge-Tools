@@ -1,0 +1,120 @@
+import csv
+import json
+import tempfile
+import unittest
+from pathlib import Path
+
+from scripts.analysis_units import DEFAULT_SCENARIO_IDS, DEFAULT_TOOLS
+from scripts.phase4_gate import phase4_issues
+from scripts.revised_experiment import EXECUTION_FIELDS, RESULT_FIELDS
+
+
+SHA = "a" * 64
+
+
+def write_csv(path, fields, rows):
+    with path.open("w", encoding="utf-8", newline="") as target:
+        writer = csv.DictWriter(target, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def make_valid_run(root: Path, run_kind: str = "canonical_release"):
+    executions = []
+    results = []
+    for tool in DEFAULT_TOOLS:
+        for scenario in DEFAULT_SCENARIO_IDS:
+            execution = {field: "" for field in EXECUTION_FIELDS}
+            execution.update(
+                tool_name=tool,
+                scenario_id=scenario,
+                execution_status="completed_clean",
+                status_detail="readable output",
+                tool_artifact_sha256=SHA,
+                oracle_checksum=SHA,
+                normalized_output_checksum=SHA,
+                input_checksums_json=json.dumps(
+                    {"base": SHA, "left": SHA, "right": SHA}
+                ),
+            )
+            executions.append(execution)
+            result = {field: "" for field in RESULT_FIELDS}
+            result.update(
+                tool_name=tool,
+                scenario_id=scenario,
+                mapping="one-to-one",
+                change_type="structural",
+                execution_status="completed_clean",
+                status_detail="readable output",
+                expected_file_count="1",
+                actual_file_count="1",
+                missing_files="",
+                extra_files="",
+                expected_line_count="1",
+                actual_line_count="1",
+                true_positives="1",
+                false_positives="0",
+                false_negatives="0",
+                precision="1.0",
+                recall="1.0",
+                f1_score="1.0",
+                sequence_agreement="1.0",
+                exact_oracle_match="True",
+                syntactic_valid="True",
+                complete_textual_resolution="True",
+            )
+            results.append(result)
+    write_csv(root / "executions.csv", EXECUTION_FIELDS, executions)
+    write_csv(root / "scenario_tool_results.csv", RESULT_FIELDS, results)
+    (root / "run_metadata.json").write_text(
+        json.dumps(
+            {
+                "run_kind": run_kind,
+                "tools": list(DEFAULT_TOOLS),
+                "scenarios": list(DEFAULT_SCENARIO_IDS),
+            }
+        ),
+        encoding="utf-8",
+    )
+    return executions, results
+
+
+class Phase4GateTests(unittest.TestCase):
+    def test_complete_canonical_matrix_passes(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            make_valid_run(root)
+            self.assertEqual((), phase4_issues(root))
+
+    def test_duplicate_and_missing_key_are_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            executions, _ = make_valid_run(root)
+            executions[-1] = executions[0].copy()
+            write_csv(root / "executions.csv", EXECUTION_FIELDS, executions)
+            issues = phase4_issues(root)
+            self.assertTrue(any("duplicate keys" in issue for issue in issues))
+            self.assertTrue(any("missing 1 expected keys" in issue for issue in issues))
+
+    def test_inconsistent_denominator_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            _, results = make_valid_run(root)
+            results[0]["expected_line_count"] = "2"
+            write_csv(root / "scenario_tool_results.csv", RESULT_FIELDS, results)
+            self.assertTrue(
+                any("expected_line_count != TP + FN" in issue for issue in phase4_issues(root))
+            )
+
+    def test_diagnostic_run_requires_explicit_allowance(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            make_valid_run(root, run_kind="diagnostic")
+            self.assertIn(
+                "run is diagnostic, not a canonical release", phase4_issues(root)
+            )
+            self.assertEqual((), phase4_issues(root, require_release=False))
+
+
+if __name__ == "__main__":
+    unittest.main()
