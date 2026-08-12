@@ -23,16 +23,9 @@ class OracleTechnicalAuditTests(unittest.TestCase):
         )
         self.assertTrue(all(len(record.sha256) == 64 for record in audit.records))
 
-    def test_known_filename_type_issues_remain_explicit(self):
+    def test_revised_oracles_pass_the_technical_audit(self):
         audit = audit_oracles(self.manifest)
-
-        self.assertEqual(
-            {
-                "scenario_17/Person.java: public type PersonIdentity does not match Person.java",
-                "scenario_26/Custumer.java: public type Customer does not match Custumer.java",
-            },
-            set(audit.issues),
-        )
+        self.assertEqual((), audit.issues)
 
 
 class ReviewPacketTests(unittest.TestCase):
@@ -61,6 +54,17 @@ class ReviewPacketTests(unittest.TestCase):
                 all(row["assigned_change_type"] == "" for row in rows)
             )
 
+            with (packet / "scenario_context.csv").open(
+                "r", encoding="utf-8", newline=""
+            ) as context_file:
+                context = list(csv.DictReader(context_file))
+            self.assertEqual(
+                {"textual_structural_only"},
+                {row["validation_scope"] for row in context},
+            )
+            self.assertNotIn("mapping", context[0])
+            self.assertNotIn("change_type", context[0])
+
     def test_packet_contains_only_inputs_oracle_and_review_context(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
             packet = Path(temporary_directory) / "reviewer_A"
@@ -77,6 +81,32 @@ class ReviewPacketTests(unittest.TestCase):
             self.assertTrue((scenario / "right").is_dir())
             self.assertTrue((scenario / "proposed_oracle").is_dir())
             self.assertFalse((packet / "tool_outputs").exists())
+
+    def test_later_round_can_target_only_revised_scenarios(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            packet = Path(temporary_directory) / "reviewer_A_round_2"
+            prepare_review_packet(
+                "reviewer_A",
+                packet,
+                self.manifest,
+                include_artifacts=False,
+                review_round=2,
+                scenario_ids=("scenario_10", "scenario_17"),
+            )
+
+            with (packet / "review_form.csv").open(
+                "r", encoding="utf-8", newline=""
+            ) as form_file:
+                rows = list(csv.DictReader(form_file))
+
+            self.assertEqual(
+                ["scenario_10", "scenario_17"],
+                [row["scenario_id"] for row in rows],
+            )
+            self.assertEqual({"2"}, {row["review_round"] for row in rows})
+
+            readme = (packet / "README.md").read_text(encoding="utf-8")
+            self.assertIn("Round: `2`", readme)
 
     def test_existing_nonempty_packet_is_not_overwritten(self):
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -97,20 +127,14 @@ class ReviewPacketTests(unittest.TestCase):
 
 
 class Phase2GateTests(unittest.TestCase):
-    def test_gate_passes_artifact_integrity_but_exposes_real_blockers(self):
+    def test_completed_phase2_gate_has_no_open_categories(self):
         categories = {
             category.name: category.issues
             for category in phase2_gate_categories()
         }
 
-        self.assertEqual((), categories["scenario artifact integrity"])
-        self.assertEqual(2, len(categories["oracle technical audit"]))
-        self.assertEqual(
-            156, len(categories["independent oracle and label review"])
-        )
-        self.assertEqual(39, len(categories["manifest classification status"]))
-        self.assertEqual(39, len(categories["manifest oracle status"]))
-        self.assertEqual(39, len(categories["scenario tests"]))
+        self.assertTrue(categories)
+        self.assertTrue(all(not issues for issues in categories.values()))
 
 
 if __name__ == "__main__":

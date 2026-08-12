@@ -177,6 +177,13 @@ If the manuscript makes a behavioral or semantic claim, the stricter rule is:
 Unknown, not-run, or not-applicable evidence does not count as a pass for a
 behavioral claim.
 
+The current manifest fixes `validation_scope=textual_structural_only` for all
+39 scenarios. Consequently, the revised benchmark may report textual oracle
+conformance and separately observed syntax evidence, but it must not claim
+semantic or behavioral correctness. The `behavioral` scenario label describes
+the intended kind of change, not the evidence strength. Introducing executable
+behavioral claims requires a new protocol version and named scenario tests.
+
 ## Aggregation rules
 
 All aggregates begin from the 117-row master dataset; file-level rows are never
@@ -259,7 +266,8 @@ python -m unittest discover -s tests -v
 Phase 1 freezes measurement semantics but does not pretend later work is done.
 The following remain prerequisites before execution:
 
-- complete and independently review scenario metadata and oracles (Phase 2);
+- preserve the completed Phase 2 oracle-review ledger and report its
+  Codex-assisted provenance accurately;
 - freeze tool commits, JDKs, arguments, checksums, timeout duration, syntax and
   compilation commands, and the JDime fallback policy (Phase 3);
 - integrate this normative module into the execution/evaluation harness and

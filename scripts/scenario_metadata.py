@@ -41,6 +41,11 @@ class ClassificationStatus(str, Enum):
     REQUIRES_REVISION = "requires_revision"
 
 
+class ValidationScope(str, Enum):
+    TEXTUAL_STRUCTURAL_ONLY = "textual_structural_only"
+    BEHAVIORAL_EVIDENCE = "behavioral_evidence"
+
+
 REQUIRED_COLUMNS = (
     "scenario_id",
     "title",
@@ -60,6 +65,7 @@ REQUIRED_COLUMNS = (
     "logical_element_count",
     "logical_elements",
     "dependency_scope",
+    "validation_scope",
     "associated_tests",
     "mapping_basis",
     "change_type_basis",
@@ -88,6 +94,7 @@ class ScenarioMetadata:
     logical_element_count: int
     logical_elements: str
     dependency_scope: str
+    validation_scope: ValidationScope
     associated_tests: str
     mapping_basis: str
     change_type_basis: str
@@ -161,6 +168,9 @@ def load_manifest(path: Path = DEFAULT_MANIFEST_PATH) -> tuple[ScenarioMetadata,
                         dependency_scope=_required_text(
                             row, "dependency_scope", line_number
                         ),
+                        validation_scope=ValidationScope(
+                            _required_text(row, "validation_scope", line_number)
+                        ),
                         associated_tests=_required_text(
                             row, "associated_tests", line_number
                         ),
@@ -230,6 +240,21 @@ def validate_manifest(rows: Sequence[ScenarioMetadata]) -> None:
             raise ManifestValidationError(
                 f"{row.scenario_id}: artifact_file_count={row.artifact_file_count} "
                 f"but {len(artifact_files)} distinct Java paths are declared"
+            )
+        if (
+            row.validation_scope is ValidationScope.TEXTUAL_STRUCTURAL_ONLY
+            and row.associated_tests != "not_applicable"
+        ):
+            raise ManifestValidationError(
+                f"{row.scenario_id}: textual/structural scope must declare "
+                "associated_tests=not_applicable"
+            )
+        if (
+            row.validation_scope is ValidationScope.BEHAVIORAL_EVIDENCE
+            and row.associated_tests == "not_applicable"
+        ):
+            raise ManifestValidationError(
+                f"{row.scenario_id}: behavioral evidence requires associated tests"
             )
 
 

@@ -22,17 +22,4 @@ public class LoyaltyManager {
     public double convertPointsToDiscount(int points) {
         return points * 0.01; // 1 point = $0.01
     }
-    
-    // Enhanced method that works with subscription system
-    public void processLoyaltyBenefits(Customer customer, Order order) {
-        // Grant express shipping for high-tier customers
-        if ("GOLD".equals(customer.getTier()) && order.getAmount() > 200) {
-            order.setExpressShipping(true);
-        }
-        
-        // Recommend better payment methods for premium subscribers
-        if ("PREMIUM".equals(customer.getSubscriptionType()) && "GOLD".equals(customer.getTier())) {
-            order.setPaymentMethod("BANK_TRANSFER"); // Lower fees
-        }
-    }
 }

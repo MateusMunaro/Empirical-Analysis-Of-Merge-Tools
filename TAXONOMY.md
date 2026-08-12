@@ -1,14 +1,15 @@
 # Operational scenario taxonomy
 
 Taxonomy version: `1.0-phase-2`  
-Status: proposed labels pending independent review
+Status: labels confirmed by the Phase 2 two-pass review workflow
 
 ## Purpose
 
 This codebook replaces the former interpretive “Human Factors” dimension with
 variables that are observable in the controlled scenario artifacts. It governs
 the `mapping`, `change_type`, `artifact_file_count`, `logical_element_count`,
-and `dependency_scope` fields in `data/scenario_manifest.csv`.
+`dependency_scope`, and `validation_scope` fields in
+`data/scenario_manifest.csv`.
 
 The benchmark has no human participants. It therefore does not measure
 cognitive load, developer experience, effort, understandability, or other
@@ -83,8 +84,28 @@ after both first-round forms are locked; corrections are appended as a higher
 review round. A third reviewer adjudicates unresolved cases.
 
 The public manifest remains `pending_independent_review` until every scenario
-has at least two independent confirmations of both labels and two accepted
-oracle decisions. Agreement coverage alone is not confirmation.
+has two confirmations of both labels and two accepted oracle decisions.
+Agreement coverage alone is not confirmation. In the current dataset, the
+two records are Codex-assisted review passes under author direction, not two
+independent human coders; see `ORACLE_VALIDATION.md` for the required
+provenance wording.
+
+## Validation scope
+
+`change_type=behavioral` describes the intended effect encoded by a scenario;
+it does not prove behavioral equivalence. Evidence scope is recorded separately:
+
+- `textual_structural_only` means the study evaluates the produced tree against
+  the independently reviewed textual oracle and may report syntax evidence. It
+  must not claim semantic or behavioral correctness, and
+  `associated_tests=not_applicable`.
+- `behavioral_evidence` is allowed only when the manifest names executable
+  scenario tests and the frozen pipeline records their result.
+
+The current 39-scenario benchmark is preregistered as
+`textual_structural_only`. A later behavioral extension requires a new protocol
+version, test fixtures, and regeneration of results; a behavioral scenario
+label alone is not sufficient.
 
 ## Manuscript use
 

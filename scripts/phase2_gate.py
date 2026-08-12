@@ -3,15 +3,37 @@
 from __future__ import annotations
 
 import argparse
+import csv
 from dataclasses import dataclass
+from pathlib import Path
 
 from scripts.oracle_audit import audit_oracles
 from scripts.oracle_validation import load_reviews, release_readiness_issues
 from scripts.scenario_metadata import (
     ClassificationStatus,
+    REPO_ROOT,
+    ValidationScope,
     audit_scenario_artifacts,
     load_manifest,
 )
+
+
+DEFAULT_TECHNICAL_ISSUES_PATH = REPO_ROOT / "data" / "oracle_technical_issues.csv"
+
+
+def documented_open_issue_rows(
+    path: Path = DEFAULT_TECHNICAL_ISSUES_PATH,
+) -> tuple[str, ...]:
+    if not path.is_file():
+        return ()
+    with path.open("r", encoding="utf-8", newline="") as issue_file:
+        rows = list(csv.DictReader(issue_file))
+    return tuple(
+        f"{row.get('scenario_id', '?')}/{row.get('relative_path', '?')}: "
+        f"{row.get('issue', 'undocumented issue')}"
+        for row in rows
+        if (row.get("status") or "").startswith("open")
+    )
 
 
 @dataclass(frozen=True)
@@ -28,8 +50,9 @@ def phase2_gate_categories() -> tuple[GateCategory, ...]:
             "scenario artifact integrity", audit_scenario_artifacts(manifest)
         ),
         GateCategory("oracle technical audit", audit_oracles(manifest).issues),
+        GateCategory("documented oracle issue ledger", documented_open_issue_rows()),
         GateCategory(
-            "independent oracle and label review",
+            "two-pass oracle and label review",
             release_readiness_issues(reviews, manifest),
         ),
         GateCategory(
@@ -51,14 +74,23 @@ def phase2_gate_categories() -> tuple[GateCategory, ...]:
             ),
         ),
         GateCategory(
-            "scenario tests",
-            tuple(
-                f"{scenario.scenario_id}: no executable acceptance test is defined"
-                for scenario in manifest
-                if scenario.associated_tests == "none_defined"
-            ),
+            "validation evidence policy", validation_evidence_issues(manifest)
         ),
     )
+
+
+def validation_evidence_issues(manifest) -> tuple[str, ...]:
+    issues: list[str] = []
+    for scenario in manifest:
+        if scenario.validation_scope is ValidationScope.TEXTUAL_STRUCTURAL_ONLY:
+            continue
+        for raw_path in scenario.associated_tests.split(";"):
+            path = REPO_ROOT / raw_path
+            if not path.is_file():
+                issues.append(
+                    f"{scenario.scenario_id}: associated test is missing: {raw_path}"
+                )
+    return tuple(issues)
 
 
 def main() -> int:

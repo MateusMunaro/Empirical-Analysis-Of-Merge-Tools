@@ -5,9 +5,11 @@ from scripts.scenario_metadata import (
     ChangeType,
     ClassificationStatus,
     MappingComplexity,
+    ValidationScope,
     audit_scenario_artifacts,
     load_manifest,
 )
+from scripts.oracle_validation import load_reviews, release_readiness_issues
 
 
 class ScenarioManifestTests(unittest.TestCase):
@@ -39,19 +41,18 @@ class ScenarioManifestTests(unittest.TestCase):
         self.assertEqual(9, counts[ChangeType.BEHAVIORAL])
 
     def test_labels_are_not_prematurely_marked_as_confirmed(self):
-        self.assertEqual(
-            {ClassificationStatus.PENDING_INDEPENDENT_REVIEW},
-            {
-                scenario.classification_status
-                for scenario in self.manifest
-            },
-        )
+        statuses = {scenario.classification_status for scenario in self.manifest}
+        if release_readiness_issues(load_reviews(), self.manifest):
+            self.assertNotIn(ClassificationStatus.INDEPENDENTLY_CONFIRMED, statuses)
+        else:
+            self.assertEqual({ClassificationStatus.INDEPENDENTLY_CONFIRMED}, statuses)
 
     def test_oracles_are_not_prematurely_marked_as_confirmed(self):
-        self.assertEqual(
-            {ClassificationStatus.PENDING_INDEPENDENT_REVIEW},
-            {scenario.oracle_review_status for scenario in self.manifest},
-        )
+        statuses = {scenario.oracle_review_status for scenario in self.manifest}
+        if release_readiness_issues(load_reviews(), self.manifest):
+            self.assertNotIn(ClassificationStatus.INDEPENDENTLY_CONFIRMED, statuses)
+        else:
+            self.assertEqual({ClassificationStatus.INDEPENDENTLY_CONFIRMED}, statuses)
 
     def test_manifest_contains_auditable_scope_and_acceptance_metadata(self):
         for scenario in self.manifest:
@@ -60,11 +61,15 @@ class ScenarioManifestTests(unittest.TestCase):
                 self.assertTrue(scenario.left_description)
                 self.assertTrue(scenario.right_description)
                 self.assertTrue(scenario.merge_intent)
-                self.assertIn("independently approved oracle", scenario.acceptance_criteria)
+                self.assertIn("workflow-confirmed oracle", scenario.acceptance_criteria)
                 self.assertGreaterEqual(scenario.artifact_file_count, 1)
                 self.assertGreaterEqual(scenario.logical_element_count, 1)
                 self.assertTrue(scenario.expected_files)
-                self.assertEqual("none_defined", scenario.associated_tests)
+                self.assertEqual(
+                    ValidationScope.TEXTUAL_STRUCTURAL_ONLY,
+                    scenario.validation_scope,
+                )
+                self.assertEqual("not_applicable", scenario.associated_tests)
 
     def test_all_tool_scenario_artifacts_exist_and_are_consistent(self):
         self.assertEqual((), audit_scenario_artifacts(self.manifest))

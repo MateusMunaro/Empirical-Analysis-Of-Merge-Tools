@@ -3,13 +3,11 @@ public class Order {
     private Long customerId;
     private double amount;
     private String status;
-    
-    // Combined features from both systems
-    private String priority; // From loyalty system
-    private boolean expressShipping; // From loyalty system
-    private boolean isRecurring; // From subscription system
-    private int billingCycle; // From subscription system
-    private String paymentMethod; // From subscription system
+    private String priority;
+    private boolean expressShipping;
+    private boolean isRecurring;
+    private int billingCycle; // in months
+    private String paymentMethod;
     
     public Order(Long orderId, Long customerId, double amount) {
         this.orderId = orderId;
@@ -32,11 +30,11 @@ public class Order {
     public boolean isRecurring() { return isRecurring; }
     public int getBillingCycle() { return billingCycle; }
     public String getPaymentMethod() { return paymentMethod; }
-    
+
     public void setPriority(String priority) {
         this.priority = priority;
     }
-    
+
     public void setExpressShipping(boolean express) {
         this.expressShipping = express;
     }
@@ -51,9 +49,7 @@ public class Order {
     }
     
     public void processOrder() {
-        if ("HIGH".equals(priority) && isRecurring) {
-            this.status = "FAST_TRACKED_SCHEDULED";
-        } else if ("HIGH".equals(priority)) {
+        if ("HIGH".equals(priority)) {
             this.status = "FAST_TRACKED";
         } else if (isRecurring) {
             this.status = "SCHEDULED";
@@ -65,7 +61,7 @@ public class Order {
     public double calculateTotal() {
         double baseTotal = amount;
         
-        // Apply recurring discounts first (from subscription system)
+        // Recurring order discount
         if (isRecurring) {
             if (billingCycle >= 12) {
                 baseTotal *= 0.85; // 15% discount for annual billing
@@ -75,18 +71,18 @@ public class Order {
                 baseTotal *= 0.95; // 5% discount for quarterly
             }
         }
-        
-        // Apply priority processing fee (from loyalty system)
+
+        // Priority processing fee from the loyalty branch.
         if ("HIGH".equals(priority)) {
-            baseTotal += amount * 0.05; // 5% priority fee
+            baseTotal += amount * 0.05;
         }
-        
-        // Apply express shipping fee (from loyalty system)
+
+        // Express shipping fee from the loyalty branch.
         if (expressShipping) {
-            baseTotal += 15.0; // $15 express fee
+            baseTotal += 15.0;
         }
         
-        // Apply payment method fees (from subscription system)
+        // Payment method fees
         switch (paymentMethod) {
             case "BANK_TRANSFER":
                 // No additional fee
@@ -100,8 +96,8 @@ public class Order {
                 break;
         }
         
-        // Apply unified tax (compromise between 8% and 12%)
-        baseTotal += baseTotal * 0.10; // 10% unified tax
+        // Retain the subscription branch's explicit service-tax decision.
+        baseTotal += baseTotal * 0.12; // 12% service tax
         
         return baseTotal;
     }
