@@ -1,0 +1,34 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"getPersonId": {
+			"left": "getPersonId"
+		},
+		"setPersonId": {
+			"left": "setPersonId"
+		},
+		"getFullName": {
+			"left": "getFullName"
+		},
+		"setFullName": {
+			"left": "setFullName"
+		},
+		"getEmailAddress": {
+			"left": "getEmailAddress"
+		},
+		"setEmailAddress": {
+			"left": "setEmailAddress"
+		},
+		"getPhoneNumber": {
+			"left": "getPhoneNumber"
+		},
+		"setPhoneNumber": {
+			"left": "setPhoneNumber"
+		}
+	}
+
+}

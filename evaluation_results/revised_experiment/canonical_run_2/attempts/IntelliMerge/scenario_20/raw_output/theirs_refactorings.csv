@@ -1,0 +1,8 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.71;18-20;.Person.getName();18-20;.PersonId.getName()
+Change Method Signature;method;0.72;22-24;.Person.setName(String);22-24;.PersonId.setName(String)
+Change Method Signature;method;0.71;14-16;.Person.setId(int);14-16;.PersonId.setId(int)
+Change Method Signature;method;0.7;10-12;.Person.getId();10-12;.PersonId.getId()
+Change Field Signature;field;1.0;2-2;.Person.id;2-2;.PersonId.id
+Change Field Signature;field;1.0;3-3;.Person.name;3-3;.PersonId.name
+Change Constructor Signature;constructor;0.68;5-8;.Person.Person(int, String);5-8;.PersonId.PersonId(int, String)

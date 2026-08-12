@@ -1,0 +1,3 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.66;22-24;.Employee.setName(String);24-26;.Worker.setName(String)
+Change Field Signature;field;1.0;3-3;.Employee.name;3-3;.Worker.name

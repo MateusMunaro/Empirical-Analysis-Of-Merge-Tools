@@ -1,0 +1,10 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.67;36-38;.Person.setEmail(String);14-16;.Contact.setEmail(String)
+Change Method Signature;method;0.66;28-30;.Person.setName(String);14-16;.Identity.setName(String)
+Change Method Signature;method;0.69;52-54;.Person.setBirthDate(Date);22-24;.Identity.setBirthDate(Date)
+Change Method Signature;method;0.67;44-46;.Person.setPhone(String);22-24;.Contact.setPhone(String)
+Change Method Signature;method;0.66;48-50;.Person.getBirthDate();18-20;.Identity.getBirthDate()
+Change Field Signature;field;1.0;6-6;.Person.birthDate;3-3;.Identity.birthDate
+Change Field Signature;field;1.0;4-4;.Person.email;2-2;.Contact.email
+Change Field Signature;field;1.0;5-5;.Person.phone;3-3;.Contact.phone
+Change Field Signature;field;1.0;3-3;.Person.name;2-2;.Identity.name
