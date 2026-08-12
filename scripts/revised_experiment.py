@@ -33,6 +33,7 @@ from scripts.analysis_units import (
     ObservationStatus,
     ScenarioObservation,
 )
+from scripts.artifact_hashes import sha256_file, sha256_zip_content
 from scripts.evaluation_metrics import (
     TreeMetrics,
     evaluate_trees,
@@ -88,6 +89,7 @@ class ToolRuntime:
     artifact: Path
     checksum_artifact: Path
     expected_sha256: str | None
+    checksum_kind: str
     java_executable: Path
     java_home: Path
     command_builder: Callable[[str, Path, Path, dict[str, str]], tuple[list[str], Path, Path]]
@@ -111,14 +113,6 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace(
         "+00:00", "Z"
     )
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def sha256_tree(root: Path) -> str | None:
@@ -268,7 +262,11 @@ def _artifact_preflight(runtime: ToolRuntime) -> str | None:
     if runtime.expected_sha256:
         if not runtime.checksum_artifact.is_file():
             return f"locked checksum artifact is missing: {runtime.checksum_artifact}"
-        observed = sha256_file(runtime.checksum_artifact)
+        observed = (
+            sha256_zip_content(runtime.checksum_artifact)
+            if runtime.checksum_kind == "canonical_zip_content_sha256"
+            else sha256_file(runtime.checksum_artifact)
+        )
         if observed != runtime.expected_sha256:
             return (
                 f"tool artifact checksum mismatch: expected {runtime.expected_sha256}, "
@@ -333,6 +331,7 @@ def load_runtimes(lock_path: Path) -> tuple[dict, dict[str, ToolRuntime]]:
             REPO_ROOT / tools["IntelliMerge"]["artifact_path"],
             REPO_ROOT / tools["IntelliMerge"]["artifact_path"],
             tools["IntelliMerge"]["artifact_sha256"],
+            "raw_sha256",
             intelli_java, intelli_java.parent.parent,
             lambda scenario, attempt, raw, _ignored: _intellimerge_command(
                 scenario, attempt, raw,
@@ -344,6 +343,7 @@ def load_runtimes(lock_path: Path) -> tuple[dict, dict[str, ToolRuntime]]:
             REPO_ROOT / tools["FSTMerge"]["artifact_path"],
             REPO_ROOT / tools["FSTMerge"]["artifact_path"],
             tools["FSTMerge"]["artifact_sha256"],
+            "raw_sha256",
             fst_java, fst_java.parent.parent,
             lambda scenario, attempt, raw, _ignored: _fstmerge_command(
                 scenario, attempt, raw,
@@ -357,7 +357,8 @@ def load_runtimes(lock_path: Path) -> tuple[dict, dict[str, ToolRuntime]]:
                 else tools["JDime"]["artifact_path_linux"]
             ),
             REPO_ROOT / tools["JDime"]["build_artifact_path"],
-            tools["JDime"]["build_artifact_sha256"],
+            tools["JDime"]["build_content_sha256"],
+            tools["JDime"]["build_artifact_verification"],
             jdime_java, jdime_java.parent.parent,
             lambda scenario, attempt, raw, _ignored: _jdime_command(
                 scenario, attempt, raw, tools["JDime"]

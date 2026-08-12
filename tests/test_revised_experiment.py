@@ -122,7 +122,8 @@ class AttemptIntegrationTests(unittest.TestCase):
             executable = Path(sys.executable)
             runtime = ToolRuntime(
                 "IntelliMerge", "test", executable, executable,
-                sha256_file(executable), executable, executable.parent,
+                sha256_file(executable), "raw_sha256", executable,
+                executable.parent,
                 command_builder,
             )
             environment = {
