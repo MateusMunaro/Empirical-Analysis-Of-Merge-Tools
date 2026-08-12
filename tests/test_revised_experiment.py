@@ -164,6 +164,7 @@ class FrozenCommandTests(unittest.TestCase):
                 "scenario_1", attempt, attempt / "raw", {}
             )
         self.assertIn("--recursive", command)
+        self.assertIn("--exit-on-error", command)
         self.assertEqual("structured", command[command.index("--mode") + 1])
 
 

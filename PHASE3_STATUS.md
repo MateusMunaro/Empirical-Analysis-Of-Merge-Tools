@@ -8,6 +8,8 @@ Last automated audit: `2026-08-12`
 - Timeout: 120 wall-clock seconds per attempt.
 - JDime: structured mode only; unstructured fallback disabled.
 - JDime directory inputs: explicit `--recursive` mode.
+- JDime structured failures: explicit `--exit-on-error`; the tool's default
+  automatic line-based fallback is therefore not permitted.
 - Failures remain `setup_error`, `crash`, `timeout`, or `invalid_output`; they
   are never silently changed to F1 = 0 in the primary analysis.
 - Raw and normalized outputs are retained separately.

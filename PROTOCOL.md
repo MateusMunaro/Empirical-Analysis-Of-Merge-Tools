@@ -42,7 +42,9 @@ The revised study adopts these decisions:
 10. A separately labelled end-to-end sensitivity analysis may assign zero to
     unavailable outputs. It must never replace the primary outcome reporting.
 11. JDime receives directory inputs in explicit recursive mode while retaining
-    `structured` as the only merge strategy; unstructured fallback is disabled.
+    `structured` as the only merge strategy. `--exit-on-error` disables the
+    tool's default automatic line-based fallback and exposes failures as
+    terminal execution outcomes.
 
 ## Unit of analysis and expected matrix
 
