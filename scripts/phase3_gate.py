@@ -3,24 +3,17 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import platform
 import subprocess
 from pathlib import Path
 
+from scripts.artifact_hashes import sha256_file, sha256_zip_content
+
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_LOCK = REPO_ROOT / "tool_versions.lock"
 REQUIRED_TOOLS = ("FSTMerge", "IntelliMerge", "JDime")
-
-
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
 
 
 def phase3_issues(lock_path: Path = DEFAULT_LOCK, release: bool = False) -> tuple[str, ...]:
@@ -61,10 +54,12 @@ def phase3_issues(lock_path: Path = DEFAULT_LOCK, release: bool = False) -> tupl
             issues.append(f"JDime launcher is missing: {jdime_path}")
         if not jdime_build.is_file():
             issues.append(f"JDime build artifact is missing: {jdime_build}")
-        elif not jdime.get("build_artifact_sha256"):
-            issues.append("JDime build artifact checksum has not been frozen")
-        elif sha256_file(jdime_build) != jdime["build_artifact_sha256"]:
-            issues.append("JDime build artifact checksum does not match the lockfile")
+        elif not jdime.get("build_content_sha256"):
+            issues.append("JDime canonical build-content checksum has not been frozen")
+        elif sha256_zip_content(jdime_build) != jdime["build_content_sha256"]:
+            issues.append(
+                "JDime canonical build-content checksum does not match the lockfile"
+            )
         target = lock.get("target_environment", {}).get("operating_system", "")
         if not platform.system().lower().startswith("linux"):
             issues.append(

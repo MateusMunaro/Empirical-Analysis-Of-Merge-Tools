@@ -49,8 +49,9 @@
       "artifact_path_linux": "merge_tools/JDime/jdime/build/install/JDime/bin/JDime",
       "artifact_path_windows": "merge_tools/JDime/jdime/build/install/JDime/bin/JDime.bat",
       "build_artifact_path": "merge_tools/JDime/jdime/build/install/JDime/lib/JDime.jar",
-      "build_artifact_size": 290059,
-      "build_artifact_sha256": "9ad4ebfbbe43a1e3d85b2ec77cd217f87451f0e56e73f09b886a5d708ff5e248",
+      "build_artifact_verification": "canonical_zip_content_sha256",
+      "build_content_sha256": "f9b0ab82a76a467208feb836393cdb1026ba877331fab2b7951b3566f50624b4",
+      "raw_sha256_note": "Raw JAR bytes are recorded per execution but are not a portable build identity because ZIP metadata differs across equivalent platform builds.",
       "runtime_java_path": "java_dependencies/java-versions/jdk8u392-b08/bin/java",
       "runtime_java_major": 8,
       "arguments": ["<artifact>", "-f", "--mode", "structured", "--output", "<raw_output>", "<left>", "<base>", "<right>"]

@@ -27,7 +27,6 @@ Tested on Ubuntu 22.04 / Debian 12 / Fedora 39 (x86_64).
 from __future__ import annotations
 
 import argparse
-import hashlib
 import os
 import platform
 import shutil
@@ -36,6 +35,8 @@ import sys
 import tarfile
 import urllib.request
 from pathlib import Path
+
+from scripts.artifact_hashes import sha256_file, sha256_zip_content
 
 REPO_ROOT = Path(__file__).resolve().parent
 
@@ -77,7 +78,7 @@ JDIME_SRC_DIR = REPO_ROOT / "merge_tools" / "JDime" / "jdime"
 JDIME_INSTALL_DIR = JDIME_SRC_DIR / "build" / "install" / "JDime"
 JDIME_LAUNCHER = JDIME_INSTALL_DIR / "bin" / "JDime"
 JDIME_BUILD_JAR = JDIME_INSTALL_DIR / "lib" / "JDime.jar"
-JDIME_BUILD_SHA256 = "9ad4ebfbbe43a1e3d85b2ec77cd217f87451f0e56e73f09b886a5d708ff5e248"
+JDIME_BUILD_CONTENT_SHA256 = "f9b0ab82a76a467208feb836393cdb1026ba877331fab2b7951b3566f50624b4"
 
 VENV_DIR = REPO_ROOT / ".venv"
 PY_PACKAGES = ["numpy", "pandas", "matplotlib", "scipy", "tabulate"]
@@ -110,19 +111,20 @@ def run(cmd, cwd: Path | None = None, env: dict | None = None) -> None:
         raise SetupError(f"command failed ({result.returncode}): {pretty}")
 
 
-def sha256_file(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
-
-
 def require_sha256(path: Path, expected: str) -> None:
     observed = sha256_file(path)
     if observed != expected:
         raise SetupError(
             f"checksum mismatch for {path}: expected {expected}, observed {observed}"
+        )
+
+
+def require_zip_content_sha256(path: Path, expected: str) -> None:
+    observed = sha256_zip_content(path)
+    if observed != expected:
+        raise SetupError(
+            f"canonical ZIP-content checksum mismatch for {path}: "
+            f"expected {expected}, observed {observed}"
         )
 
 
@@ -268,9 +270,25 @@ def step_jdk21(force: bool) -> None:
 def step_jdime(force: bool) -> None:
     info("== JDime (built from source) ==")
     if JDIME_LAUNCHER.exists() and not force:
+        if not (JDIME_SRC_DIR / ".git").exists():
+            raise SetupError(
+                f"existing JDime distribution has no verifiable source clone: "
+                f"{JDIME_SRC_DIR}. Re-run with --force."
+            )
+        observed_commit = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=JDIME_SRC_DIR,
+            capture_output=True, text=True, check=True,
+        ).stdout.strip()
+        if observed_commit != JDIME_COMMIT:
+            raise SetupError(
+                f"existing JDime source commit mismatch: expected {JDIME_COMMIT}, "
+                f"observed {observed_commit}. Re-run with --force."
+            )
         if not JDIME_BUILD_JAR.exists():
             raise SetupError(f"JDime build jar missing: {JDIME_BUILD_JAR}")
-        require_sha256(JDIME_BUILD_JAR, JDIME_BUILD_SHA256)
+        require_zip_content_sha256(
+            JDIME_BUILD_JAR, JDIME_BUILD_CONTENT_SHA256
+        )
         info(f"already built: {JDIME_LAUNCHER.relative_to(REPO_ROOT)} (skipping)")
         return
 
@@ -306,13 +324,17 @@ def step_jdime(force: bool) -> None:
     env = os.environ.copy()
     env["JAVA_HOME"] = str(JDK21_DIR)
     env["PATH"] = f"{JDK21_DIR / 'bin'}{os.pathsep}{env.get('PATH', '')}"
-    run([str(gradlew), "installDist", "--no-daemon"], cwd=JDIME_SRC_DIR, env=env)
+    run(
+        [str(gradlew), "clean", "installDist", "--no-daemon"],
+        cwd=JDIME_SRC_DIR,
+        env=env,
+    )
 
     if not JDIME_LAUNCHER.exists():
         raise SetupError(f"build finished but launcher missing: {JDIME_LAUNCHER}")
     if not JDIME_BUILD_JAR.exists():
         raise SetupError(f"build finished but jar missing: {JDIME_BUILD_JAR}")
-    require_sha256(JDIME_BUILD_JAR, JDIME_BUILD_SHA256)
+    require_zip_content_sha256(JDIME_BUILD_JAR, JDIME_BUILD_CONTENT_SHA256)
     JDIME_LAUNCHER.chmod(0o755)
     info("JDime built and installed.")
 
