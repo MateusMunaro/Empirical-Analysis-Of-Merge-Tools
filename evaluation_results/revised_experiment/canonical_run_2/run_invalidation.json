@@ -1,0 +1,13 @@
+{
+  "invalidated_at_utc": "2026-08-13T00:30:00Z",
+  "scope": "entire_run",
+  "reason": "JDime was invoked without --exit-on-error, so its documented default automatic line-based fallback could not be excluded.",
+  "evidence": {
+    "source_option": "CommandLineConfigSource.java: if neither --exit-on-error nor --keep-going is set, fallback line-based strategy will be tried",
+    "source_behavior": "FileArtifact.java catches structured RuntimeException and switches to LinebasedStrategy by default",
+    "phase4_gate_before_invalidation": "PASS",
+    "records": 117
+  },
+  "disposition": "Preserved as pre-analysis harness-discovery evidence; excluded from all analysis and publication results.",
+  "replacement_run": "canonical_run_3"
+}

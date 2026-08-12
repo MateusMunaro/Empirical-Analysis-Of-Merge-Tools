@@ -2,6 +2,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts.phase3_gate import DEFAULT_LOCK, phase3_issues
 
@@ -32,9 +33,25 @@ class Phase3GateTests(unittest.TestCase):
                 phase3_issues(path),
             )
 
+    def test_jdime_must_fail_instead_of_falling_back(self):
+        lock = json.loads(DEFAULT_LOCK.read_text(encoding="utf-8"))
+        lock["execution_policy"]["jdime_exit_on_error"] = False
+        lock["tools"]["JDime"]["arguments"].remove("--exit-on-error")
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            path = Path(temporary_directory) / "tool_versions.lock"
+            path.write_text(json.dumps(lock), encoding="utf-8")
+            issues = phase3_issues(path)
+            self.assertIn("JDime must exit on structured merge errors", issues)
+            self.assertIn(
+                "JDime locked arguments must disable automatic fallback", issues
+            )
+
     def test_release_gate_exposes_incompatible_environment(self):
-        issues = phase3_issues(release=True)
-        self.assertTrue(issues)
+        with patch("scripts.phase3_gate.platform.system", return_value="Windows"):
+            issues = phase3_issues(release=True)
+        self.assertTrue(
+            any("release execution requires Linux x86_64" in issue for issue in issues)
+        )
 
 
 if __name__ == "__main__":

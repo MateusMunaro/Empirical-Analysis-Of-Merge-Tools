@@ -17,14 +17,16 @@ Last automated audit: `2026-08-12`
 
 ## Blocked
 
-`canonical_run_1` produced all 117 records and exposed an adapter defect before
-analysis: JDime received directory inputs without its required explicit
-recursive option. It produced 37 absent outputs and two empty Java artifacts.
-That run is preserved with `run_invalidation.json` and must not be analyzed or
-reported. The Phase 4 gate was also corrected to accept mathematically
-undefined precision/F1 for a readable zero-line output.
+`canonical_run_1` produced all 117 records and exposed missing explicit JDime
+recursive mode. `canonical_run_2` added that option and passed the structural
+gate, but source-level audit before analysis found that this JDime commit tries
+automatic line-based fallback after structured exceptions unless
+`--exit-on-error` is supplied. Both runs are preserved with
+`run_invalidation.json` and must not be analyzed or reported. The Phase 4 gate
+was also corrected to accept mathematically undefined precision/F1 for a
+readable zero-line output.
 
-The corrected harness requires a fresh complete run named `canonical_run_2` in
+The corrected harness requires a fresh complete run named `canonical_run_3` in
 the Linux x86_64 environment. The Windows workstation remains unsuitable for
 release execution because its registered WSL distributions are broken.
 
@@ -36,11 +38,11 @@ source .venv/bin/activate
 python -m unittest discover -s tests -v
 python -m scripts.phase3_gate --release
 python -m scripts.revised_experiment --release \
-  --run-dir evaluation_results/revised_experiment/canonical_run_2
+  --run-dir evaluation_results/revised_experiment/canonical_run_3
 python -m scripts.phase4_gate \
-  evaluation_results/revised_experiment/canonical_run_2
+  evaluation_results/revised_experiment/canonical_run_3
 python -m scripts.phase4_audit prepare \
-  evaluation_results/revised_experiment/canonical_run_2 \
+  evaluation_results/revised_experiment/canonical_run_3 \
   --output evaluation_results/revised_experiment/manual_audit.csv
 ```
 
