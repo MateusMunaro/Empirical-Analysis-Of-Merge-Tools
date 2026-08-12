@@ -50,8 +50,9 @@
       "artifact_path_windows": "merge_tools/JDime/jdime/build/install/JDime/bin/JDime.bat",
       "build_artifact_path": "merge_tools/JDime/jdime/build/install/JDime/lib/JDime.jar",
       "build_artifact_verification": "canonical_zip_content_sha256",
-      "build_content_sha256": "f9b0ab82a76a467208feb836393cdb1026ba877331fab2b7951b3566f50624b4",
-      "raw_sha256_note": "Raw JAR bytes are recorded per execution but are not a portable build identity because ZIP metadata differs across equivalent platform builds.",
+      "build_content_sha256": "db7dacfbae08c2ab68b18826e4bc0249e1982cbfd5fc7bd3a02b69a8292887aa",
+      "linux_clean_build_raw_sha256": "2c87fb916cb2d99d843085bb30d27da92004e503b4dbeb00bcdb251bfdd867af",
+      "build_verification_note": "Frozen from two matching observations around a clean installDist build on the canonical Linux x86_64 target. The Windows build differs and is not a release artifact.",
       "runtime_java_path": "java_dependencies/java-versions/jdk8u392-b08/bin/java",
       "runtime_java_major": 8,
       "arguments": ["<artifact>", "-f", "--mode", "structured", "--output", "<raw_output>", "<left>", "<base>", "<right>"]

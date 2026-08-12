@@ -53,7 +53,12 @@ built, hashed JDime artifact and the frozen Linux x86_64 environment.
   artifact present and checksum verified;
 - JDime source fixed at commit
   `dc3d2eeacf0bb0980994b980bcb11c630300c4f3`; the Gradle distribution build
-  completed and `JDime.jar` is frozen by size and SHA-256 in the lockfile.
+  completed. The canonical Linux x86_64 build was reproduced with
+  `clean installDist`; its raw SHA-256 is
+  `2c87fb916cb2d99d843085bb30d27da92004e503b4dbeb00bcdb251bfdd867af`
+  and its metadata-independent ZIP-content SHA-256 is
+  `db7dacfbae08c2ab68b18826e4bc0249e1982cbfd5fc7bd3a02b69a8292887aa`.
+  The Windows build is intentionally not accepted as a release artifact.
 
 The development gate passes here. The release gate remains closed because the
 frozen target is Linux x86_64 and its provisioned Temurin runtimes are absent.
