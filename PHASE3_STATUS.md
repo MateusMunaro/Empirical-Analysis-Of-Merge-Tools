@@ -45,7 +45,15 @@ The development gate validates the lockfile, harness, and locally available
 IntelliMerge/FSTMerge artifacts. The release gate additionally requires a
 built, hashed JDime artifact and the frozen Linux x86_64 environment.
 
-## Current host
+## Release evidence and current host
+
+The release gate passed in the canonical Linux x86_64 Codespaces environment
+before `canonical_run_3` was created. The retained run metadata records Python
+3.12.1, Linux 6.8 x86_64, the frozen Temurin runtimes, lockfile snapshot, tool
+artifact hashes, and the no-fallback JDime command. Phase 3 is therefore
+complete for the accepted release run.
+
+The local Windows workstation remains useful only for development checks:
 
 - Windows 11 x64;
 - Python 3.12.3;
@@ -63,14 +71,14 @@ built, hashed JDime artifact and the frozen Linux x86_64 environment.
   `db7dacfbae08c2ab68b18826e4bc0249e1982cbfd5fc7bd3a02b69a8292887aa`.
   The Windows build is intentionally not accepted as a release artifact.
 
-The development gate passes here. The release gate remains closed because the
-frozen target is Linux x86_64 and its provisioned Temurin runtimes are absent.
+The development gate passes here. A new release execution remains unavailable
+on this host because the frozen target is Linux x86_64 and its provisioned
+Temurin runtimes are absent.
 Both registered user distributions (`Ubuntu` and `kali-linux`) fail to start:
 their registered `ext4.vhdx` files are missing
 (`Wsl/Service/CreateInstance/MountDisk/HCS/ERROR_FILE_NOT_FOUND`). Therefore a
 Windows run can be diagnostic only and must not be presented as publication
-data. The canonical 117-attempt run must be completed in a working Linux/WSL2
-environment after `python setup.py`.
+data. The accepted 117-attempt run was instead completed in Codespaces.
 
 ## Smoke evidence
 

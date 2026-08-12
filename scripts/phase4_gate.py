@@ -20,6 +20,13 @@ from scripts.analysis_units import (
 EXPECTED_KEYS = {
     (tool, scenario) for tool in DEFAULT_TOOLS for scenario in DEFAULT_SCENARIO_IDS
 }
+HIGH_RISK_SCENARIOS = (
+    "scenario_1", "scenario_5", "scenario_6", "scenario_10", "scenario_11",
+    "scenario_17", "scenario_23", "scenario_30", "scenario_38",
+)
+HIGH_RISK_KEYS = {
+    (tool, scenario) for tool in DEFAULT_TOOLS for scenario in HIGH_RISK_SCENARIOS
+}
 COMPLETED = {
     ObservationStatus.COMPLETED_CLEAN.value,
     ObservationStatus.COMPLETED_CONFLICTED.value,
@@ -35,7 +42,9 @@ SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 def _read_csv(path: Path) -> tuple[list[dict[str, str]], list[str]]:
     try:
-        with path.open(encoding="utf-8", newline="") as source:
+        # utf-8-sig also accepts ordinary UTF-8 and strips a BOM emitted by
+        # spreadsheet/PowerShell workflows before the first quoted header.
+        with path.open(encoding="utf-8-sig", newline="") as source:
             return list(csv.DictReader(source)), []
     except OSError as error:
         return [], [f"cannot read {path.name}: {error}"]
@@ -123,7 +132,86 @@ def _metric_issues(row: dict[str, str]) -> list[str]:
     return issues
 
 
-def phase4_issues(run_dir: Path, require_release: bool = True) -> tuple[str, ...]:
+def _final_audit_issues(
+    run_dir: Path, results: list[dict[str, str]]
+) -> list[str]:
+    issues: list[str] = []
+    audit, read_issues = _read_csv(run_dir / "manual_audit.csv")
+    if read_issues:
+        return read_issues
+    audit_keys = [_key(row) for row in audit]
+    duplicate_audit_keys = sorted(
+        key for key, count in Counter(audit_keys).items() if count > 1
+    )
+    unexpected_audit_keys = sorted(set(audit_keys) - EXPECTED_KEYS)
+    if duplicate_audit_keys:
+        issues.append(
+            f"manual audit has duplicate keys: {duplicate_audit_keys[:5]}"
+        )
+    if unexpected_audit_keys:
+        issues.append(
+            f"manual audit has unexpected keys: {unexpected_audit_keys[:5]}"
+        )
+    audit_by_key = {_key(row): row for row in audit}
+    required_boundary_keys = {
+        _key(row) for row in results
+        if row.get("execution_status") != ObservationStatus.COMPLETED_CLEAN.value
+        or row.get("exact_oracle_match") == "True"
+        or row.get("syntactic_valid") == "False"
+    }
+    missing_boundary = sorted(required_boundary_keys - set(audit_by_key))
+    if missing_boundary:
+        issues.append(
+            f"manual audit is missing {len(missing_boundary)} boundary/unexpected cells"
+        )
+    results_by_key = {_key(row): row for row in results}
+    audited_strata = {
+        (key[0], results_by_key[key]["mapping"], results_by_key[key]["change_type"])
+        for key in audit_by_key
+        if key in results_by_key
+    }
+    required_strata = {
+        (row["tool_name"], row["mapping"], row["change_type"])
+        for row in results
+    }
+    if required_strata - audited_strata:
+        issues.append("manual audit does not cover every tool/mapping/change-type stratum")
+    for key, row in audit_by_key.items():
+        label = f"{key[0]}/{key[1]}"
+        if row.get("audit_decision") != "evidence_consistent":
+            issues.append(f"{label}: manual audit decision is not evidence_consistent")
+        if not row.get("auditor_id", "").strip():
+            issues.append(f"{label}: manual audit has no auditor provenance")
+        if not row.get("audit_notes", "").strip():
+            issues.append(f"{label}: manual audit has no notes")
+        if not row.get("audited_at_utc", "").strip():
+            issues.append(f"{label}: manual audit has no UTC timestamp")
+
+    determinism, determinism_read_issues = _read_csv(
+        run_dir / "determinism_high_risk.csv"
+    )
+    if determinism_read_issues:
+        issues.extend(determinism_read_issues)
+        return issues
+    keys = [_key(row) for row in determinism]
+    if len(keys) != len(set(keys)):
+        issues.append("determinism evidence contains duplicate keys")
+    if set(keys) != HIGH_RISK_KEYS:
+        issues.append(
+            "determinism evidence must contain the frozen 27-cell high-risk sample"
+        )
+    for row in determinism:
+        if row.get("deterministic") != "True" or row.get("different_fields"):
+            issues.append(
+                f"{row.get('tool_name')}/{row.get('scenario_id')}: "
+                "determinism comparison differs or is not adjudicated"
+            )
+    return issues
+
+
+def phase4_issues(
+    run_dir: Path, require_release: bool = True, require_final_audit: bool = False
+) -> tuple[str, ...]:
     run_dir = run_dir.resolve()
     issues: list[str] = []
     invalidation_path = run_dir / "run_invalidation.json"
@@ -179,6 +267,8 @@ def phase4_issues(run_dir: Path, require_release: bool = True) -> tuple[str, ...
             issues.append("run metadata does not declare the frozen tool order")
         if metadata.get("scenarios") != list(DEFAULT_SCENARIO_IDS):
             issues.append("run metadata does not declare all 39 scenarios")
+    if require_final_audit and not issues:
+        issues.extend(_final_audit_issues(run_dir, results))
     return tuple(issues)
 
 
@@ -189,8 +279,17 @@ def main() -> int:
         "--allow-diagnostic", action="store_true",
         help="Validate structure without requiring canonical_release metadata",
     )
+    parser.add_argument(
+        "--final", action="store_true",
+        help="Also require completed manual-audit and determinism evidence",
+    )
     args = parser.parse_args()
-    issues = phase4_issues(args.run_dir, require_release=not args.allow_diagnostic)
+    if args.final and args.allow_diagnostic:
+        parser.error("--final cannot be combined with --allow-diagnostic")
+    issues = phase4_issues(
+        args.run_dir, require_release=not args.allow_diagnostic,
+        require_final_audit=args.final,
+    )
     if issues:
         print(f"PHASE 4 GATE: BLOCKED ({len(issues)} issue(s))")
         for issue in issues:

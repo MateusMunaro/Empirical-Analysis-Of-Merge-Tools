@@ -42,6 +42,7 @@ scripts/
   phase2_gate.py               metadata/oracle release gate
   phase3_gate.py               environment and tool-artifact gate
   phase4_gate.py               117-row result integrity gate
+  phase4_audit.py              audit selection and determinism comparison
 tests/                         evaluator and gate regression tests
 tool_versions.lock             frozen commits, artifacts, hashes, JDKs, policy
 evaluation_results/
@@ -114,6 +115,20 @@ python -m scripts.revised_experiment \
 Diagnostic runs are marked in `run_metadata.json` and cannot pass the default
 Phase 4 gate. They must never be mixed with publication data.
 
+The accepted canonical source is `canonical_run_3`. Its 85-cell
+Codex-assisted, author-supervised evidence inspection is recorded in
+`manual_audit.csv`. Phase 4 is released only after the preregistered 27-cell
+high-risk repeat has been compared and the final gate passes:
+
+```bash
+python -m scripts.phase4_audit compare-sample \
+  evaluation_results/revised_experiment/canonical_run_3 \
+  evaluation_results/revised_experiment/determinism_high_risk_1 \
+  --output evaluation_results/revised_experiment/canonical_run_3/determinism_high_risk.csv
+python -m scripts.phase4_gate --final \
+  evaluation_results/revised_experiment/canonical_run_3
+```
+
 ## Run outputs
 
 Each run contains:
@@ -135,11 +150,12 @@ See [DATA_DICTIONARY.md](DATA_DICTIONARY.md) for column-level definitions.
 ## Validation status
 
 - Phase 2: complete; see [PHASE2_STATUS.md](PHASE2_STATUS.md).
-- Phase 3: harness and artifacts frozen; canonical Linux environment pending on
-  the current workstation; see [PHASE3_STATUS.md](PHASE3_STATUS.md).
-- Phase 4: runner and integrity gate ready; canonical execution pending; see
-  [PHASE4_STATUS.md](PHASE4_STATUS.md).
-- Phases 5 and 8 result-dependent content must wait for a passing Phase 4 run.
+- Phase 3: complete; the frozen Linux release gate passed before canonical run
+  3; see [PHASE3_STATUS.md](PHASE3_STATUS.md).
+- Phase 4: canonical run 3 passes the 117-cell integrity gate and its evidence
+  inspection is complete; only the frozen determinism repeat remains; see
+  [PHASE4_STATUS.md](PHASE4_STATUS.md) and [PHASE4_AUDIT.md](PHASE4_AUDIT.md).
+- Phases 5 and 8 result-dependent content must wait for the final Phase 4 gate.
 
 Run all repository tests with:
 
