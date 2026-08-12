@@ -29,6 +29,8 @@ def phase3_issues(lock_path: Path = DEFAULT_LOCK, release: bool = False) -> tupl
         issues.append("execution timeout must be positive")
     if policy.get("jdime_mode") != "structured":
         issues.append("JDime mode must be frozen as structured")
+    if policy.get("jdime_recursive_directories") is not True:
+        issues.append("JDime directory inputs must be merged recursively")
     if policy.get("jdime_fallback") != "disabled":
         issues.append("JDime fallback must remain disabled")
     tools = lock.get("tools", {})

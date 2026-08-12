@@ -17,9 +17,16 @@ Last automated audit: `2026-08-12`
 
 ## Blocked
 
-The canonical run has not been executed. This host is Windows and its Ubuntu
-and Kali WSL2 registrations both point to missing `ext4.vhdx` files. The
-release command correctly fails closed before creating a result directory.
+`canonical_run_1` produced all 117 records and exposed an adapter defect before
+analysis: JDime received directory inputs without its required explicit
+recursive option. It produced 37 absent outputs and two empty Java artifacts.
+That run is preserved with `run_invalidation.json` and must not be analyzed or
+reported. The Phase 4 gate was also corrected to accept mathematically
+undefined precision/F1 for a readable zero-line output.
+
+The corrected harness requires a fresh complete run named `canonical_run_2` in
+the Linux x86_64 environment. The Windows workstation remains unsuitable for
+release execution because its registered WSL distributions are broken.
 
 After a working Linux x86_64 environment is available, run:
 
@@ -29,11 +36,11 @@ source .venv/bin/activate
 python -m unittest discover -s tests -v
 python -m scripts.phase3_gate --release
 python -m scripts.revised_experiment --release \
-  --run-dir evaluation_results/revised_experiment/canonical_run_1
+  --run-dir evaluation_results/revised_experiment/canonical_run_2
 python -m scripts.phase4_gate \
-  evaluation_results/revised_experiment/canonical_run_1
+  evaluation_results/revised_experiment/canonical_run_2
 python -m scripts.phase4_audit prepare \
-  evaluation_results/revised_experiment/canonical_run_1 \
+  evaluation_results/revised_experiment/canonical_run_2 \
   --output evaluation_results/revised_experiment/manual_audit.csv
 ```
 

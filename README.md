@@ -93,9 +93,9 @@ python -m unittest discover -s tests -v
 python -m scripts.phase2_gate
 python -m scripts.phase3_gate --release
 python -m scripts.revised_experiment --release \
-  --run-dir evaluation_results/revised_experiment/canonical_run_1
+  --run-dir evaluation_results/revised_experiment/canonical_run_2
 python -m scripts.phase4_gate \
-  evaluation_results/revised_experiment/canonical_run_1
+  evaluation_results/revised_experiment/canonical_run_2
 ```
 
 The release command fails before creating results unless the full 3 × 39

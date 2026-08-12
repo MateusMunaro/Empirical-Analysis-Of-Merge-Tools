@@ -307,7 +307,8 @@ def _jdime_command(
     artifact = REPO_ROOT / lock[artifact_key]
     source = REPO_ROOT / "scenarios_base" / "JDime" / scenario_id
     command = [
-        str(artifact), "-f", "--mode", "structured", "--output", str(raw),
+        str(artifact), "-f", "--mode", "structured", "--recursive",
+        "--output", str(raw),
         str(source / "left"), str(source / "base"), str(source / "right"),
     ]
     return command, artifact.parent, raw

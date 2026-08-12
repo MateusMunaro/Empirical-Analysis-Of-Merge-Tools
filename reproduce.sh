@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-run_dir="${1:-evaluation_results/revised_experiment/canonical_run_1}"
+run_dir="${1:-evaluation_results/revised_experiment/canonical_run_2}"
 
 python3 setup.py
 source .venv/bin/activate

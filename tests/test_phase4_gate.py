@@ -115,6 +115,35 @@ class Phase4GateTests(unittest.TestCase):
             )
             self.assertEqual((), phase4_issues(root, require_release=False))
 
+    def test_undefined_precision_and_f1_are_valid_for_empty_output(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            _, results = make_valid_run(root)
+            results[0].update(
+                actual_line_count="0",
+                true_positives="0",
+                false_positives="0",
+                false_negatives="1",
+                precision="",
+                recall="0.0",
+                f1_score="",
+                sequence_agreement="0.0",
+                exact_oracle_match="False",
+                complete_textual_resolution="False",
+            )
+            write_csv(root / "scenario_tool_results.csv", RESULT_FIELDS, results)
+            self.assertEqual((), phase4_issues(root))
+
+    def test_explicitly_invalidated_run_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            root = Path(temporary_directory)
+            make_valid_run(root)
+            (root / "run_invalidation.json").write_text("{}", encoding="utf-8")
+            self.assertIn(
+                "run has been explicitly invalidated; see run_invalidation.json",
+                phase4_issues(root),
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
