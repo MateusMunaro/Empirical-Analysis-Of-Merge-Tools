@@ -1,0 +1,28 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"getId": {
+			"left": "getId"
+		},
+		"setId": {
+			"left": "setId"
+		},
+		"getEmail": {
+			"left": "getEmail"
+		},
+		"setEmail": {
+			"left": "setEmail"
+		},
+		"getPhone": {
+			"left": "getPhone"
+		},
+		"setPhone": {
+			"left": "setPhone"
+		}
+	}
+
+}

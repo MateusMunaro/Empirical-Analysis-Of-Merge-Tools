@@ -1,0 +1,5 @@
+StudentDetails.java:6:13: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, StudentDetails, null)
+StudentDetails.java:10:36: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, StudentDetails, null)
+StudentDetails.java:29:12: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, StudentDetails, null)
+StudentDetails.java:35:36: compiler.err.cant.resolve.location: kindname.class, List, , , (compiler.misc.location: kindname.class, StudentDetails, null)
+4 errors

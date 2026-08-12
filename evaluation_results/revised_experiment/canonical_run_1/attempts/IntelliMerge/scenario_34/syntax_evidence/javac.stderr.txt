@@ -1,0 +1,13 @@
+PriceCalculator.java:7:1: compiler.err.illegal.start.of.expr
+PriceCalculator.java:7:3: compiler.err.illegal.start.of.expr
+PriceCalculator.java:7:5: compiler.err.illegal.start.of.expr
+PriceCalculator.java:8:13: compiler.err.expected: >
+PriceCalculator.java:11:1: compiler.err.illegal.start.of.expr
+PriceCalculator.java:11:3: compiler.err.illegal.start.of.expr
+PriceCalculator.java:11:5: compiler.err.illegal.start.of.expr
+PriceCalculator.java:11:7: compiler.err.illegal.start.of.expr
+PriceCalculator.java:15:1: compiler.err.illegal.start.of.expr
+PriceCalculator.java:15:4: compiler.err.illegal.start.of.expr
+PriceCalculator.java:15:7: compiler.err.illegal.start.of.expr
+PriceCalculator.java:15:15: compiler.err.expected: ';'
+12 errors

@@ -1,0 +1,15 @@
+UserService.java:11:1: compiler.err.illegal.start.of.expr
+UserService.java:11:3: compiler.err.illegal.start.of.expr
+UserService.java:11:5: compiler.err.illegal.start.of.expr
+UserService.java:12:9: compiler.err.expected: >
+UserService.java:17:1: compiler.err.illegal.start.of.expr
+UserService.java:17:3: compiler.err.illegal.start.of.expr
+UserService.java:17:5: compiler.err.illegal.start.of.expr
+UserService.java:17:7: compiler.err.illegal.start.of.expr
+UserService.java:19:25: compiler.err.expected: ';'
+UserService.java:22:1: compiler.err.illegal.start.of.expr
+UserService.java:22:4: compiler.err.illegal.start.of.expr
+UserService.java:22:7: compiler.err.illegal.start.of.expr
+UserService.java:22:15: compiler.err.expected: ';'
+UserService.java:38:5: compiler.err.illegal.start.of.expr
+14 errors
