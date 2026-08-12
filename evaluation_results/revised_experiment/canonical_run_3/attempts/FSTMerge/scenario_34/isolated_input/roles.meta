@@ -1,0 +1,14 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"calculateDiscount": {
+			"left": "calculateDiscount",
+			"right": "calculateDiscount"
+		}
+	}
+
+}

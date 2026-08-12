@@ -1,0 +1,34 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"getId": {
+			"right": "getId"
+		},
+		"setId": {
+			"right": "setId"
+		},
+		"getName": {
+			"right": "getName"
+		},
+		"setName": {
+			"right": "setName"
+		},
+		"getDeptId": {
+			"right": "getDeptId"
+		},
+		"setDeptId": {
+			"right": "setDeptId"
+		},
+		"getDeptName": {
+			"right": "getDeptName"
+		},
+		"setDeptName": {
+			"right": "setDeptName"
+		}
+	}
+
+}

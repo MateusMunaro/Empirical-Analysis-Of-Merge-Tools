@@ -1,0 +1,3 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.93;40-42;.Person.setPhone(String);40-42;.Person.setPhoneNumber(String)
+Change Method Signature;method;0.77;36-38;.Person.getPhone();36-38;.Person.getPhoneNumber()

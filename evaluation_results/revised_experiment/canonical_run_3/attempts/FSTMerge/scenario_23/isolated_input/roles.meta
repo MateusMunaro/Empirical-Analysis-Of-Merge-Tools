@@ -1,0 +1,13 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"sendNotification": {
+			"right": "sendNotification"
+		}
+	}
+
+}

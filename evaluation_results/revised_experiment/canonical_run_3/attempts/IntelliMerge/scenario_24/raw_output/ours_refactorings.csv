@@ -1,0 +1,4 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.67;22-24;.Person.setName(String);22-24;.Client.setName(String)
+Change Field Signature;field;1.0;3-3;.Person.name;3-3;.Client.name
+Change Field Signature;field;1.0;2-2;.Person.id;2-2;.Client.id

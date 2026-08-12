@@ -1,0 +1,2 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Constructor Signature;constructor;0.84;5-8;.DatabaseConnection.DatabaseConnection(String);7-11;.DatabaseConnection.DatabaseConnection(String, String)
