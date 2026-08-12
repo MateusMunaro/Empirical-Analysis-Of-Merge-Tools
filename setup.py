@@ -78,7 +78,7 @@ JDIME_SRC_DIR = REPO_ROOT / "merge_tools" / "JDime" / "jdime"
 JDIME_INSTALL_DIR = JDIME_SRC_DIR / "build" / "install" / "JDime"
 JDIME_LAUNCHER = JDIME_INSTALL_DIR / "bin" / "JDime"
 JDIME_BUILD_JAR = JDIME_INSTALL_DIR / "lib" / "JDime.jar"
-JDIME_BUILD_CONTENT_SHA256 = "f9b0ab82a76a467208feb836393cdb1026ba877331fab2b7951b3566f50624b4"
+JDIME_BUILD_CONTENT_SHA256 = "db7dacfbae08c2ab68b18826e4bc0249e1982cbfd5fc7bd3a02b69a8292887aa"
 
 VENV_DIR = REPO_ROOT / ".venv"
 PY_PACKAGES = ["numpy", "pandas", "matplotlib", "scipy", "tabulate"]

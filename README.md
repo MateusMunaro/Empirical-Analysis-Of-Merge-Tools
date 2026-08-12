@@ -69,6 +69,12 @@ Canonical execution targets Linux x86_64 (native or WSL2) and uses:
 hashes and tool hashes, and checks out detached commits. AutoMerge is not a
 prerequisite and is not evaluated.
 
+Because JDime is built locally, its release identity is the canonical hash of
+the JAR entry names and uncompressed contents, which ignores ZIP container
+metadata. The frozen value was reproduced before and after a clean build on
+the Linux x86_64 target; the raw Linux JAR hash is retained as supplementary
+provenance in `tool_versions.lock`.
+
 System prerequisites on Debian/Ubuntu:
 
 ```bash
