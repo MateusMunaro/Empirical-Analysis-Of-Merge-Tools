@@ -1,0 +1,10 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+	}
+
+}

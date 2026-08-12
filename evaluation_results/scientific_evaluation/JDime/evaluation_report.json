@@ -1,6 +1,6 @@
 {
   "tool_name": "JDime",
-  "evaluation_timestamp": "2026-05-17T21:53:46.873320",
+  "evaluation_timestamp": "2026-08-11T00:37:03.559417",
   "total_scenarios": 2,
   "overall_precision": 0.0,
   "overall_recall": 0.0,
@@ -51,7 +51,7 @@
       ],
       "critical_errors": 3,
       "minor_errors": 0,
-      "processing_time": 0.0,
+      "processing_time": 0.000685,
       "file_size_bytes": 0,
       "checksum_expected": "b0472aed33a1b81788412283cdd6024b",
       "checksum_actual": "d41d8cd98f00b204e9800998ecf8427e"
@@ -83,15 +83,15 @@
       ],
       "critical_errors": 2,
       "minor_errors": 0,
-      "processing_time": 0.0,
+      "processing_time": 0.000191,
       "file_size_bytes": 0,
       "checksum_expected": "89b8be755863539d99f7fb906afe5fb6",
       "checksum_actual": "d41d8cd98f00b204e9800998ecf8427e"
     }
   ],
   "common_error_patterns": [
-    "missing_content",
-    "syntax_errors"
+    "syntax_errors",
+    "missing_content"
   ],
   "failure_analysis": {
     "syntax_errors": 2,

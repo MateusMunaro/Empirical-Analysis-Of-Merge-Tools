@@ -1,0 +1,19 @@
+Person.java:5:1: compiler.err.illegal.start.of.type
+Person.java:5:13: compiler.err.expected: >
+Person.java:6:5: compiler.err.illegal.start.of.type
+Person.java:6:54: compiler.err.expected: ';'
+Person.java:8:53: compiler.err.expected: ';'
+Person.java:12:1: compiler.err.illegal.start.of.expr
+Person.java:12:3: compiler.err.illegal.start.of.expr
+Person.java:12:5: compiler.err.illegal.start.of.expr
+Person.java:13:9: compiler.err.expected: >
+Person.java:13:13: compiler.err.expected: '('
+Person.java:14:1: compiler.err.illegal.start.of.expr
+Person.java:14:3: compiler.err.illegal.start.of.expr
+Person.java:14:5: compiler.err.illegal.start.of.expr
+Person.java:14:7: compiler.err.illegal.start.of.expr
+Person.java:16:1: compiler.err.illegal.start.of.expr
+Person.java:16:4: compiler.err.illegal.start.of.expr
+Person.java:16:7: compiler.err.illegal.start.of.expr
+Person.java:16:15: compiler.err.expected: ';'
+18 errors
