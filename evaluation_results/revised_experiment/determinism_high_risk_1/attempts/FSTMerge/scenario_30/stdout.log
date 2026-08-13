@@ -1,0 +1,14 @@
+Found the following features in expression file:
+base
+left
+right
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/determinism_high_risk_1/attempts/FSTMerge/scenario_30/isolated_input/base/Person.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/determinism_high_risk_1/attempts/FSTMerge/scenario_30/isolated_input/base/Contact.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/determinism_high_risk_1/attempts/FSTMerge/scenario_30/isolated_input/left/Person.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/determinism_high_risk_1/attempts/FSTMerge/scenario_30/isolated_input/left/Contact.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/determinism_high_risk_1/attempts/FSTMerge/scenario_30/isolated_input/right/Person.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/determinism_high_risk_1/attempts/FSTMerge/scenario_30/isolated_input/right/UserContact.java
+Terminal replacement: [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default] replaces [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default]
+Terminal replacement: [T -> Person : Id "Person" compose:Replacement merge: Default] replaces [T -> Person : Id "Person" compose:Replacement merge: Default]
+Terminal replacement: [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default] replaces [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default]
+Terminal replacement: [T -> Contact : Id "Contact" compose:Replacement merge: Default] replaces [T -> Contact : Id "Contact" compose:Replacement merge: Default]
