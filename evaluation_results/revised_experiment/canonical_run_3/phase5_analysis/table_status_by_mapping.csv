@@ -1,0 +1,10 @@
+tool_name,mapping,expected_n,status_completed_clean_n,status_completed_clean_rate,status_completed_conflicted_n,status_completed_conflicted_rate,status_invalid_output_n,status_invalid_output_rate,status_crash_n,status_crash_rate,status_timeout_n,status_timeout_rate,status_setup_error_n,status_setup_error_rate
+FSTMerge,1:1,13,13,1.0,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0
+FSTMerge,1:N,13,13,1.0,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0
+FSTMerge,N:N,13,13,1.0,0,0.0,0,0.0,0,0.0,0,0.0,0,0.0
+IntelliMerge,1:1,13,5,0.38461538461538464,7,0.5384615384615384,1,0.07692307692307693,0,0.0,0,0.0,0,0.0
+IntelliMerge,1:N,13,0,0.0,2,0.15384615384615385,11,0.8461538461538461,0,0.0,0,0.0,0,0.0
+IntelliMerge,N:N,13,1,0.07692307692307693,3,0.23076923076923078,9,0.6923076923076923,0,0.0,0,0.0,0,0.0
+JDime,1:1,13,1,0.07692307692307693,0,0.0,12,0.9230769230769231,0,0.0,0,0.0,0,0.0
+JDime,1:N,13,1,0.07692307692307693,0,0.0,12,0.9230769230769231,0,0.0,0,0.0,0,0.0
+JDime,N:N,13,0,0.0,0,0.0,13,1.0,0,0.0,0,0.0,0,0.0

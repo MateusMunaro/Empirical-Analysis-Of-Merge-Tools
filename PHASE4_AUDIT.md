@@ -1,7 +1,7 @@
 # Phase 4 audit record
 
-Audit date: `2026-08-12`  
-Canonical source: `evaluation_results/revised_experiment/canonical_run_3`  
+Audit date: `2026-08-14`
+Canonical source: `evaluation_results/revised_experiment/canonical_run_3`
 Provenance: Codex-assisted, author-supervised evidence inspection; not an
 independent human audit.
 
@@ -45,11 +45,9 @@ Raw byte-tree checksums can differ from normalized oracle equality because the
 protocol normalizes line separators and one terminal separator. Normalized
 tree comparison is authoritative for `exact_oracle_match`.
 
-## Remaining release condition
+## Release condition
 
-The final Phase 4 gate remains blocked only until the frozen 27-cell high-risk
-sample is repeated and compared. The sample covers all six mapping/change-type
-strata, both exact matches, empty Java artifacts, invalid output, source-form
-boundaries, and conflicts. The comparison must be written to
-`canonical_run_3/determinism_high_risk.csv` and pass
-`python -m scripts.phase4_gate --final canonical_run_3`.
+The frozen high-risk sample was repeated and compared. All 27 cells are
+substantively deterministic, no cell requires adjudication, and the final
+Phase 4 integrity gate passes. The canonical 117-cell dataset is released for
+Phase 5 analysis.
