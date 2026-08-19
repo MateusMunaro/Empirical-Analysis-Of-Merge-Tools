@@ -1,0 +1,13 @@
+f1_rounded_2,cell_count,distinct_exact_f1_count,cells,tp_fp_fn_decompositions
+0.47,5,5,FSTMerge/scenario_3;FSTMerge/scenario_13;FSTMerge/scenario_27;FSTMerge/scenario_29;FSTMerge/scenario_31,38/75/12;50/107/4;57/125/4;66/137/10;107/220/21
+0.64,4,4,FSTMerge/scenario_11;IntelliMerge/scenario_7;IntelliMerge/scenario_38;IntelliMerge/scenario_39,89/75/24;27/9/21;109/56/65;247/81/194
+0.44,3,3,FSTMerge/scenario_9;FSTMerge/scenario_20;FSTMerge/scenario_22,31/65/15;56/135/5;39/87/12
+0.48,3,3,FSTMerge/scenario_16;FSTMerge/scenario_18;FSTMerge/scenario_35,55/114/5;49/103/2;7/11/4
+0.54,3,3,FSTMerge/scenario_6;FSTMerge/scenario_8;FSTMerge/scenario_34,36/48/14;40/59/10;10/8/9
+0.60,3,3,FSTMerge/scenario_38;IntelliMerge/scenario_36;IntelliMerge/scenario_37,100/60/74;29/7/32;15/15/5
+0.31,2,1,FSTMerge/scenario_24;FSTMerge/scenario_33,40/163/12;48/197/13
+0.38,2,2,FSTMerge/scenario_19;FSTMerge/scenario_21,41/120/11;44/133/9
+0.42,2,2,FSTMerge/scenario_15;FSTMerge/scenario_25,47/125/4;48/118/12
+0.43,2,2,FSTMerge/scenario_32;IntelliMerge/scenario_23,69/177/9;21/22/34
+0.51,2,2,FSTMerge/scenario_2;FSTMerge/scenario_10,36/56/14;36/54/15
+1.00,2,1,IntelliMerge/scenario_6;IntelliMerge/scenario_10,50/0/0;51/0/0

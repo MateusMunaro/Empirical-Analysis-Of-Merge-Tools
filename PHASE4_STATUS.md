@@ -1,6 +1,6 @@
 # Phase 4 status — canonical re-execution
 
-Last automated audit: `2026-08-12`
+Last automated audit: `2026-08-14`
 
 ## Ready
 
@@ -26,42 +26,19 @@ automatic line-based fallback after structured exceptions unless
 was also corrected to accept mathematically undefined precision/F1 for a
 readable zero-line output.
 
-`canonical_run_3` has now been received and passes the 117-cell integrity gate.
-The 85-cell Codex-assisted evidence inspection is complete and recorded in
-`PHASE4_AUDIT.md` and `canonical_run_3/manual_audit.csv`. Only the frozen
-27-cell high-risk determinism repeat remains before `phase4_gate --final` can
-release Phase 4.
+The canonical run passes the 117-cell integrity gate. The 85-cell
+Codex-assisted evidence inspection is complete and recorded in the audit
+record. The frozen 27-cell high-risk repeat is also complete: all 27 cells are
+substantively deterministic and require no adjudication. The final Phase 4
+gate passes and releases the canonical dataset for analysis.
 
-## Remaining command sequence
+## Final release evidence
 
-Run only the frozen high-risk repeat in the same Linux x86_64 environment:
+The release was confirmed with the final integrity gate after comparing the
+canonical run with the preregistered high-risk repeat. The repeat covers every
+mapping/change-type stratum, both exact matches, empty Java artifacts, invalid
+output, source-form boundaries, and conflicts.
 
-```bash
-python -m scripts.revised_experiment \
-  --tool FSTMerge --tool IntelliMerge --tool JDime \
-  --scenario scenario_1 --scenario scenario_5 --scenario scenario_6 \
-  --scenario scenario_10 --scenario scenario_11 --scenario scenario_17 \
-  --scenario scenario_23 --scenario scenario_30 --scenario scenario_38 \
-  --run-dir evaluation_results/revised_experiment/determinism_high_risk_1
-
-python -m scripts.phase4_audit compare-sample \
-  evaluation_results/revised_experiment/canonical_run_3 \
-  evaluation_results/revised_experiment/determinism_high_risk_1 \
-  --output evaluation_results/revised_experiment/canonical_run_3/determinism_high_risk.csv
-
-python -m scripts.phase4_gate --final \
-  evaluation_results/revised_experiment/canonical_run_3
-```
-
-Do not add `--release` to the repeat: it is intentionally a diagnostic subset
-and cannot replace the canonical 117-cell source. Any substantive difference
-blocks the final gate and requires explicit adjudication. A raw byte checksum
-change alone is retained as provenance but is not a difference when the
-normalized tree, terminal state, oracle, tool artifact, and metrics agree.
-
-The preregistered high-risk repeat uses all three tools on scenarios 1, 5, 6,
-10, 11, 17, 23, 30, and 38. These 27 cells cover every mapping/change-type
-stratum, exact matches, empty artifacts, invalid outputs, syntax boundaries,
-and conflicts. Run it without `--release`, then compare it with
-`phase4_audit compare-sample`; diagnostic metadata prevents it from replacing
-the 117-cell canonical source of truth.
+The diagnostic repeat remains separate from the canonical 117-cell source of
+truth. It supports determinism only and does not replace or enlarge the primary
+dataset. Phase 5 must derive every result from the released canonical source.

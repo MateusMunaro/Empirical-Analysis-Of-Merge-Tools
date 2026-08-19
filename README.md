@@ -152,10 +152,16 @@ See [DATA_DICTIONARY.md](DATA_DICTIONARY.md) for column-level definitions.
 - Phase 2: complete; see [PHASE2_STATUS.md](PHASE2_STATUS.md).
 - Phase 3: complete; the frozen Linux release gate passed before canonical run
   3; see [PHASE3_STATUS.md](PHASE3_STATUS.md).
-- Phase 4: canonical run 3 passes the 117-cell integrity gate and its evidence
-  inspection is complete; only the frozen determinism repeat remains; see
-  [PHASE4_STATUS.md](PHASE4_STATUS.md) and [PHASE4_AUDIT.md](PHASE4_AUDIT.md).
-- Phases 5 and 8 result-dependent content must wait for the final Phase 4 gate.
+- Phase 4: complete. The canonical 117-cell dataset passes the final integrity
+  gate, the evidence inspection is complete, and all 27 preregistered high-risk
+  repeat cells are deterministic; see [PHASE4_STATUS.md](PHASE4_STATUS.md) and
+  [PHASE4_AUDIT.md](PHASE4_AUDIT.md).
+- Phase 5 analysis and Phase 8 result-dependent manuscript work are released to
+  proceed from the canonical dataset.
+- Phase 5 descriptive analysis now regenerates the master matrix, overall and
+  stratified summaries, robustness tables, score decompositions, and three
+  publication-oriented figures. Line-level diff excerpts and final manuscript
+  placement remain; see [PHASE5_STATUS.md](PHASE5_STATUS.md).
 
 Run all repository tests with:
 
