@@ -39,19 +39,23 @@ run_case() {
 
   mkdir -p "$log_dir"
   if [[ "$input_kind" == "file" ]]; then
-    left="$left"/*.java
-    base="$base"/*.java
-    right="$right"/*.java
+    left="$(find "$left" -maxdepth 1 -type f -name '*.java' -print -quit)"
+    base="$(find "$base" -maxdepth 1 -type f -name '*.java' -print -quit)"
+    right="$(find "$right" -maxdepth 1 -type f -name '*.java' -print -quit)"
+    if [[ -z "$left" || -z "$base" || -z "$right" ]]; then
+      echo "[$name] missing Java fixture file" >&2
+      return 2
+    fi
     out="$out.java"
     (
       cd "$LAUNCH_DIR"
-      "$JDIME_BIN" -f --mode structured --exit-on-error --stats --log-level FINE \
+      "$JDIME_BIN" -f --accept-non-java --mode structured --exit-on-error --stats --log-level FINE \
         --output "$out" "$left" "$base" "$right"
     ) >"$log_dir/stdout.log" 2>"$log_dir/stderr.log"
   else
     (
       cd "$LAUNCH_DIR"
-      "$JDIME_BIN" -f --mode structured --recursive --exit-on-error --stats --log-level FINE \
+      "$JDIME_BIN" -f --accept-non-java --mode structured --recursive --exit-on-error --stats --log-level FINE \
         --output "$out" "$left" "$base" "$right"
     ) >"$log_dir/stdout.log" 2>"$log_dir/stderr.log"
   fi
