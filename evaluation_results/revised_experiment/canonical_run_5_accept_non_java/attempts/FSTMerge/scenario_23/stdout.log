@@ -1,0 +1,13 @@
+Found the following features in expression file:
+base
+left
+right
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_23/isolated_input/base/NotificationService.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_23/isolated_input/left/NotificationStrategy.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_23/isolated_input/left/SmsStrategy.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_23/isolated_input/left/EmailStrategy.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_23/isolated_input/left/NotificationService.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_23/isolated_input/left/PushStrategy.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_23/isolated_input/right/NotificationService.java
+Terminal replacement: [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default] replaces [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default]
+Terminal replacement: [T -> NotificationService : Id "NotificationService" compose:Replacement merge: Default] replaces [T -> NotificationService : Id "NotificationService" compose:Replacement merge: Default]

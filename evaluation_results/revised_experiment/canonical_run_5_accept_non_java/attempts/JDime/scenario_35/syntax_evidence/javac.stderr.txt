@@ -1,0 +1,16 @@
+User.java:9:1: compiler.err.illegal.start.of.expr
+User.java:9:3: compiler.err.illegal.start.of.expr
+User.java:9:5: compiler.err.illegal.start.of.expr
+User.java:9:9: compiler.err.illegal.start.of.type
+User.java:9:102: compiler.err.expected: ';'
+User.java:13:1: compiler.err.illegal.start.of.expr
+User.java:13:3: compiler.err.illegal.start.of.expr
+User.java:13:5: compiler.err.illegal.start.of.expr
+User.java:13:7: compiler.err.illegal.start.of.expr
+User.java:14:5: compiler.err.illegal.start.of.expr
+User.java:17:1: compiler.err.illegal.start.of.expr
+User.java:17:4: compiler.err.illegal.start.of.expr
+User.java:17:7: compiler.err.illegal.start.of.expr
+User.java:17:9: compiler.err.illegal.start.of.expr
+User.java:17:103: compiler.err.expected: ';'
+15 errors

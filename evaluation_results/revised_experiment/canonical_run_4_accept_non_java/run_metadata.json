@@ -1,0 +1,162 @@
+{
+  "created_at_utc": "2026-08-21T02:59:53Z",
+  "tools": [
+    "FSTMerge",
+    "IntelliMerge",
+    "JDime"
+  ],
+  "scenarios": [
+    "scenario_1",
+    "scenario_2",
+    "scenario_3",
+    "scenario_4",
+    "scenario_5",
+    "scenario_6",
+    "scenario_7",
+    "scenario_8",
+    "scenario_9",
+    "scenario_10",
+    "scenario_11",
+    "scenario_12",
+    "scenario_13",
+    "scenario_14",
+    "scenario_15",
+    "scenario_16",
+    "scenario_17",
+    "scenario_18",
+    "scenario_19",
+    "scenario_20",
+    "scenario_21",
+    "scenario_22",
+    "scenario_23",
+    "scenario_24",
+    "scenario_25",
+    "scenario_26",
+    "scenario_27",
+    "scenario_28",
+    "scenario_29",
+    "scenario_30",
+    "scenario_31",
+    "scenario_32",
+    "scenario_33",
+    "scenario_34",
+    "scenario_35",
+    "scenario_36",
+    "scenario_37",
+    "scenario_38",
+    "scenario_39"
+  ],
+  "timeout_seconds": 120,
+  "run_kind": "canonical_release",
+  "lockfile": "/workspaces/Empirical-Analysis-Of-Merge-Tools/tool_versions.lock",
+  "lock": {
+    "schema_version": 1,
+    "frozen_at_utc": "2026-08-12T17:00:00Z",
+    "amended_at_utc": "2026-08-13T00:30:00Z",
+    "amendment_reason": "Pre-analysis integrity runs revealed two JDime adapter requirements: explicit recursive directory handling and --exit-on-error to prevent the tool's default line-based fallback. Runs 1 and 2 were invalidated before analysis.",
+    "target_environment": {
+      "operating_system": "Linux x86_64 (WSL2 or native)",
+      "python": ">=3.8",
+      "build_jdk": "Eclipse Temurin 21.0.11+10",
+      "merge_runtime_jdk": "Eclipse Temurin 21.0.11+10",
+      "jdime_runtime_jdk": "Eclipse Temurin 8u392-b08"
+    },
+    "execution_policy": {
+      "timeout_seconds": 120,
+      "jdime_mode": "structured",
+      "jdime_recursive_directories": true,
+      "jdime_fallback": "disabled",
+      "jdime_exit_on_error": true,
+      "clean_output_per_attempt": true,
+      "continue_after_failure": true,
+      "unit_of_analysis": "tool_name x scenario_id",
+      "expected_observations": 117,
+      "syntax_validator": "javac -proc:none -XDrawDiagnostics; parser diagnostics only",
+      "output_normalization": "tool adapter preserves relative paths; raw output retained separately"
+    },
+    "tools": {
+      "IntelliMerge": {
+        "repository": "https://github.com/Symbolk/IntelliMerge.git",
+        "tag": "1.0.9",
+        "tag_commit": "1aa08901c1502871c2f77f7561a91586a47dec7c",
+        "artifact_url": "https://github.com/Symbolk/IntelliMerge/releases/download/1.0.9/IntelliMerge-1.0.9-all.jar",
+        "artifact_path": "merge_tools/IntelliMerge/IntelliMerge-1.0.9-all.jar",
+        "artifact_size": 41340240,
+        "artifact_sha256": "a1bc929f8c5cb2f293b4d7fdd9a9bdf67460cad79c58b5ca052ada44e4df5f0e",
+        "runtime_java_path": "java_dependencies/java-versions/jdk-21.0.11+10/bin/java",
+        "runtime_java_major": 21,
+        "arguments": [
+          "java",
+          "-jar",
+          "<artifact>",
+          "-d",
+          "<left>",
+          "<base>",
+          "<right>",
+          "-o",
+          "<raw_output>"
+        ]
+      },
+      "FSTMerge": {
+        "repository": "https://github.com/joliebig/featurehouse.git",
+        "commit": "81724157bc638524e72af5bb689cf939e6df8599",
+        "source_artifact": "fstcomp/lib/FeatureHouse.jar",
+        "artifact_path": "merge_tools/FSTMerge/featurehouse-8172415.jar",
+        "artifact_size": 4126379,
+        "artifact_sha256": "b70425b557ab3ac20d223febc9b6247cddbd12befa5165067972e95173aed10f",
+        "runtime_java_path": "java_dependencies/java-versions/jdk-21.0.11+10/bin/java",
+        "runtime_java_major": 21,
+        "arguments": [
+          "java",
+          "-jar",
+          "<artifact>",
+          "--expression",
+          "<expression>",
+          "--base-directory",
+          "<isolated_scenario>"
+        ]
+      },
+      "JDime": {
+        "repository": "https://github.com/se-sic/jdime.git",
+        "commit": "dc3d2eeacf0bb0980994b980bcb11c630300c4f3",
+        "artifact_path_linux": "merge_tools/JDime/jdime/build/install/JDime/bin/JDime",
+        "artifact_path_windows": "merge_tools/JDime/jdime/build/install/JDime/bin/JDime.bat",
+        "build_artifact_path": "merge_tools/JDime/jdime/build/install/JDime/lib/JDime.jar",
+        "build_artifact_verification": "canonical_zip_content_sha256",
+        "build_content_sha256": "db7dacfbae08c2ab68b18826e4bc0249e1982cbfd5fc7bd3a02b69a8292887aa",
+        "linux_clean_build_raw_sha256": "2c87fb916cb2d99d843085bb30d27da92004e503b4dbeb00bcdb251bfdd867af",
+        "build_verification_note": "Frozen from two matching observations around a clean installDist build on the canonical Linux x86_64 target. The Windows build differs and is not a release artifact.",
+        "runtime_java_path": "java_dependencies/java-versions/jdk8u392-b08/bin/java",
+        "runtime_java_major": 8,
+        "arguments": [
+          "<artifact>",
+          "-f",
+          "--mode",
+          "structured",
+          "--recursive",
+          "--exit-on-error",
+          "--output",
+          "<raw_output>",
+          "<left>",
+          "<base>",
+          "<right>"
+        ]
+      }
+    },
+    "runtime_archives": {
+      "temurin_8u392_b08_linux_x64": {
+        "url": "https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u392b08.tar.gz",
+        "sha256": "15d091e22aa0cad12a241acff8c1634e7228b9740f8d19634250aa6fe0c19a33"
+      },
+      "temurin_21_0_11_10_linux_x64": {
+        "url": "https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.11%2B10/OpenJDK21U-jdk_x64_linux_hotspot_21.0.11_10.tar.gz",
+        "sha256": "4b2220e232a97997b436ca6ab15cbf70171ecff52958a46159dfa5a8c44ca4de"
+      }
+    }
+  },
+  "environment": {
+    "python_version": "3.12.1",
+    "operating_system": "Linux-6.8.0-1052-azure-x86_64-with-glibc2.39",
+    "architecture": "x86_64"
+  }
+}

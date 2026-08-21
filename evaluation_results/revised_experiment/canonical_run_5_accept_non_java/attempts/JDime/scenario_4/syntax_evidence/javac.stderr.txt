@@ -1,0 +1,101 @@
+Person.java:10:1: compiler.err.illegal.start.of.type
+Person.java:10:8: compiler.err.expected: token.identifier
+Person.java:10:9: compiler.err.illegal.start.of.type
+Person.java:10:20: compiler.err.expected: token.identifier
+Person.java:10:30: compiler.err.expected: token.identifier
+Person.java:10:39: compiler.err.expected: token.identifier
+Person.java:10:42: compiler.err.expected: token.identifier
+Person.java:10:48: compiler.err.expected: token.identifier
+Person.java:10:54: compiler.err.expected: token.identifier
+Person.java:10:69: compiler.err.expected: token.identifier
+Person.java:10:75: compiler.err.expected: token.identifier
+Person.java:10:86: compiler.err.expected: token.identifier
+Person.java:10:91: compiler.err.expected: token.identifier
+Person.java:10:103: compiler.err.expected: token.identifier
+Person.java:12:1: compiler.err.illegal.start.of.type
+Person.java:14:1: compiler.err.illegal.start.of.type
+Person.java:14:20: compiler.err.expected: token.identifier
+Person.java:14:30: compiler.err.expected: token.identifier
+Person.java:14:39: compiler.err.expected: token.identifier
+Person.java:14:42: compiler.err.expected: token.identifier
+Person.java:14:48: compiler.err.expected: token.identifier
+Person.java:14:54: compiler.err.expected: token.identifier
+Person.java:14:69: compiler.err.expected: token.identifier
+Person.java:14:75: compiler.err.expected: token.identifier
+Person.java:14:86: compiler.err.expected: token.identifier
+Person.java:14:92: compiler.err.expected: token.identifier
+Person.java:14:104: compiler.err.expected: token.identifier
+Person.java:21:1: compiler.err.illegal.start.of.type
+Person.java:21:8: compiler.err.expected: token.identifier
+Person.java:21:9: compiler.err.illegal.start.of.type
+Person.java:21:20: compiler.err.expected: token.identifier
+Person.java:21:30: compiler.err.expected: token.identifier
+Person.java:21:39: compiler.err.expected: token.identifier
+Person.java:21:42: compiler.err.expected: token.identifier
+Person.java:21:48: compiler.err.expected: token.identifier
+Person.java:21:54: compiler.err.expected: token.identifier
+Person.java:21:69: compiler.err.expected: token.identifier
+Person.java:21:75: compiler.err.expected: token.identifier
+Person.java:21:86: compiler.err.expected: token.identifier
+Person.java:21:91: compiler.err.expected: token.identifier
+Person.java:22:8: compiler.err.expected: ';'
+Person.java:22:14: compiler.err.expected: token.identifier
+Person.java:24:12: compiler.err.expected: ';'
+Person.java:25:20: compiler.err.expected: token.identifier
+Person.java:25:30: compiler.err.expected: token.identifier
+Person.java:25:39: compiler.err.expected: token.identifier
+Person.java:25:42: compiler.err.expected: token.identifier
+Person.java:25:48: compiler.err.expected: token.identifier
+Person.java:25:54: compiler.err.expected: token.identifier
+Person.java:25:69: compiler.err.expected: token.identifier
+Person.java:25:75: compiler.err.expected: token.identifier
+Person.java:25:86: compiler.err.expected: token.identifier
+Person.java:25:92: compiler.err.expected: token.identifier
+Person.java:25:104: compiler.err.expected: token.identifier
+Person.java:58:1: compiler.err.illegal.start.of.type
+Person.java:58:8: compiler.err.expected: token.identifier
+Person.java:58:9: compiler.err.illegal.start.of.type
+Person.java:58:20: compiler.err.expected: token.identifier
+Person.java:58:30: compiler.err.expected: token.identifier
+Person.java:58:39: compiler.err.expected: token.identifier
+Person.java:58:42: compiler.err.expected: token.identifier
+Person.java:58:48: compiler.err.expected: token.identifier
+Person.java:58:54: compiler.err.expected: token.identifier
+Person.java:58:69: compiler.err.expected: token.identifier
+Person.java:58:75: compiler.err.expected: token.identifier
+Person.java:58:86: compiler.err.expected: token.identifier
+Person.java:58:91: compiler.err.expected: token.identifier
+Person.java:58:103: compiler.err.expected: token.identifier
+Person.java:62:1: compiler.err.illegal.start.of.type
+Person.java:66:1: compiler.err.illegal.start.of.type
+Person.java:66:20: compiler.err.expected: token.identifier
+Person.java:66:30: compiler.err.expected: token.identifier
+Person.java:66:39: compiler.err.expected: token.identifier
+Person.java:66:42: compiler.err.expected: token.identifier
+Person.java:66:48: compiler.err.expected: token.identifier
+Person.java:66:54: compiler.err.expected: token.identifier
+Person.java:66:69: compiler.err.expected: token.identifier
+Person.java:66:75: compiler.err.expected: token.identifier
+Person.java:66:86: compiler.err.expected: token.identifier
+Person.java:66:92: compiler.err.expected: token.identifier
+Person.java:66:104: compiler.err.expected: token.identifier
+Person.java:70:1: compiler.err.illegal.start.of.type
+Person.java:70:8: compiler.err.expected: token.identifier
+Person.java:70:9: compiler.err.illegal.start.of.type
+Person.java:70:20: compiler.err.expected: token.identifier
+Person.java:70:30: compiler.err.expected: token.identifier
+Person.java:70:39: compiler.err.expected: token.identifier
+Person.java:70:42: compiler.err.expected: token.identifier
+Person.java:70:48: compiler.err.expected: token.identifier
+Person.java:70:54: compiler.err.expected: token.identifier
+Person.java:70:69: compiler.err.expected: token.identifier
+Person.java:70:75: compiler.err.expected: token.identifier
+Person.java:70:86: compiler.err.expected: token.identifier
+Person.java:70:91: compiler.err.expected: token.identifier
+Person.java:71:8: compiler.err.expected: ';'
+Person.java:71:14: compiler.err.expected: token.identifier
+Person.java:73:12: compiler.err.expected: ';'
+Person.java:74:20: compiler.err.expected: token.identifier
+Person.java:74:30: compiler.err.expected: token.identifier
+Person.java:74:39: compiler.err.expected: token.identifier
+100 errors

@@ -1,0 +1,3 @@
+Address.java:1:1: compiler.err.expected3: class, interface, enum
+Address.java:28:1: compiler.err.expected3: class, interface, enum
+2 errors

@@ -1,0 +1,28 @@
+UserService.java:33:1: compiler.err.illegal.start.of.type
+UserService.java:33:8: compiler.err.expected: token.identifier
+UserService.java:33:9: compiler.err.illegal.start.of.type
+UserService.java:33:20: compiler.err.expected: token.identifier
+UserService.java:33:30: compiler.err.expected: token.identifier
+UserService.java:33:39: compiler.err.expected: token.identifier
+UserService.java:33:42: compiler.err.expected: token.identifier
+UserService.java:33:48: compiler.err.expected: token.identifier
+UserService.java:33:54: compiler.err.expected: token.identifier
+UserService.java:33:69: compiler.err.expected: token.identifier
+UserService.java:33:75: compiler.err.expected: token.identifier
+UserService.java:33:87: compiler.err.expected: token.identifier
+UserService.java:33:92: compiler.err.expected: token.identifier
+UserService.java:33:109: compiler.err.expected: token.identifier
+UserService.java:72:1: compiler.err.illegal.start.of.type
+UserService.java:87:1: compiler.err.illegal.start.of.type
+UserService.java:87:20: compiler.err.expected: token.identifier
+UserService.java:87:30: compiler.err.expected: token.identifier
+UserService.java:87:39: compiler.err.expected: token.identifier
+UserService.java:87:42: compiler.err.expected: token.identifier
+UserService.java:87:48: compiler.err.expected: token.identifier
+UserService.java:87:54: compiler.err.expected: token.identifier
+UserService.java:87:69: compiler.err.expected: token.identifier
+UserService.java:87:75: compiler.err.expected: token.identifier
+UserService.java:87:87: compiler.err.expected: token.identifier
+UserService.java:87:93: compiler.err.expected: token.identifier
+UserService.java:87:110: compiler.err.expected: token.identifier
+27 errors

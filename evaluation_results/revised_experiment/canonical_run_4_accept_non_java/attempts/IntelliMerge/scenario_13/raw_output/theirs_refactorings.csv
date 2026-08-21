@@ -1,0 +1,5 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Field Signature;field;1.0;5-5;.Person.phone;3-3;.ContactInfo.phone
+Change Field Signature;field;1.0;2-2;.Person.id;2-2;.Individual.id
+Change Field Signature;field;1.0;3-3;.Person.name;3-3;.Individual.name
+Change Field Signature;field;1.0;4-4;.Person.email;2-2;.ContactInfo.email

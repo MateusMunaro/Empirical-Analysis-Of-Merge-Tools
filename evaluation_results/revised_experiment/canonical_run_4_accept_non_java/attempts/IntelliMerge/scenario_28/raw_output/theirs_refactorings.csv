@@ -1,0 +1,8 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.7;10-12;.Address.getStreet();10-12;.DetailedAddress.getStreet()
+Change Method Signature;method;0.67;22-24;.Person.setName(String);28-30;.Profile.setName(String)
+Change Method Signature;method;0.72;18-20;.Address.setStreet(String);18-20;.DetailedAddress.setStreet(String)
+Change Field Signature;field;1.0;2-2;.Person.id;2-2;.Profile.id
+Change Field Signature;field;1.0;2-2;.Address.street;2-2;.DetailedAddress.street
+Change Field Signature;field;1.0;3-3;.Person.name;3-3;.Profile.name
+Change Constructor Signature;constructor;0.63;5-8;.Address.Address(String, String);5-8;.DetailedAddress.DetailedAddress(String, String)

@@ -1,0 +1,3 @@
+Employee.java:1:1: compiler.err.expected3: class, interface, enum
+Employee.java:29:1: compiler.err.expected3: class, interface, enum
+2 errors

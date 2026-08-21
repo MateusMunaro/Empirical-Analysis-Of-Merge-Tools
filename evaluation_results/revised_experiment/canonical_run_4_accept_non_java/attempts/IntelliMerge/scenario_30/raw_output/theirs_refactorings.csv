@@ -1,0 +1,7 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.72;10-12;.Contact.getPhone();14-16;.UserContact.getPhone()
+Change Method Signature;method;0.73;18-20;.Contact.setPhone(String);22-24;.UserContact.setPhone(String)
+Change Field Signature;field;1.0;4-4;.Person.email;2-2;.UserContact.email
+Change Field Signature;field;1.0;2-2;.Person.id;2-2;.User.id
+Change Field Signature;field;0.65;3-3;.Person.name;3-3;.User.username
+Change Field Signature;field;1.0;2-2;.Contact.phone;3-3;.UserContact.phone

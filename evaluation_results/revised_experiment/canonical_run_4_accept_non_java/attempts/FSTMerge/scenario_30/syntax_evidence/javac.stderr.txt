@@ -1,0 +1,2 @@
+Person.java:1:9: compiler.err.class.public.should.be.in.file: kindname.class, User
+1 error

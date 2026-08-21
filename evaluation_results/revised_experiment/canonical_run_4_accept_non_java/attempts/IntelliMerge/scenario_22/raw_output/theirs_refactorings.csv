@@ -1,0 +1,4 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.71;12-14;.Person.setId(int);14-16;.BasicPerson.setId(int)
+Change Method Signature;method;0.7;8-10;.Person.getId();10-12;.BasicPerson.getId()
+Change Field Signature;field;1.0;2-2;.Person.id;2-2;.BasicPerson.id

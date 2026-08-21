@@ -1,0 +1,13 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.69;34-36;.Person.setEmail(String);34-36;.People.setEmail(String)
+Change Method Signature;method;0.66;46-49;.Person.toString();46-49;.People.toString()
+Change Method Signature;method;0.66;18-20;.Person.setId(int);18-20;.People.setId(int)
+Change Method Signature;method;0.69;42-44;.Person.setPhone(String);42-44;.People.setPhone(String)
+Change Method Signature;method;0.66;30-32;.Person.getEmail();30-32;.People.getEmail()
+Change Method Signature;method;0.66;38-40;.Person.getPhone();38-40;.People.getPhone()
+Change Method Signature;method;0.68;26-28;.Person.setName(String);26-28;.People.setName(String)
+Change Field Signature;field;1.0;5-5;.Person.phone;5-5;.People.phone
+Change Field Signature;field;1.0;2-2;.Person.id;2-2;.People.id
+Change Field Signature;field;1.0;4-4;.Person.email;4-4;.People.email
+Change Field Signature;field;1.0;3-3;.Person.name;3-3;.People.name
+Change Constructor Signature;constructor;0.69;7-12;.Person.Person(int, String, String, String);7-12;.People.People(int, String, String, String)

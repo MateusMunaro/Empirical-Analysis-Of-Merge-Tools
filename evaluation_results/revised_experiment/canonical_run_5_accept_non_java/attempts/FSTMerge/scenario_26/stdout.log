@@ -1,0 +1,14 @@
+Found the following features in expression file:
+base
+left
+right
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_26/isolated_input/base/Order.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_26/isolated_input/base/Custumer.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_26/isolated_input/left/Order.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_26/isolated_input/left/Custumer.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_26/isolated_input/right/Client.java
+processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_26/isolated_input/right/Purchase.java
+Terminal replacement: [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default] replaces [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default]
+Terminal replacement: [T -> Order : Id "Order" compose:Replacement merge: Default] replaces [T -> Order : Id "Order" compose:Replacement merge: Default]
+Terminal replacement: [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default] replaces [T -> - : ClassOrInterface1 "class" compose:Replacement merge: Default]
+Terminal replacement: [T -> Customer : Id "Customer" compose:Replacement merge: Default] replaces [T -> Customer : Id "Customer" compose:Replacement merge: Default]

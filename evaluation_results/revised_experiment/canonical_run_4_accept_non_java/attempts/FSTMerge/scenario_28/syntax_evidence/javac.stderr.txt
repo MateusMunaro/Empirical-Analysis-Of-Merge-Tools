@@ -1,0 +1,2 @@
+DetailAddress.java:1:9: compiler.err.class.public.should.be.in.file: kindname.class, DetailedAddress
+1 error

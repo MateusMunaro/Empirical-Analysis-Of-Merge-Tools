@@ -1,0 +1,14 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"setAge": {
+			"left": "setAge",
+			"right": "setAge"
+		}
+	}
+
+}

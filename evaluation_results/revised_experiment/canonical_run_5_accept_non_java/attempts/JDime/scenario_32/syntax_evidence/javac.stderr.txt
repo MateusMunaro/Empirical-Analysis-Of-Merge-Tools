@@ -1,0 +1,5 @@
+Course.java:1:1: compiler.err.expected3: class, interface, enum
+Course.java:27:1: compiler.err.expected3: class, interface, enum
+Student.java:1:1: compiler.err.expected3: class, interface, enum
+Student.java:29:1: compiler.err.expected3: class, interface, enum
+4 errors

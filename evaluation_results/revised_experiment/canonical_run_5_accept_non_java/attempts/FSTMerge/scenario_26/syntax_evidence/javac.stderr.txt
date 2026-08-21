@@ -1,0 +1,2 @@
+Custumer.java:1:10: compiler.err.class.public.should.be.in.file: kindname.class, Customer
+1 error

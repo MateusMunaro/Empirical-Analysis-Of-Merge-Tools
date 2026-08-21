@@ -1,0 +1,8 @@
+{
+  "completed_clean": 53,
+  "completed_conflicted": 42,
+  "invalid_output": 21,
+  "crash": 1,
+  "timeout": 0,
+  "setup_error": 0
+}

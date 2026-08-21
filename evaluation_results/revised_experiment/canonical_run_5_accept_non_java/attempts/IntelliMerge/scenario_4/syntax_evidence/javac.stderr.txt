@@ -1,0 +1,22 @@
+Person.java:5:1: compiler.err.illegal.start.of.type
+Person.java:5:13: compiler.err.expected: >
+Person.java:6:5: compiler.err.illegal.start.of.type
+Person.java:6:24: compiler.err.expected: ';'
+Person.java:8:22: compiler.err.expected: ';'
+Person.java:9:15: compiler.err.expected: token.identifier
+Person.java:15:1: compiler.err.illegal.start.of.type
+Person.java:15:13: compiler.err.expected: >
+Person.java:16:5: compiler.err.illegal.start.of.type
+Person.java:16:66: compiler.err.expected: ';'
+Person.java:18:64: compiler.err.expected: ';'
+Person.java:51:1: compiler.err.illegal.start.of.type
+Person.java:51:13: compiler.err.expected: >
+Person.java:52:5: compiler.err.illegal.start.of.type
+Person.java:52:28: compiler.err.expected: ';'
+Person.java:54:26: compiler.err.expected: ';'
+Person.java:60:1: compiler.err.illegal.start.of.type
+Person.java:60:13: compiler.err.expected: >
+Person.java:61:5: compiler.err.illegal.start.of.type
+Person.java:61:38: compiler.err.expected: ';'
+Person.java:63:36: compiler.err.expected: ';'
+21 errors
