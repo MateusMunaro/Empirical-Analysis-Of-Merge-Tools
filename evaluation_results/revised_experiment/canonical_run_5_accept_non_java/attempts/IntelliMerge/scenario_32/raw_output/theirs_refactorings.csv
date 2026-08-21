@@ -1,0 +1,7 @@
+refactoring_type;node_type;confidence;before_location;before_node;after_location;after_node
+Change Method Signature;method;0.69;32-34;.Student.setAge(int);14-16;.StudentDetails.setAge(int)
+Change Method Signature;method;0.66;24-26;.Student.setName(String);14-16;.Program.setName(String)
+Change Method Signature;method;0.68;28-30;.Student.getAge();10-12;.StudentDetails.getAge()
+Change Field Signature;field;1.0;4-4;.Student.age;2-2;.StudentDetails.age
+Change Field Signature;field;1.0;3-3;.Student.name;2-2;.Program.name
+Change Field Signature;field;1.0;2-2;.Student.id;2-2;.Learner.id

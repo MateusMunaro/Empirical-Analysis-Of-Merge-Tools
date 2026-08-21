@@ -1,0 +1,22 @@
+{
+	"features" : [
+		"base",
+		"left",
+		"right"
+	],
+	"roles": {
+		"validateUser": {
+			"left": "validateUser",
+			"right": "validateUser"
+		},
+		"validatePassword": {
+			"left": "validatePassword",
+			"right": "validatePassword"
+		},
+		"validateEmail": {
+			"left": "validateEmail",
+			"right": "validateEmail"
+		}
+	}
+
+}

@@ -1,0 +1,2 @@
+Person.java:1:1: compiler.err.expected3: class, interface, enum
+1 error

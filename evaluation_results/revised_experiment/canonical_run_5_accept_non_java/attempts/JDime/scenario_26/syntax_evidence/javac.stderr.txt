@@ -1,0 +1,5 @@
+Custumer.java:1:1: compiler.err.expected3: class, interface, enum
+Custumer.java:29:1: compiler.err.expected3: class, interface, enum
+Order.java:1:1: compiler.err.expected3: class, interface, enum
+Order.java:27:1: compiler.err.expected3: class, interface, enum
+4 errors

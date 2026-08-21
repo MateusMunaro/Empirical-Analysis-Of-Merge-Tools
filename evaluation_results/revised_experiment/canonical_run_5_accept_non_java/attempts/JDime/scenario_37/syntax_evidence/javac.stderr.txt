@@ -1,0 +1,97 @@
+TeamManager.java:4:1: compiler.err.illegal.start.of.type
+TeamManager.java:4:8: compiler.err.expected: token.identifier
+TeamManager.java:4:9: compiler.err.illegal.start.of.type
+TeamManager.java:4:20: compiler.err.expected: token.identifier
+TeamManager.java:4:30: compiler.err.expected: token.identifier
+TeamManager.java:4:39: compiler.err.expected: token.identifier
+TeamManager.java:4:42: compiler.err.expected: token.identifier
+TeamManager.java:4:48: compiler.err.expected: token.identifier
+TeamManager.java:4:54: compiler.err.expected: token.identifier
+TeamManager.java:4:69: compiler.err.expected: token.identifier
+TeamManager.java:4:75: compiler.err.expected: token.identifier
+TeamManager.java:4:87: compiler.err.expected: token.identifier
+TeamManager.java:4:92: compiler.err.expected: token.identifier
+TeamManager.java:5:7: compiler.err.expected: ';'
+TeamManager.java:7:6: compiler.err.expected: token.identifier
+TeamManager.java:8:20: compiler.err.expected: token.identifier
+TeamManager.java:8:30: compiler.err.expected: token.identifier
+TeamManager.java:8:39: compiler.err.expected: token.identifier
+TeamManager.java:8:42: compiler.err.expected: token.identifier
+TeamManager.java:8:48: compiler.err.expected: token.identifier
+TeamManager.java:8:54: compiler.err.expected: token.identifier
+TeamManager.java:8:69: compiler.err.expected: token.identifier
+TeamManager.java:8:75: compiler.err.expected: token.identifier
+TeamManager.java:8:87: compiler.err.expected: token.identifier
+TeamManager.java:8:93: compiler.err.expected: token.identifier
+TeamManager.java:9:25: compiler.err.expected: token.identifier
+TeamManager.java:10:1: compiler.err.expected2: '(', '['
+TeamManager.java:10:3: compiler.err.illegal.start.of.expr
+TeamManager.java:10:5: compiler.err.illegal.start.of.expr
+TeamManager.java:10:9: compiler.err.illegal.start.of.type
+TeamManager.java:10:109: compiler.err.expected: ';'
+TeamManager.java:11:12: compiler.err.expected: token.identifier
+TeamManager.java:13:10: compiler.err.expected: token.identifier
+TeamManager.java:14:20: compiler.err.expected: token.identifier
+TeamManager.java:14:30: compiler.err.expected: token.identifier
+TeamManager.java:14:39: compiler.err.expected: token.identifier
+TeamManager.java:14:42: compiler.err.expected: token.identifier
+TeamManager.java:14:48: compiler.err.expected: token.identifier
+TeamManager.java:14:54: compiler.err.expected: token.identifier
+TeamManager.java:14:69: compiler.err.expected: token.identifier
+TeamManager.java:14:75: compiler.err.expected: token.identifier
+TeamManager.java:14:87: compiler.err.expected: token.identifier
+TeamManager.java:14:93: compiler.err.expected: token.identifier
+TeamManager.java:15:4: compiler.err.illegal.start.of.type
+TeamManager.java:15:5: compiler.err.expected: token.identifier
+TeamManager.java:19:1: compiler.err.illegal.start.of.expr
+TeamManager.java:19:3: compiler.err.illegal.start.of.expr
+TeamManager.java:19:5: compiler.err.illegal.start.of.expr
+TeamManager.java:19:17: compiler.err.expected: >
+TeamManager.java:19:30: compiler.err.expected: ';'
+TeamManager.java:19:28: compiler.err.variable.not.allowed
+TeamManager.java:19:36: compiler.err.expected: ';'
+TeamManager.java:19:45: compiler.err.expected: ';'
+TeamManager.java:24:1: compiler.err.illegal.start.of.expr
+TeamManager.java:24:4: compiler.err.illegal.start.of.expr
+TeamManager.java:24:7: compiler.err.illegal.start.of.expr
+TeamManager.java:24:9: compiler.err.illegal.start.of.expr
+TeamManager.java:24:110: compiler.err.expected: ';'
+TeamManager.java:30:1: compiler.err.illegal.start.of.type
+TeamManager.java:30:8: compiler.err.expected: token.identifier
+TeamManager.java:30:9: compiler.err.illegal.start.of.type
+TeamManager.java:30:20: compiler.err.expected: token.identifier
+TeamManager.java:30:30: compiler.err.expected: token.identifier
+TeamManager.java:30:39: compiler.err.expected: token.identifier
+TeamManager.java:30:42: compiler.err.expected: token.identifier
+TeamManager.java:30:48: compiler.err.expected: token.identifier
+TeamManager.java:30:54: compiler.err.expected: token.identifier
+TeamManager.java:30:69: compiler.err.expected: token.identifier
+TeamManager.java:30:75: compiler.err.expected: token.identifier
+TeamManager.java:30:87: compiler.err.expected: token.identifier
+TeamManager.java:30:92: compiler.err.expected: token.identifier
+TeamManager.java:31:7: compiler.err.expected: ';'
+TeamManager.java:33:6: compiler.err.expected: token.identifier
+TeamManager.java:34:20: compiler.err.expected: token.identifier
+TeamManager.java:34:30: compiler.err.expected: token.identifier
+TeamManager.java:34:39: compiler.err.expected: token.identifier
+TeamManager.java:34:42: compiler.err.expected: token.identifier
+TeamManager.java:34:48: compiler.err.expected: token.identifier
+TeamManager.java:34:54: compiler.err.expected: token.identifier
+TeamManager.java:34:69: compiler.err.expected: token.identifier
+TeamManager.java:34:75: compiler.err.expected: token.identifier
+TeamManager.java:34:87: compiler.err.expected: token.identifier
+TeamManager.java:34:93: compiler.err.expected: token.identifier
+TeamManager.java:36:15: compiler.err.expected: token.identifier
+TeamManager.java:37:1: compiler.err.expected2: '(', '['
+TeamManager.java:37:3: compiler.err.illegal.start.of.expr
+TeamManager.java:37:5: compiler.err.illegal.start.of.expr
+TeamManager.java:37:9: compiler.err.illegal.start.of.type
+TeamManager.java:37:109: compiler.err.expected: ';'
+TeamManager.java:39:3: compiler.err.illegal.start.of.expr
+TeamManager.java:39:5: compiler.err.illegal.start.of.expr
+TeamManager.java:39:7: compiler.err.illegal.start.of.expr
+TeamManager.java:41:4: compiler.err.illegal.start.of.expr
+TeamManager.java:41:7: compiler.err.illegal.start.of.expr
+TeamManager.java:41:9: compiler.err.illegal.start.of.expr
+TeamManager.java:42:6: compiler.err.illegal.start.of.expr
+96 errors
