@@ -31,6 +31,8 @@ def phase3_issues(lock_path: Path = DEFAULT_LOCK, release: bool = False) -> tupl
         issues.append("JDime mode must be frozen as structured")
     if policy.get("jdime_recursive_directories") is not True:
         issues.append("JDime directory inputs must be merged recursively")
+    if policy.get("jdime_accept_non_java") is not True:
+        issues.append("JDime directory inputs must bypass host MIME filtering")
     if policy.get("jdime_fallback") != "disabled":
         issues.append("JDime fallback must remain disabled")
     if policy.get("jdime_exit_on_error") is not True:
@@ -53,6 +55,8 @@ def phase3_issues(lock_path: Path = DEFAULT_LOCK, release: bool = False) -> tupl
     jdime_arguments = jdime.get("arguments", [])
     if "--exit-on-error" not in jdime_arguments:
         issues.append("JDime locked arguments must disable automatic fallback")
+    if "--accept-non-java" not in jdime_arguments:
+        issues.append("JDime locked arguments must bypass host MIME filtering")
     jdime_key = "artifact_path_windows" if platform.system() == "Windows" else "artifact_path_linux"
     jdime_path = REPO_ROOT / str(jdime.get(jdime_key, ""))
     jdime_build = REPO_ROOT / str(jdime.get("build_artifact_path", ""))

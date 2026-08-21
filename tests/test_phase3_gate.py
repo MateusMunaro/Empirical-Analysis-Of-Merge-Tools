@@ -46,6 +46,17 @@ class Phase3GateTests(unittest.TestCase):
                 "JDime locked arguments must disable automatic fallback", issues
             )
 
+    def test_jdime_must_bypass_host_mime_filtering(self):
+        lock = json.loads(DEFAULT_LOCK.read_text(encoding="utf-8"))
+        lock["execution_policy"]["jdime_accept_non_java"] = False
+        lock["tools"]["JDime"]["arguments"].remove("--accept-non-java")
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            path = Path(temporary_directory) / "tool_versions.lock"
+            path.write_text(json.dumps(lock), encoding="utf-8")
+            issues = phase3_issues(path)
+        self.assertIn("JDime directory inputs must bypass host MIME filtering", issues)
+        self.assertIn("JDime locked arguments must bypass host MIME filtering", issues)
+
     def test_release_gate_exposes_incompatible_environment(self):
         with patch("scripts.phase3_gate.platform.system", return_value="Windows"):
             issues = phase3_issues(release=True)
