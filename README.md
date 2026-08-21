@@ -21,8 +21,9 @@ used in the revised manuscript.
 - Order metric: per-file longest-common-subsequence agreement.
 - Complete textual resolution: clean execution, exact oracle equality, and no
   Java parser diagnostic. This is not a behavioral-correctness claim.
-- JDime configuration: structured mode only; automatic unstructured fallback
-  is disabled.
+- JDime configuration: structured mode only, recursive directory inputs, and
+  `--accept-non-java` to bypass host MIME filtering; automatic unstructured
+  fallback is disabled.
 
 The normative definitions are in [PROTOCOL.md](PROTOCOL.md). Scenario labels
 and their operational rules are in [TAXONOMY.md](TAXONOMY.md), and the oracle

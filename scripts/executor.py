@@ -112,7 +112,10 @@ def run_jdime():
         command = [
             jdime_exec,
             "-f",
+            "--accept-non-java",
             "--mode", "structured",
+            "--recursive",
+            "--exit-on-error",
             "--output", output,
             left, base, right,
         ]
@@ -121,25 +124,32 @@ def run_jdime():
 
         print(f"[JDime] Executando cenário {i}")
         try:
-            subprocess.run(command, env=env, check=True, capture_output=True, text=True)
+            subprocess.run(
+                command, env=env, cwd=os.path.dirname(jdime_exec), check=True,
+                capture_output=True, text=True,
+            )
             successful_scenarios.append(i)
             print(f"[JDime] Cenário {i} executado com sucesso")
         except subprocess.CalledProcessError as e:
             failed_scenarios.append(i)
             print(f"[JDime] Falha no cenário {i}: {e}")
             print(f"[JDime] Erro de saída: {e.stderr}")
-            print(f"[JDime] Tentando modo alternativo para cenário {i}")
+            print(f"[JDime] Repetindo em modo estruturado para cenário {i}")
             try:
                 alt_command = [
-                    jdime_exec, "-f", "--mode", "unstructured",
+                    jdime_exec, "-f", "--accept-non-java", "--mode", "structured",
+                    "--recursive", "--exit-on-error",
                     "--output", output, left, base, right,
                 ]
-                subprocess.run(alt_command, env=env, check=True, capture_output=True, text=True)
-                print(f"[JDime] Cenário {i} executado em modo não estruturado")
+                subprocess.run(
+                    alt_command, env=env, cwd=os.path.dirname(jdime_exec), check=True,
+                    capture_output=True, text=True,
+                )
+                print(f"[JDime] Cenário {i} executado em repetição estruturada")
                 failed_scenarios.remove(i)
                 successful_scenarios.append(i)
             except subprocess.CalledProcessError as alt_e:
-                print(f"[JDime] Cenário {i} falhou também em modo não estruturado: {alt_e}")
+                print(f"[JDime] Cenário {i} falhou novamente em modo estruturado: {alt_e}")
         except Exception as e:
             failed_scenarios.append(i)
             print(f"[JDime] Erro inesperado no cenário {i}: {e}")

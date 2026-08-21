@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "frozen_at_utc": "2026-08-12T17:00:00Z",
-  "amended_at_utc": "2026-08-13T00:30:00Z",
-  "amendment_reason": "Pre-analysis integrity runs revealed two JDime adapter requirements: explicit recursive directory handling and --exit-on-error to prevent the tool's default line-based fallback. Runs 1 and 2 were invalidated before analysis.",
+  "amended_at_utc": "2026-08-20T00:00:00Z",
+  "amendment_reason": "A JDime smoke test showed that its default directory filter can discard Java source files when the host MIME probe does not return text/x-java. The adapter must use --accept-non-java, in addition to explicit recursive directory handling and --exit-on-error. Earlier JDime results are invalidated and must not be analyzed.",
   "target_environment": {
     "operating_system": "Linux x86_64 (WSL2 or native)",
     "python": ">=3.8",
@@ -14,6 +14,7 @@
     "timeout_seconds": 120,
     "jdime_mode": "structured",
     "jdime_recursive_directories": true,
+    "jdime_accept_non_java": true,
     "jdime_fallback": "disabled",
     "jdime_exit_on_error": true,
     "clean_output_per_attempt": true,
@@ -59,7 +60,7 @@
       "build_verification_note": "Frozen from two matching observations around a clean installDist build on the canonical Linux x86_64 target. The Windows build differs and is not a release artifact.",
       "runtime_java_path": "java_dependencies/java-versions/jdk8u392-b08/bin/java",
       "runtime_java_major": 8,
-      "arguments": ["<artifact>", "-f", "--mode", "structured", "--recursive", "--exit-on-error", "--output", "<raw_output>", "<left>", "<base>", "<right>"]
+      "arguments": ["<artifact>", "-f", "--accept-non-java", "--mode", "structured", "--recursive", "--exit-on-error", "--output", "<raw_output>", "<left>", "<base>", "<right>"]
     }
   },
   "runtime_archives": {
