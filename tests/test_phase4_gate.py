@@ -4,9 +4,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.analysis_units import DEFAULT_SCENARIO_IDS, DEFAULT_TOOLS
-from scripts.phase4_gate import HIGH_RISK_KEYS, phase4_issues
-from scripts.revised_experiment import EXECUTION_FIELDS, RESULT_FIELDS
+from scripts.core.analysis_units import DEFAULT_SCENARIO_IDS, DEFAULT_TOOLS
+from scripts.workflows.phase4_gate import HIGH_RISK_KEYS, phase4_issues
+from scripts.workflows.revised_experiment import EXECUTION_FIELDS, RESULT_FIELDS
 
 
 SHA = "a" * 64

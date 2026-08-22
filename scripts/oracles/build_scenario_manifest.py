@@ -11,7 +11,7 @@ import csv
 from pathlib import Path
 
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MANIFEST = REPO_ROOT / "data" / "scenario_manifest.csv"
 CANONICAL_TOOL = "FSTMerge"
 

@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from zipfile import ZipFile, ZipInfo
 
-from scripts.artifact_hashes import sha256_file, sha256_zip_content
+from scripts.core.artifact_hashes import sha256_file, sha256_zip_content
 
 
 class ArtifactHashTests(unittest.TestCase):

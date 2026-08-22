@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.oracle_validation import (
+from scripts.oracles.oracle_validation import (
     EvidenceResult,
     OracleDecision,
     OracleReview,
@@ -9,7 +9,7 @@ from scripts.oracle_validation import (
     release_readiness_issues,
     review_coverage_issues,
 )
-from scripts.scenario_metadata import (
+from scripts.core.scenario_metadata import (
     ChangeType,
     MappingComplexity,
     load_manifest,

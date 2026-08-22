@@ -3,7 +3,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.manuscript_gate import manuscript_issues
+from scripts.quality.manuscript_gate import manuscript_issues
 
 
 VALID_TEXT = r"""

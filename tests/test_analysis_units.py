@@ -1,6 +1,6 @@
 import unittest
 
-from scripts.analysis_units import (
+from scripts.core.analysis_units import (
     AnalysisMatrix,
     AnalysisUnit,
     DEFAULT_SCENARIO_IDS,

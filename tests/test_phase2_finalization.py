@@ -3,21 +3,21 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.finalize_phase2 import (
+from scripts.oracles.finalize_phase2 import (
     documented_open_issue_rows,
     write_confirmed_manifest_atomically,
 )
-from scripts.ingest_oracle_reviews import (
+from scripts.oracles.ingest_oracle_reviews import (
     validate_review_ingestion,
     write_reviews_atomically,
 )
-from scripts.oracle_validation import (
+from scripts.oracles.oracle_validation import (
     EvidenceResult,
     OracleDecision,
     OracleReview,
     load_reviews,
 )
-from scripts.scenario_metadata import (
+from scripts.core.scenario_metadata import (
     ChangeType,
     ClassificationStatus,
     MappingComplexity,

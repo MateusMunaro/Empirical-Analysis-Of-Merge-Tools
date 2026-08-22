@@ -4,8 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.phase4_audit import compare_sample
-from scripts.revised_experiment import EXECUTION_FIELDS, RESULT_FIELDS
+from scripts.workflows.phase4_audit import compare_sample
+from scripts.workflows.revised_experiment import EXECUTION_FIELDS, RESULT_FIELDS
 from tests.test_phase4_gate import make_valid_run, write_csv
 
 

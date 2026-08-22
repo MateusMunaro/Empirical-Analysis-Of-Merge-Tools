@@ -1,7 +1,7 @@
 import unittest
 from collections import Counter
 
-from scripts.scenario_metadata import (
+from scripts.core.scenario_metadata import (
     ChangeType,
     ClassificationStatus,
     MappingComplexity,
@@ -9,7 +9,7 @@ from scripts.scenario_metadata import (
     audit_scenario_artifacts,
     load_manifest,
 )
-from scripts.oracle_validation import load_reviews, release_readiness_issues
+from scripts.oracles.oracle_validation import load_reviews, release_readiness_issues
 
 
 class ScenarioManifestTests(unittest.TestCase):

@@ -5,8 +5,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.analysis_units import DEFAULT_SCENARIO_IDS, DEFAULT_TOOLS
-from scripts.phase5_analysis import (
+from scripts.core.analysis_units import DEFAULT_SCENARIO_IDS, DEFAULT_TOOLS
+from scripts.workflows.phase5_analysis import (
     AnalysisError,
     build_diff_examples,
     build_tables,
