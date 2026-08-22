@@ -146,7 +146,7 @@ class Phase5AnalysisTests(unittest.TestCase):
             source = root / "master.csv"
             output = root / "analysis"
             write_rows(source, make_rows())
-            with patch("scripts.phase5_analysis._save_figures"):
+            with patch("scripts.workflows.phase5_analysis._save_figures"):
                 summary = generate(source, output)
             self.assertEqual(117, summary["expected_observations"])
             self.assertTrue((output / "table_tool_summary.csv").is_file())
@@ -178,7 +178,8 @@ class Phase5AnalysisTests(unittest.TestCase):
                     (destination / name).write_bytes(b"pdf")
 
             with patch(
-                "scripts.phase5_analysis._save_figures", side_effect=fake_figures
+                "scripts.workflows.phase5_analysis._save_figures",
+                side_effect=fake_figures,
             ):
                 generate(source, output, manuscript_assets=assets)
             self.assertEqual(b"pdf", (assets / "F0.pdf").read_bytes())
