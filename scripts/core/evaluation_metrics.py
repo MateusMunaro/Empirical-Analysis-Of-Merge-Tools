@@ -1,6 +1,6 @@
 """Normative metrics for the revised merge-tool experiment.
 
-This module is the executable counterpart of ``PROTOCOL.md``.  It compares a
+This module implements the evaluation protocol summarized in ``README.md``. It compares a
 complete output tree with its oracle, preserving line multiplicity, file paths,
 and line order.  The legacy evaluator is intentionally not imported here: it
 uses sets of lines and a metric named ``accuracy`` that are incompatible with
