@@ -1,9 +1,0 @@
-Identity.java:6:13: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Identity, null)
-Identity.java:10:34: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Identity, null)
-Identity.java:29:12: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Identity, null)
-Identity.java:35:30: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Identity, null)
-Person.java:15:13: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Person, null)
-Person.java:19:68: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Person, null)
-Person.java:77:12: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Person, null)
-Person.java:83:30: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Person, null)
-8 errors

@@ -1,5 +1,0 @@
-Profile.java:24:13: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Profile, null)
-Profile.java:28:32: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Profile, null)
-Profile.java:35:12: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Profile, null)
-Profile.java:41:29: compiler.err.cant.resolve.location: kindname.class, Date, , , (compiler.misc.location: kindname.class, Profile, null)
-4 errors

@@ -1,6 +1,0 @@
-DatabaseConnection.java:8:1: compiler.err.illegal.start.of.type
-DatabaseConnection.java:8:13: compiler.err.expected: >
-DatabaseConnection.java:9:5: compiler.err.illegal.start.of.type
-DatabaseConnection.java:9:43: compiler.err.expected: ';'
-DatabaseConnection.java:11:57: compiler.err.expected: ';'
-5 errors

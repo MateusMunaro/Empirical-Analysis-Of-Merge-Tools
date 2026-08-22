@@ -1,5 +1,0 @@
-Person.java:1:1: compiler.err.expected3: class, interface, enum
-Person.java:43:46: compiler.err.not.stmt
-Person.java:43:47: compiler.err.expected: ';'
-Person.java:52:1: compiler.err.expected3: class, interface, enum
-4 errors
