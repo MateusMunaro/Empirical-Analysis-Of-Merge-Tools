@@ -1,5 +1,0 @@
-Profile.java:1:1: compiler.err.expected3: class, interface, enum
-Profile.java:27:1: compiler.err.expected3: class, interface, enum
-User.java:1:1: compiler.err.expected3: class, interface, enum
-User.java:39:1: compiler.err.expected3: class, interface, enum
-4 errors

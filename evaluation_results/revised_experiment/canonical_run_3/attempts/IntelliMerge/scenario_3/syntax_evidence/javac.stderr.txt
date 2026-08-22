@@ -1,6 +1,0 @@
-Person.java:42:1: compiler.err.illegal.start.of.type
-Person.java:42:13: compiler.err.expected: >
-Person.java:43:5: compiler.err.illegal.start.of.type
-Person.java:43:45: compiler.err.expected: ';'
-Person.java:45:40: compiler.err.expected: ';'
-5 errors

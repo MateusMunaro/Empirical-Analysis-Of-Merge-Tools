@@ -1,5 +1,0 @@
-JDime [14:53:24] SEVERE: Uncaught exception. 
-java.lang.UnsupportedOperationException: Setting a Security Manager is not supported
-	at java.base/java.lang.System.setSecurityManager(System.java:286)
-	at de.fosd.jdime.Main.main(Main.java:141)
-

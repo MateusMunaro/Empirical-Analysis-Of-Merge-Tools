@@ -1,3 +1,0 @@
-Order.java:1:1: compiler.err.expected3: class, interface, enum
-Order.java:37:1: compiler.err.expected3: class, interface, enum
-2 errors

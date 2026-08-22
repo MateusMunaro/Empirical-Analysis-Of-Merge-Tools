@@ -1,7 +1,0 @@
-0 [pool-1-thread-1] INFO edu.pku.intellimerge.core.GraphBuilderV2  - Found (1) files in ours.
-20 [pool-1-thread-3] INFO edu.pku.intellimerge.core.GraphBuilderV2  - Found (1) files in theirs.
-21 [pool-1-thread-2] INFO edu.pku.intellimerge.core.GraphBuilderV2  - Found (1) files in base.
-49 [main] INFO edu.pku.intellimerge.client.IntelliMerge  - (141ms) Done building graphs.
-63 [main] INFO edu.pku.intellimerge.client.IntelliMerge  - (11ms) Done matching graphs.
-68 [main] INFO edu.pku.intellimerge.client.IntelliMerge  - (5ms) Done merging programs.
-68 [main] INFO edu.pku.intellimerge.client.IntelliMerge  - Merged 1 files. Overall time cost: 157ms.

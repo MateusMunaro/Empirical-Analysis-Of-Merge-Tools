@@ -1,6 +1,0 @@
-Contact.java:1:1: compiler.err.expected3: class, interface, enum
-Contact.java:28:1: compiler.err.expected3: class, interface, enum
-Person.java:3:1: compiler.err.expected3: class, interface, enum
-Person.java:30:1: compiler.err.expected3: class, interface, enum
-Person.java:57:1: compiler.err.expected3: class, interface, enum
-5 errors

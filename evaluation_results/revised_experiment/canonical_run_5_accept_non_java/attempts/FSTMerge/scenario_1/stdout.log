@@ -1,7 +1,0 @@
-Found the following features in expression file:
-base
-left
-right
-processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_1/isolated_input/base/Person.java
-processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_1/isolated_input/left/People.java
-processing: /workspaces/Empirical-Analysis-Of-Merge-Tools/evaluation_results/revised_experiment/canonical_run_5_accept_non_java/attempts/FSTMerge/scenario_1/isolated_input/right/Client.java
