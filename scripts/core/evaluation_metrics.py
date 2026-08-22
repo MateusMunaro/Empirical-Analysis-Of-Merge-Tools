@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 from typing import Mapping, Sequence
 
-from scripts.analysis_units import ObservationStatus
+from scripts.core.analysis_units import ObservationStatus
 
 
 TreeLines = Mapping[str, Sequence[str]]

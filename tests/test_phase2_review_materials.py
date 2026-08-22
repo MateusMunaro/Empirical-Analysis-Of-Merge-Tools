@@ -3,10 +3,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.oracle_audit import audit_oracles
-from scripts.prepare_oracle_review import prepare_review_packet
-from scripts.phase2_gate import phase2_gate_categories
-from scripts.scenario_metadata import load_manifest
+from scripts.oracles.oracle_audit import audit_oracles
+from scripts.oracles.prepare_oracle_review import prepare_review_packet
+from scripts.workflows.phase2_gate import phase2_gate_categories
+from scripts.core.scenario_metadata import load_manifest
 
 
 class OracleTechnicalAuditTests(unittest.TestCase):

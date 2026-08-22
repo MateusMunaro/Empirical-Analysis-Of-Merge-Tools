@@ -9,13 +9,13 @@ import tempfile
 from pathlib import Path
 from typing import Sequence
 
-from scripts.oracle_audit import audit_oracles
-from scripts.oracle_validation import load_reviews, release_readiness_issues
-from scripts.phase2_gate import (
+from scripts.oracles.oracle_audit import audit_oracles
+from scripts.oracles.oracle_validation import load_reviews, release_readiness_issues
+from scripts.workflows.phase2_gate import (
     documented_open_issue_rows,
     validation_evidence_issues,
 )
-from scripts.scenario_metadata import (
+from scripts.core.scenario_metadata import (
     DEFAULT_MANIFEST_PATH,
     ClassificationStatus,
     ScenarioMetadata,

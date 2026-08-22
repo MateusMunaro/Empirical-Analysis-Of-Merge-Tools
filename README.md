@@ -1,5 +1,42 @@
 # Controlled benchmark for Java merge tools
 
+## Reproduce the published experiment
+
+This repository is the replication package for the IEEE Access study. Use the
+single public command below; do not invoke modules in `scripts/` directly.
+
+```bash
+python3 -m scripts.run_replication \
+  --run-dir evaluation_results/revised_experiment/my_release_run
+```
+
+The command installs the frozen dependencies, runs the regression tests,
+validates the oracle and environment, executes all 117 tool--scenario cells,
+validates the produced dataset, and writes the descriptive analysis under the
+chosen run directory. The directory must not already exist. On a prepared
+environment, add `--skip-setup`; use `--skip-tests` only when tests have
+already passed for the exact checkout.
+
+The release target is Linux x86_64 with Temurin 8 for JDime and Temurin 21 for
+the other tools. JDime is invoked in structured recursive mode with
+`--accept-non-java` and `--exit-on-error`.
+
+## Repository layout
+
+```text
+data/                  reviewed oracle provenance and scenario metadata
+scenarios_base/        base, left, and right inputs for each tool/scenario
+output/                accepted oracle trees
+scripts/run_replication.py  the only public execution entry point
+scripts/core/          metrics, units, hashes, and scenario metadata
+scripts/workflows/     execution, validation gates, and analysis
+scripts/oracles/       oracle review and release utilities
+scripts/legacy/        superseded exploratory pipeline; not publication evidence
+tests/                 regression and JDime smoke tests
+evaluation_results/    retained execution evidence
+PROTOCOL.md, TAXONOMY.md, and ORACLE_VALIDATION.md  supporting methodology
+```
+
 Replication package for a controlled, synthetic benchmark comparing FSTMerge,
 IntelliMerge, and JDime on 39 three-way Java merge scenarios. The experimental
 unit is one `tool_name × scenario_id` pair, yielding exactly 117 observations.

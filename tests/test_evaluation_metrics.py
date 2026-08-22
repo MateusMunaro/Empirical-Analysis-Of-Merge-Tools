@@ -2,8 +2,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.analysis_units import ObservationStatus
-from scripts.evaluation_metrics import (
+from scripts.core.analysis_units import ObservationStatus
+from scripts.core.evaluation_metrics import (
     evaluate_trees,
     is_complete_resolution,
     load_text_tree,

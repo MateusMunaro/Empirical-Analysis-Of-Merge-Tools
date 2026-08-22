@@ -36,7 +36,7 @@ import tarfile
 import urllib.request
 from pathlib import Path
 
-from scripts.artifact_hashes import sha256_file, sha256_zip_content
+from scripts.core.artifact_hashes import sha256_file, sha256_zip_content
 
 REPO_ROOT = Path(__file__).resolve().parent
 

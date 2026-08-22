@@ -4,8 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from scripts.analysis_units import ObservationStatus
-from scripts.revised_experiment import (
+from scripts.core.analysis_units import ObservationStatus
+from scripts.workflows.revised_experiment import (
     DEFAULT_LOCK,
     ProcessOutcome,
     ToolRuntime,
@@ -16,7 +16,7 @@ from scripts.revised_experiment import (
     run_process,
     sha256_file,
 )
-from scripts.scenario_metadata import load_manifest
+from scripts.core.scenario_metadata import load_manifest
 
 
 class TerminalStatusTests(unittest.TestCase):

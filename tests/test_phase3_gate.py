@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.phase3_gate import DEFAULT_LOCK, phase3_issues
+from scripts.workflows.phase3_gate import DEFAULT_LOCK, phase3_issues
 
 
 class Phase3GateTests(unittest.TestCase):
