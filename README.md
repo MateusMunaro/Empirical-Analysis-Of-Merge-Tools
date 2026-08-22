@@ -1,222 +1,246 @@
-# Controlled benchmark for Java merge tools
+# Empirical Evaluation of Java Merge Tools
 
-## Reproduce the published experiment
+Reproducibility package for a controlled benchmark of **FSTMerge**, **IntelliMerge**, and **JDime** across 39 synthetic three-way Java merge scenarios. The frozen experiment contains 117 observations: one for every `tool_name x scenario_id` pair.
 
-This repository is the replication package for the IEEE Access study. Use the
-single public command below; do not invoke modules in `scripts/` directly.
+This document is the single maintained guide for installing the toolchain, running the evaluation, validating a run, interpreting the generated evidence, and reviewing the benchmark oracles.
 
-```bash
-python3 -m scripts.run_replication \
-  --run-dir evaluation_results/revised_experiment/my_release_run
-```
+## What this benchmark evaluates
 
-The command installs the frozen dependencies, runs the regression tests,
-validates the oracle and environment, executes all 117 tool--scenario cells,
-validates the produced dataset, and writes the descriptive analysis under the
-chosen run directory. The directory must not already exist. On a prepared
-environment, add `--skip-setup`; use `--skip-tests` only when tests have
-already passed for the exact checkout.
+Each scenario provides a common ancestor (`base`) and two independently changed variants (`left` and `right`). Every merge-tool output is normalized and compared with a reviewed expected output tree.
 
-The release target is Linux x86_64 with Temurin 8 for JDime and Temurin 21 for
-the other tools. JDime is invoked in structured recursive mode with
-`--accept-non-java` and `--exit-on-error`.
+The evaluation records:
 
-## Repository layout
+- path-aware, multiplicity-preserving precision, recall, and F1;
+- per-file longest-common-subsequence order agreement;
+- exact oracle equality;
+- conflict-marker presence and parser diagnostics;
+- execution time and one mutually exclusive terminal status.
 
-```text
-data/                  reviewed oracle provenance and scenario metadata
-scenarios_base/        base, left, and right inputs for each tool/scenario
-output/                accepted oracle trees
-scripts/run_replication.py  the only public execution entry point
-scripts/core/          metrics, units, hashes, and scenario metadata
-scripts/workflows/     execution, validation gates, and analysis
-scripts/oracles/       oracle review and release utilities
-scripts/legacy/        superseded exploratory pipeline; not publication evidence
-tests/                 regression and JDime smoke tests
-evaluation_results/    retained execution evidence
-PROTOCOL.md, TAXONOMY.md, and ORACLE_VALIDATION.md  supporting methodology
-```
+The terminal statuses are `completed_clean`, `completed_conflicted`, `invalid_output`, `crash`, `timeout`, and `setup_error`. Missing or unavailable metrics remain missing; failures are never silently converted to an F1 score of zero.
 
-Replication package for a controlled, synthetic benchmark comparing FSTMerge,
-IntelliMerge, and JDime on 39 three-way Java merge scenarios. The experimental
-unit is one `tool_name × scenario_id` pair, yielding exactly 117 observations.
-
-The repository is undergoing a preregistered resubmission correction. Results
-under `evaluation_results/scientific_evaluation/` were produced by the legacy
-pipeline and are retained only for traceability; they are not current evidence.
-Only a run marked `canonical_release` that passes `scripts.phase4_gate` may be
-used in the revised manuscript.
-
-## Study scope
-
-- Population: 39 controlled/synthetic scenarios, not mined real-world merges.
-- Tools: FSTMerge, IntelliMerge, and JDime.
-- Inputs: `base`, `left`, and `right` trees under `scenarios_base/`.
-- Oracles: reviewed output trees under `output/<tool>/expected/`.
-- Primary content metrics: path-aware, multiplicity-preserving precision,
-  recall, and F1.
-- Order metric: per-file longest-common-subsequence agreement.
-- Complete textual resolution: clean execution, exact oracle equality, and no
-  Java parser diagnostic. This is not a behavioral-correctness claim.
-- JDime configuration: structured mode only, recursive directory inputs, and
-  `--accept-non-java` to bypass host MIME filtering; automatic unstructured
-  fallback is disabled.
-
-The normative definitions are in [PROTOCOL.md](PROTOCOL.md). Scenario labels
-and their operational rules are in [TAXONOMY.md](TAXONOMY.md), and the oracle
-review provenance is in [ORACLE_VALIDATION.md](ORACLE_VALIDATION.md).
-
-## Repository map
-
-```text
-data/
-  scenario_manifest.csv       39 scenario definitions and confirmed labels
-  oracle_reviews.csv          review rounds and decisions
-  oracle_inventory.csv        per-file oracle hashes and technical checks
-scenarios_base/<tool>/         base/left/right inputs
-output/<tool>/expected/        accepted oracle trees
-scripts/
-  revised_experiment.py        canonical execution/evaluation harness
-  phase2_gate.py               metadata/oracle release gate
-  phase3_gate.py               environment and tool-artifact gate
-  phase4_gate.py               117-row result integrity gate
-  phase4_audit.py              audit selection and determinism comparison
-tests/                         evaluator and gate regression tests
-tool_versions.lock             frozen commits, artifacts, hashes, JDKs, policy
-evaluation_results/
-  revised_experiment/          isolated diagnostic/canonical run directories
-```
-
-The older `executor.py`, `run_evaluation.py`, `merge_evaluation_tool.py`, and
-`scientific_report_generator.py` remain only to reproduce the original state.
-Do not use them for the resubmission.
+"Complete textual resolution" means that execution completed cleanly, the normalized output exactly matched the oracle, and the Java syntax check emitted no parser diagnostic. It is not a claim of behavioral equivalence or semantic correctness.
 
 ## Frozen environment
 
-Canonical execution targets Linux x86_64 (native or WSL2) and uses:
+Canonical release runs target **Linux x86_64**, either natively or through WSL2. The setup is intentionally rejected on other platforms.
 
 | Component | Frozen version |
-|---|---|
+| --- | --- |
 | Python | 3.8 or newer |
-| IntelliMerge | tag 1.0.9, release JAR SHA-256 in lockfile |
-| FSTMerge/FeatureHouse | commit `81724157bc638524e72af5bb689cf939e6df8599` |
+| IntelliMerge | 1.0.9 |
+| FSTMerge / FeatureHouse | commit `81724157bc638524e72af5bb689cf939e6df8599` |
 | JDime | commit `dc3d2eeacf0bb0980994b980bcb11c630300c4f3` |
-| Merge-tool runtime | Eclipse Temurin 21.0.11+10 |
+| IntelliMerge and FSTMerge runtime | Eclipse Temurin 21.0.11+10 |
 | JDime runtime | Eclipse Temurin 8u392-b08 |
 
-`setup.py` downloads/builds these exact resources, validates published archive
-hashes and tool hashes, and checks out detached commits. AutoMerge is not a
-prerequisite and is not evaluated.
+Exact artifact locations, download URLs, checksums, runtime arguments, the 120-second timeout, and the execution policy are frozen in `tool_versions.lock`. JDime runs in recursive structured mode with `--accept-non-java` and `--exit-on-error`; automatic unstructured fallback is disabled.
 
-Because JDime is built locally, its release identity is the canonical hash of
-the JAR entry names and uncompressed contents, which ignores ZIP container
-metadata. The frozen value was reproduced before and after a clean build on
-the Linux x86_64 target; the raw Linux JAR hash is retained as supplementary
-provenance in `tool_versions.lock`.
+## Prerequisites
 
-System prerequisites on Debian/Ubuntu:
+On Debian or Ubuntu, install the host tools from a terminal:
 
 ```bash
 sudo apt update
 sudo apt install -y python3 python3-venv python3-pip git tar ca-certificates default-jre
 ```
 
-## Canonical reproduction
+The initial setup downloads approximately two JDKs, IntelliMerge, FeatureHouse, and the JDime source tree. Internet access and several gigabytes of free disk space are recommended. Run every command below from the repository root.
 
-From the repository root on Linux x86_64:
+## Run the complete evaluation
+
+Choose a new output directory. It must not already exist, which prevents stale artifacts from being mixed into a run.
 
 ```bash
 python3 setup.py
 source .venv/bin/activate
+python -m scripts.run_replication \
+  --skip-setup \
+  --run-dir evaluation_results/revised_experiment/my_release_run
+```
+
+The orchestrator performs the following sequence:
+
+1. runs the complete regression suite;
+2. validates scenario metadata and oracle-review evidence;
+3. validates the operating system, Java runtimes, frozen commits, and artifact hashes;
+4. executes all 117 tool-scenario cells;
+5. checks the integrity of the released result matrix;
+6. generates the descriptive tables, figures, summary, and report.
+
+Use a distinct run-directory name for every attempt. A timestamped name is convenient:
+
+```bash
+python -m scripts.run_replication \
+  --skip-setup \
+  --run-dir evaluation_results/revised_experiment/run_YYYYMMDD
+```
+
+Do not add `--skip-tests` unless the tests have already passed for the exact checkout and environment being evaluated.
+
+## Verify each stage manually
+
+The explicit workflow is useful for auditing failures or collecting individual gate output:
+
+```bash
+python3 setup.py
+source .venv/bin/activate
+
 python -m unittest discover -s tests -v
 python -m scripts.phase2_gate
 python -m scripts.phase3_gate --release
+
 python -m scripts.revised_experiment --release \
-  --run-dir evaluation_results/revised_experiment/canonical_run_3
+  --run-dir evaluation_results/revised_experiment/my_release_run
+
 python -m scripts.phase4_gate \
-  evaluation_results/revised_experiment/canonical_run_3
+  evaluation_results/revised_experiment/my_release_run
+
+python -m scripts.phase5_analysis \
+  evaluation_results/revised_experiment/my_release_run/scenario_tool_results.csv \
+  evaluation_results/revised_experiment/my_release_run/analysis \
+  --run-root evaluation_results/revised_experiment/my_release_run \
+  --oracle-root output
 ```
 
-The release command fails before creating results unless the full 3 × 39
-matrix, exact artifacts, per-tool Java runtimes, and Linux target pass the
-environment gate. A run directory must not already exist; this prevents stale
-outputs from being reused.
-
-For an instrumentation-only smoke run, omit `--release` and select cells:
+The Phase 4 command above validates a canonical computational run. The stricter `--final` gate additionally requires completed manual-audit and determinism evidence in the run directory:
 
 ```bash
-python -m scripts.revised_experiment \
-  --tool FSTMerge --scenario scenario_1 \
-  --run-dir evaluation_results/revised_experiment/my_diagnostic
-```
-
-Diagnostic runs are marked in `run_metadata.json` and cannot pass the default
-Phase 4 gate. They must never be mixed with publication data.
-
-The accepted canonical source is `canonical_run_3`. Its 85-cell
-Codex-assisted, author-supervised evidence inspection is recorded in
-`manual_audit.csv`. Phase 4 is released only after the preregistered 27-cell
-high-risk repeat has been compared and the final gate passes:
-
-```bash
-python -m scripts.phase4_audit compare-sample \
-  evaluation_results/revised_experiment/canonical_run_3 \
-  evaluation_results/revised_experiment/determinism_high_risk_1 \
-  --output evaluation_results/revised_experiment/canonical_run_3/determinism_high_risk.csv
 python -m scripts.phase4_gate --final \
-  evaluation_results/revised_experiment/canonical_run_3
+  evaluation_results/revised_experiment/my_release_run
 ```
 
-## Run outputs
+A newly generated run will not pass `--final` until those review artifacts have been produced and completed.
 
-Each run contains:
+## Run a fast diagnostic
 
-- `run_metadata.json`: lockfile snapshot, declared matrix, run kind, and host;
-- `executions.csv`: one terminal execution record per requested cell;
-- `scenario_tool_results.csv`: labels and applicable evaluation metrics;
-- `status_counts.json`: terminal-state counts;
-- `attempts/<tool>/<scenario>/`: command logs, raw output, normalized output,
-  isolated FSTMerge input, and syntax evidence where applicable.
-
-Terminal states are mutually exclusive: `completed_clean`,
-`completed_conflicted`, `invalid_output`, `crash`, `timeout`, and
-`setup_error`. Failures remain missing metrics; they are not silently converted
-to F1 = 0.
-
-See [DATA_DICTIONARY.md](DATA_DICTIONARY.md) for column-level definitions.
-
-## Validation status
-
-- Phase 2: complete; see [PHASE2_STATUS.md](PHASE2_STATUS.md).
-- Phase 3: complete; the frozen Linux release gate passed before canonical run
-  3; see [PHASE3_STATUS.md](PHASE3_STATUS.md).
-- Phase 4: complete. The canonical 117-cell dataset passes the final integrity
-  gate, the evidence inspection is complete, and all 27 preregistered high-risk
-  repeat cells are deterministic; see [PHASE4_STATUS.md](PHASE4_STATUS.md) and
-  [PHASE4_AUDIT.md](PHASE4_AUDIT.md).
-- Phase 5 analysis and Phase 8 result-dependent manuscript work are released to
-  proceed from the canonical dataset.
-- Phase 5 descriptive analysis now regenerates the master matrix, overall and
-  stratified summaries, robustness tables, score decompositions, and three
-  publication-oriented figures. Line-level diff excerpts and final manuscript
-  placement remain; see [PHASE5_STATUS.md](PHASE5_STATUS.md).
-
-Run all repository tests with:
+To test instrumentation without executing the full matrix, select one or more tools and scenarios. Diagnostic runs are clearly marked and cannot be treated as canonical evidence.
 
 ```bash
-python -m unittest discover -s tests -v
+source .venv/bin/activate
+python -m scripts.revised_experiment \
+  --tool FSTMerge \
+  --scenario scenario_1 \
+  --run-dir evaluation_results/revised_experiment/smoke_fstmerge_s1
+
+python -m scripts.phase4_gate --allow-diagnostic \
+  evaluation_results/revised_experiment/smoke_fstmerge_s1
 ```
 
-## Provenance and limitations
+Repeat `--tool` or `--scenario` to request multiple cells. Omitting `--release` always produces a diagnostic run, even when all defaults are selected.
 
-The scenario origin is `synthetic_controlled`. Claims must therefore be limited
-to this benchmark; external validity to mined project histories has not been
-established. The oracle review record accurately identifies the Codex-assisted
-review rounds and must not be described as two independent human experts.
+## Inspect the results
 
-No dataset/software license has yet been selected by the authors. Reuse rights
-must not be inferred until a license file is added. Citation metadata should be
-finalized together with the revised manuscript author list and publication
-details.
+Each run directory contains:
+
+| Artifact | Purpose |
+| --- | --- |
+| `run_metadata.json` | Run kind, host environment, frozen lock snapshot, tools, and scenarios |
+| `executions.csv` | Command, timing, exit information, logs, and terminal status for every cell |
+| `scenario_tool_results.csv` | Master evaluation matrix and applicable metrics |
+| `status_counts.json` | Aggregate terminal-state counts |
+| `attempts/<tool>/<scenario>/` | Raw output, normalized output, command logs, isolated inputs, and syntax evidence |
+| `analysis/analysis_summary.json` | Machine-readable analysis provenance and artifact index |
+| `analysis/table_*.csv` | Overall, stratified, robustness, decomposition, and diff-example tables |
+| `analysis/figure_*.png` and `analysis/figure_*.pdf` | Publication-oriented figures |
+| `analysis/phase5_descriptive_analysis.md` | Generated human-readable analysis report |
+
+The analysis report is generated output, not maintained repository documentation. Running Phase 5 can therefore create a Markdown file inside a new run directory.
+
+Before using a run in research reporting, confirm all of the following:
+
+```bash
+python -m scripts.phase4_gate evaluation_results/revised_experiment/my_release_run
+python -m unittest discover -s tests -v
+python setup.py --check
+```
+
+Also verify that `run_metadata.json` declares `canonical_release`, lists all three tools and all 39 scenarios, and contains the expected lock snapshot.
+
+## Repository structure
+
+```text
+data/
+  scenario_manifest.csv        Scenario definitions, labels, and acceptance criteria
+  oracle_reviews.csv           Reviewer decisions and provenance
+  oracle_inventory.csv         Expected-file hashes and technical checks
+scenarios_base/<tool>/         Base, left, and right input trees
+output/<tool>/expected/        Accepted oracle trees
+scripts/
+  run_replication.py           Public end-to-end orchestrator
+  workflows/                   Execution, validation gates, audit, and analysis
+  core/                        Metrics, artifact hashes, and data models
+  oracles/                     Oracle packet, ingestion, and validation utilities
+  legacy/                      Superseded exploratory pipeline
+tests/                         Regression and JDime smoke tests
+evaluation_results/            Retained execution evidence and generated analyses
+tool_versions.lock             Frozen environment and execution policy
+```
+
+Files under `scripts/legacy/` and `evaluation_results/scientific_evaluation/` are historical. They do not implement or constitute current release evidence.
+
+## Oracle review and scenario taxonomy
+
+The canonical metadata is `data/scenario_manifest.csv`. A scenario mapping describes logical correspondence across branches:
+
+- `1:1`: one logical element maps to one counterpart;
+- `1:n`: one logical element maps to multiple counterparts;
+- `n:1`: multiple logical elements map to one counterpart;
+- `n:m`: multiple elements correspond on both sides.
+
+The `change_type` label describes the dominant intended change according to the manifest. Reviewers must judge the proposed oracle against the scenario's `merge_intent`, `acceptance_criteria`, declared file set, and available base/left/right artifacts. They must not inspect merge-tool outputs, scores, earlier decisions, or proposed labels before making an independent decision.
+
+For each review row:
+
+- complete every required field and use an ISO 8601 UTC timestamp;
+- provide a substantive comment for a rejection or classification concern;
+- use `tests_result=not_applicable` when `validation_scope=textual_structural_only`;
+- use `compilation_result=not_run` unless a documented compilation fixture was actually executed;
+- never infer compilation success from visual inspection;
+- preserve earlier rounds and append validated decisions to `data/oracle_reviews.csv`.
+
+Generate a blinded review packet with the oracle utilities only when conducting a new review round. The generated packet includes its own task-specific README and must be kept separate from tool outputs.
+
+## Troubleshooting
+
+### `setup.py` rejects the operating system
+
+Use Linux x86_64 or WSL2. Windows-native and macOS runs are not canonical release environments.
+
+### A tool or JDK is missing
+
+Resume the idempotent setup and then verify it:
+
+```bash
+python3 setup.py
+python3 setup.py --check
+```
+
+Use `python3 setup.py --force` only when a cached artifact is corrupt or its commit/hash does not match the lockfile; this deliberately rebuilds or downloads components.
+
+### Phase 3 is blocked
+
+Read every reported issue. Typical causes are the wrong platform, a missing JAR, an unexpected checksum, an incorrect Java major version, or a JDime build from the wrong commit. Do not bypass this gate for a release run.
+
+### The run directory already exists
+
+Choose a new directory. The evaluator refuses to reuse it by design.
+
+### A diagnostic run fails Phase 4
+
+Pass `--allow-diagnostic` when validating its structure. Only a full `--release` run may pass the canonical gate.
+
+### Python cannot import analysis packages
+
+Activate the environment created by setup:
+
+```bash
+source .venv/bin/activate
+```
+
+## Scientific scope and reuse
+
+The benchmark population consists of controlled synthetic scenarios, not merges mined from production histories. Conclusions must remain scoped to this benchmark; external validity to real-world repositories has not been established. Oracle-review provenance must accurately distinguish independent human review from author-supervised or AI-assisted review.
+
+No dataset or software license is currently declared in this repository. Do not infer reuse rights until the maintainers add a license file.
 
 Repository: <https://github.com/MateusMunaro/Empirical-Analysis-Of-Merge-Tools>
