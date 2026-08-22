@@ -28,9 +28,10 @@ Thumbs.db
 
 # Logs
 *.log
-# Per-attempt logs are required experimental evidence.
-!evaluation_results/revised_experiment/**/stdout.log
-!evaluation_results/revised_experiment/**/stderr.log
+
+# Generated evaluation outputs
+/evaluation_results/
+/output/*/scenarios/
 
 # Python
 __pycache__/
