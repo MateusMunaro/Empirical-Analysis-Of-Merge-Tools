@@ -1,4 +1,4 @@
-# Empirical Evaluation of Java Merge Tools
+# On the Correctness and Reliability of Software Merge Tools: An Empirical Study
 
 Reproducibility package for a controlled benchmark of **FSTMerge**, **IntelliMerge**, and **JDime** across 39 synthetic three-way Java merge scenarios. The frozen experiment contains 117 observations: one for every `tool_name x scenario_id` pair.
 
@@ -6,7 +6,7 @@ This document is the single maintained guide for installing the toolchain, runni
 
 ## What this benchmark evaluates
 
-Each scenario provides a common ancestor (`base`) and two independently changed variants (`left` and `right`). Every merge-tool output is normalized and compared with a reviewed expected output tree.
+Each scenario provides a common ancestor (`base`) and two independently changed variants (`left` and `right`). We normalize every merge-tool output and compare it with a reviewed expected output tree.
 
 The evaluation records:
 
@@ -18,11 +18,11 @@ The evaluation records:
 
 The terminal statuses are `completed_clean`, `completed_conflicted`, `invalid_output`, `crash`, `timeout`, and `setup_error`. Missing or unavailable metrics remain missing; failures are never silently converted to an F1 score of zero.
 
-"Complete textual resolution" means that execution completed cleanly, the normalized output exactly matched the oracle, and the Java syntax check emitted no parser diagnostic. It is not a claim of behavioral equivalence or semantic correctness.
+"Complete textual resolution" means that execution completed cleanly, the normalized output exactly matched the oracle, and the Java syntax check emitted no parser diagnostic. It does not claim behavioral equivalence or semantic correctness.
 
 ## Frozen environment
 
-Canonical release runs target **Linux x86_64**, either natively or through WSL2. The setup is intentionally rejected on other platforms.
+Canonical release runs target **Linux x86_64**, either natively or through WSL2. The setup intentionally rejects other platforms.
 
 | Component | Frozen version |
 | --- | --- |
